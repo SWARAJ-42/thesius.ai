@@ -1,5 +1,16 @@
 fastapi==0.115.4
 fastapi-cli==0.0.5
+fastapi[standard]
 SQLAlchemy==2.0.36
 passlib==1.7.4
 bcrypt==4.2.0
+python-jose==3.3.0
+openai==1.53.1
+nltk==3.9.1
+langchain-community==0.3.3
+tiktoken==0.8.0
+langchain==0.3.4
+streamlit==1.39.0
+transformers==4.44.2
+scikit-learn==1.5.2
+ipython==8.29.0

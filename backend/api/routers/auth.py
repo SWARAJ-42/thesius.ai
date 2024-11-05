@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 import os
 from api.models import User
 from api.deps import db_dependency, bcrypt_context
+from api.repository.search_engine.main import get_query_result
 
 load_dotenv()
 
@@ -28,6 +29,10 @@ class UserCreateRequest(BaseModel):
 class Token(BaseModel):
     access_token: str
     token_type: str
+
+class QueryModel(BaseModel):
+    query: str
+    
     
     
 def authenticate_user(email: str, password: str, db):
@@ -65,4 +70,15 @@ async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm,
     token = create_access_token(user.email, user.id, timedelta(minutes=20))
     
     return {'access_token': token, 'token_type': 'bearer'}
+
+@router.post("/get-query-result")
+async def get_query_result_endpoint(query: QueryModel):
+    try:
+        # Call the function and pass the query from the request body
+        result = get_query_result(query.query)
+        return result  # Returns the response in JSON format
+
+    except Exception as e:
+        # Handle any errors that may occur during the process
+        raise HTTPException(status_code=500, detail=str(e))
     

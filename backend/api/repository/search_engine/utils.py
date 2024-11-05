@@ -1,4 +1,4 @@
-import constants as constants
+import api.repository.search_engine.constants as constants
 import requests
 import nltk
 from transformers import AutoTokenizer, AutoModel
@@ -8,7 +8,7 @@ import pandas as pd
 import langchain
 from langchain.prompts import PromptTemplate
 from langchain.chains.qa_with_sources import load_qa_with_sources_chain
-from langchain.llms import OpenAI
+from langchain_community.llms import OpenAI
 from IPython.display import display, Markdown
 import streamlit as st
 import re
@@ -37,8 +37,9 @@ def get_papers(query):
         else:
             df = pd.DataFrame(search_results['data']).dropna()
             return df
-    except:
-        print('some error occured while searching papers')
+    except Exception as e:
+        print(f"An error occurred while searching papers: {e}")
+
 
 
 def get_doc_objects_from_df(df):
@@ -87,7 +88,7 @@ def advanced_preprocess_query(query):
     query = query.lower()
 
     # Improving the query to make it more detailed
-    response = openai.ChatCompletion.create(
+    response = openai.chat.completions.create(
         model="gpt-4o-mini",
         messages=[
             {
@@ -102,7 +103,8 @@ def advanced_preprocess_query(query):
     )
 
     # Extract and return the descriptive response from the assistant
-    expanded_query = response['choices'][0]['message']['content']
+    expanded_query = response.choices[0].message.content
+
 
     # remove stopwords from the query
     stopwords = set(nltk.corpus.stopwords.words("english"))
@@ -159,7 +161,7 @@ def answer_question(
     stop_sequence=None,
 ):
     """
-    Answer a question based on the most similar context from the dataframe texts
+    Answer a question based on the most similar context from the dataframe texts.
     """
     context = create_context(
         question,
@@ -173,23 +175,20 @@ def answer_question(
         print("\n\n")
 
     try:
-        prompt = f'Answer the question based on the context below:\n\nContext: {context}\n\n---\n\nQuestion: {question}\nAnswer:'
+        prompt = f"Answer the question based on the context below:\n\nContext: {context}\n\n---\n\nQuestion: {question}\nAnswer:"
 
         # Create a completion using the question and context
-        response = openai.ChatCompletion.create(
+        response = openai.chat.completions.create(
             model=model,
             messages=[
-                {
-                    "role": "system",
-                    "content": "You are a great research assistant, who answers based on the provided context"
-                },
-                {
-                    "role": "user",
-                    "content": prompt
-                }
-            ]
+                {"role": "system", "content": "You are a helpful research assistant who answers based on the provided context."},
+                {"role": "user", "content": prompt}
+            ],
+            max_tokens=max_tokens,
+            stop=stop_sequence,
+            temperature=0.7
         )
-        return response['choices'][0]['message']['content']
+        return response.choices[0].message.content
     except Exception as e:
         print(e)
         return ""

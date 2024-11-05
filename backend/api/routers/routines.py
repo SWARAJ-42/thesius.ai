@@ -16,7 +16,8 @@ class RoutineBase(BaseModel):
     
 class RoutineCreate(RoutineBase):
     workouts: List[int] = []
-    
+
+
 @router.get("/")
 def get_routines(db: db_dependency, user: user_dependency):
     return db.query(Routine).options(joinedload(Routine.workouts)).filter(Routine.user_id == user.get('id')).all()
@@ -41,3 +42,4 @@ def delete_routine(db: db_dependency, user: user_dependency, routine_id: int):
         db.delete(db_routine)
         db.commit()
     return db_routine
+
