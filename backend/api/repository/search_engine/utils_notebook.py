@@ -1,4 +1,4 @@
-import api.repository.search_engine.constants as constants
+import constants
 import requests
 import nltk
 from transformers import AutoTokenizer, AutoModel
@@ -18,7 +18,7 @@ tokenizer = AutoTokenizer.from_pretrained("allenai/specter2_base")
 model = AutoModel.from_pretrained("allenai/specter2_base")
 
 
-def search(query, limit=20, fields=["title", "abstract", "tldr", "venue", "year", "fieldsOfStudy", "citationCount", "influentialCitationCount", "isOpenAccess", "openAccessPdf"]):
+def search(query, limit=20, fields=["title", "abstract", "venue", "year"]):
     # space between the  query to be removed and replaced with +
     query = query.replace(" ", "+")
     url = f'https://api.semanticscholar.org/graph/v1/paper/search?query={query}&limit={limit}&fields={",".join(fields)}'

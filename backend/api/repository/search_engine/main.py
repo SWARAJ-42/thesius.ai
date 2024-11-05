@@ -14,13 +14,16 @@ def get_query_result(query):
     df = utils.get_papers(query)
 
     if df is None:
-        return {'message': "Sorry, no result found"}
+        return {'data': jsonable_encoder([{}]), 'final_answer': "Sorry, no result found"}
     
     df, query = utils.rerank(df, query, column_name='title_abs')
     gpt_response = utils.answer_question(df=df, question=query, debug=False)
+
+    df = df.drop(columns=['title_abs', 'n_tokens', 'specter_embeddings'])
     
     # Ensure data is JSON serializable
     df_list = df.astype(str).to_dict(orient='records')
+
     response = {
         'data': jsonable_encoder([dict(record) for record in df_list]),
         'final_answer': str(gpt_response)  
