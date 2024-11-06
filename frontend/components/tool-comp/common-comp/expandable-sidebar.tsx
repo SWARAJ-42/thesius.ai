@@ -19,7 +19,7 @@ export function ExpandableSidebar() {
   return (
     <>
       <div
-        className={`fixed sm:relative z-10 left-0 top-0 m-[1vh] h-[98vh] bg-purple-600/80 backdrop-blur-lg transition-all duration-300 ease-in-out rounded-lg shadow-lg ${
+        className={`fixed sm:relative z-10 left-0 top-0 m-[1vh] h-[98vh] bg-green-300/50 backdrop-blur-lg transition-all duration-300 ease-in-out rounded-lg shadow-lg ${
           isCompletelyHidden ? '-translate-x-full' : isExpanded ? 'w-64' : 'w-16'
         }`}
       >

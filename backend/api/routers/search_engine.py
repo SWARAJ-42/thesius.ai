@@ -10,7 +10,7 @@ router = APIRouter(
 class QueryModel(BaseModel):
     query: str
 
-@router.post("/get-query-result")
+@router.post("/get-results")
 async def get_query_result_endpoint(query: QueryModel):
     try:
         # Call the function and pass the query from the request body

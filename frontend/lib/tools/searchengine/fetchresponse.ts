@@ -30,17 +30,16 @@ export interface QueryResult {
 
 export const fetchQueryResult = async (query: string): Promise<QueryResult | null> => {
   try {
-    const response = await axios.post<QueryResult>('/api/query', { query });
+    const response = await axios.post<QueryResult>('http://localhost:8000/searchpapers/get-results', { query });
 
     if (response.data) {
       const queryData: QueryResult = {
         ...response.data,
         data: response.data.data.map(paper => ({
           ...paper,
-          // Check and parse JSON strings to objects
-          openAccessPdf: typeof paper.openAccessPdf === 'string' ? JSON.parse(paper.openAccessPdf) : paper.openAccessPdf,
-          fieldsOfStudy: typeof paper.fieldsOfStudy === 'string' ? JSON.parse(paper.fieldsOfStudy) : paper.fieldsOfStudy,
-          tldr: typeof paper.tldr === 'string' ? JSON.parse(paper.tldr) : paper.tldr,
+          openAccessPdf: typeof paper.openAccessPdf === 'string' ? safeJsonParse(paper.openAccessPdf) : paper.openAccessPdf,
+          fieldsOfStudy: typeof paper.fieldsOfStudy === 'string' ? safeJsonParse(paper.fieldsOfStudy) : paper.fieldsOfStudy,
+          tldr: typeof paper.tldr === 'string' ? safeJsonParse(paper.tldr) : paper.tldr,
           isOpenAccess: paper.isOpenAccess === 'True' || paper.isOpenAccess === true,  // Ensure boolean conversion
           citationCount: Number(paper.citationCount),  // Convert to number
           influentialCitationCount: Number(paper.influentialCitationCount),  // Convert to number
@@ -58,6 +57,17 @@ export const fetchQueryResult = async (query: string): Promise<QueryResult | nul
     return null;
   }
 };
+
+// Helper function to safely parse JSON strings
+function safeJsonParse(value: string) {
+  try {
+    return JSON.parse(value);
+  } catch (error) {
+    console.warn("Failed to parse JSON:", value, error);
+    return value; // Return the original value if parsing fails
+  }
+}
+
 
 // Usage example:
 // fetchQueryResult("example query").then(result => console.log(result));
