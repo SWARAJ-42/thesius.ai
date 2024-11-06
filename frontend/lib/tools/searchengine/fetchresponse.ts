@@ -5,10 +5,8 @@ export interface OpenAccessPdf {
   status: string;
 }
 
-export interface TLDR {
-  model: string;
-  text: string;
-}
+export const isOpenAccessPdf = (variable: any): variable is OpenAccessPdf =>
+  typeof variable?.url === "string" && typeof variable?.status === "string";
 
 export interface PaperData {
   paperId: string;
@@ -21,7 +19,7 @@ export interface PaperData {
   isOpenAccess: boolean | string;
   openAccessPdf: OpenAccessPdf | string;
   fieldsOfStudy: string[] | string;
-  tldr: TLDR | string;
+  tldr: string;
   similarity: number;
 }
 
