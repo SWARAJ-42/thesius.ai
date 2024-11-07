@@ -18,16 +18,20 @@ import {
 } from "lucide-react";
 import { PaperData, isOpenAccessPdf } from "@/lib/tools/searchengine/fetchresponse";
 
-export function PaperCard(PaperData: PaperData) {
+interface PaperCardProps {
+  paper: PaperData;  // We expect PaperData to be passed as a prop
+}
+
+export function PaperCard({paper}: PaperCardProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <Card className="w-full max-w-2xl">
+    <Card className="max-w-2xl mt-2">
       <CardHeader>
-        <CardTitle className="text-xl font-bold">{PaperData.title}</CardTitle>
+        <CardTitle className="text-lg font-bold">{paper.title}</CardTitle>
         <div className="flex flex-wrap gap-2 mt-2">
-          {Array.isArray(PaperData.fieldsOfStudy) &&
-            PaperData.fieldsOfStudy.map((label, index) => (
+          {Array.isArray(paper.fieldsOfStudy) &&
+            paper.fieldsOfStudy.map((label, index) => (
               <Badge key={index} variant="secondary">
                 {label}
               </Badge>
@@ -35,7 +39,7 @@ export function PaperCard(PaperData: PaperData) {
         </div>
       </CardHeader>
       <CardContent className="grid gap-4">
-        <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+        {/* <Collapsible open={isOpen} onOpenChange={setIsOpen}>
           <CollapsibleTrigger asChild>
             <Button
               variant="ghost"
@@ -53,12 +57,12 @@ export function PaperCard(PaperData: PaperData) {
             <Card className="bg-secondary/10">
               <CardContent className="p-3">
                 <p className="text-sm text-muted-foreground">
-                  {PaperData.abstract}
+                  {paper.abstract}
                 </p>
               </CardContent>
             </Card>
           </CollapsibleContent>
-        </Collapsible>
+        </Collapsible> */}
         <Collapsible open={isOpen} onOpenChange={setIsOpen}>
           <CollapsibleTrigger asChild>
             <Button
@@ -77,7 +81,7 @@ export function PaperCard(PaperData: PaperData) {
             <Card className="bg-secondary/10">
               <CardContent className="p-3">
                 <p className="text-sm text-muted-foreground">
-                  {PaperData.tldr}
+                  {paper.tldr}
                 </p>
               </CardContent>
             </Card>
@@ -90,28 +94,28 @@ export function PaperCard(PaperData: PaperData) {
                 <TrendingUp size={16} className="text-primary" />
                 <span className="text-sm font-semibold">Citations:</span>
                 <span className="text-lg font-bold text-primary">
-                  {PaperData.citationCount}
+                  {paper.citationCount}
                 </span>
               </div>
               <Badge variant="secondary" className="text-xs">
-                {PaperData.influentialCitationCount} influential
+                {paper.influentialCitationCount} influential
               </Badge>
             </CardContent>
           </Card>
-          <Card className={PaperData.isOpenAccess ? "bg-green-100" : "bg-red-100"}>
+          <Card className={paper.isOpenAccess ? "bg-green-100" : "bg-red-100"}>
             <CardContent className="p-3 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <BookOpen
                   size={16}
-                  className={PaperData.isOpenAccess ? "text-green-600" : "text-red-600"}
+                  className={paper.isOpenAccess ? "text-green-600" : "text-red-600"}
                 />
                 <span className="text-sm font-semibold">
-                  {PaperData.isOpenAccess ? "Open Access" : "Closed Access"}
+                  {paper.isOpenAccess ? "Open Access" : "Closed Access"}
                 </span>
               </div>
-              {PaperData.isOpenAccess && (
+              {paper.isOpenAccess && (
                 <a
-                  href={isOpenAccessPdf(PaperData.openAccessPdf) ? PaperData.openAccessPdf.url: ""}
+                  href={isOpenAccessPdf(paper.openAccessPdf) ? paper.openAccessPdf.url: ""}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-1 text-sm text-blue-600 hover:underline"

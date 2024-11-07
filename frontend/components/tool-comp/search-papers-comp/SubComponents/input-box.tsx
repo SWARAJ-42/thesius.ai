@@ -1,15 +1,22 @@
 "use client";
 
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Send} from "lucide-react";
 import { fetchQueryResult } from "@/lib/tools/searchengine/fetchresponse"; // Import your fetchQueryResult function
+import SearchPaperContext, { SearchPaperPage, useSearchPaper } from "@/context/SearchPapersContext";
 
 export function InputBox() {
   const [input, setInput] = useState("");
   const [isExpanded, setIsExpanded] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  const searchPaperContext = useContext(SearchPaperContext)
+  if (!SearchPaperContext) {
+    return <div>some problem occured sorry for the inconvinience !</div>
+  }
+  const {searchPaperPage, setSearchPaperPage} = searchPaperContext
 
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInput(e.target.value);
@@ -26,6 +33,14 @@ export function InputBox() {
       try {
         const data = await fetchQueryResult(input); // Call fetchQueryResult with the input
         console.log("Response data:", data); // Handle the returned data as needed
+        if (data) {
+          const newSearchPaperPage: SearchPaperPage = {
+            query: input,
+            queryResult: data,
+            library: []
+          };
+          setSearchPaperPage(newSearchPaperPage)
+        }
         setIsExpanded(false);
       } catch (error) {
         console.error("Error fetching response:", error);

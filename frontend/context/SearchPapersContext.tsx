@@ -6,7 +6,7 @@ import { QueryResult } from "@/lib/tools/searchengine/fetchresponse";
 export interface SearchPaperPage {
   query: string;
   queryResult: QueryResult;
-  library: QueryResult[];
+  library: QueryResult[] | null;
 }
 
 interface SearchPaperContextType {

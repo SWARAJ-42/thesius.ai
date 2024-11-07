@@ -4,7 +4,7 @@ import Layout from "./layout";
 
 const Page = () => {
   return (
-    <div className="flex bg-gray-800">
+    <div className="flex bg-gray-800 h-[100vh] overflow-y-scroll">
         <ExpandableSidebar />
         <Playground />
     </div>
