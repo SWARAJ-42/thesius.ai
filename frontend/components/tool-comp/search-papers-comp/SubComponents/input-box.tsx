@@ -58,7 +58,7 @@ export function InputBox() {
 
   return (
     <div className="w-full p-4 ">
-      <div className="max-w-2xl mx-auto p-2 relative bg-green-300/50 rounded-full shadow-xl overflow-hidden flex flex-row justify-center items-center">
+      <div className="max-w-3xl mx-auto p-2 relative bg-green-300/50 rounded-full shadow-xl overflow-hidden flex flex-row justify-center items-center">
         <Textarea
           value={input}
           onChange={handleInputChange}

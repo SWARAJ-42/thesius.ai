@@ -26,7 +26,7 @@ export function PaperCard({paper}: PaperCardProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <Card className="max-w-2xl mt-2">
+    <Card className="max-w-3xl mt-2">
       <CardHeader>
         <CardTitle className="text-lg font-bold">{paper.title}</CardTitle>
         <div className="flex flex-wrap gap-2 mt-2">

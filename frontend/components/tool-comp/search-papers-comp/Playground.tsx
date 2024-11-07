@@ -24,7 +24,11 @@ function Playground() {
     <div className="w-full h-[100vh]">
       <InputBox />
       <div className="mx-auto w-fit">
-        <div className="my-2"></div>
+        <div className="max-w-3xl my-1 p-3 mx-auto bg-gray-200 rounded-xl">
+          <div className="text-gray-700 bg-gray-300 p-3 my-1 rounded-xl font-semibold">
+            {queryResult.final_answer}
+          </div>
+        </div>
         {queryResult.data.map((paper: PaperData) => (
           <PaperCard paper={paper} />
         ))}
