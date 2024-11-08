@@ -8,13 +8,24 @@ import { PaperData } from "@/lib/tools/searchengine/fetchresponse";
 
 function Playground() {
   const searchpapercontext = useContext(SearchPaperContext);
-  const { searchPaperPage, setSearchPaperPage } = searchpapercontext;
+  
+  const { searchPaperPage, setSearchPaperPage, paperRetrievalLoading, setPaperRetrievalLoading, paperRetrievalQuery, setPaperRetrievalQuery } = searchpapercontext;
+
   if (!searchPaperPage) {
-    return (
-      <div className="w-full h-[100vh] flex justify-center items-center">
-        <InputBox />
-      </div>
-    );
+    if (paperRetrievalLoading) {
+        return (
+          <div className="w-full h-[100vh]">
+            <InputBox />
+          </div>
+        );
+    }
+    else {
+      return (
+        <div className="w-full h-[100vh] flex justify-center items-center">
+          <InputBox />
+        </div>
+      );
+    }
   }
 
   const query = searchPaperPage.query;

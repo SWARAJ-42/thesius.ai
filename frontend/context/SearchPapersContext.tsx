@@ -12,6 +12,10 @@ export interface SearchPaperPage {
 interface SearchPaperContextType {
   searchPaperPage: SearchPaperPage | null;
   setSearchPaperPage: (searchPaperPage: SearchPaperPage | null) => void;
+  paperRetrievalLoading: boolean;
+  setPaperRetrievalLoading: (paperRetrievalLoading:boolean) => void;
+  paperRetrievalQuery: string;
+  setPaperRetrievalQuery: (paperRetrievalQuery:string) => void;
 }
 
 const SearchPaperContext = createContext<SearchPaperContextType | undefined>(undefined);
@@ -22,8 +26,11 @@ interface SearchPaperProviderProps {
 
 export const SearchPaperProvider: React.FC<SearchPaperProviderProps> = ({ children }) => {
   const [searchPaperPage, setSearchPaperPage] = useState<SearchPaperPage | null>(null);
+  const [paperRetrievalLoading, setPaperRetrievalLoading] = useState(false)
+  const [paperRetrievalQuery, setPaperRetrievalQuery] = useState("")
+
   return (
-    <SearchPaperContext.Provider value={{ searchPaperPage, setSearchPaperPage }}>
+    <SearchPaperContext.Provider value={{ searchPaperPage, setSearchPaperPage, paperRetrievalLoading, setPaperRetrievalLoading, paperRetrievalQuery, setPaperRetrievalQuery }}>
       {children}
     </SearchPaperContext.Provider>
   );

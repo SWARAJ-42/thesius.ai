@@ -8,18 +8,16 @@ import { fetchQueryResult } from "@/lib/tools/searchengine/fetchresponse"; // Im
 import SearchPaperContext, { SearchPaperPage, useSearchPaper } from "@/context/SearchPapersContext";
 
 export function InputBox() {
-  const [input, setInput] = useState("");
   const [isExpanded, setIsExpanded] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
 
   const searchPaperContext = useContext(SearchPaperContext)
   if (!SearchPaperContext) {
     return <div>some problem occured sorry for the inconvinience !</div>
   }
-  const {searchPaperPage, setSearchPaperPage} = searchPaperContext
+  const {searchPaperPage, setSearchPaperPage, paperRetrievalLoading, setPaperRetrievalLoading, paperRetrievalQuery, setPaperRetrievalQuery} = searchPaperContext
 
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setInput(e.target.value);
+    setPaperRetrievalQuery(e.target.value);
     if (e.target.value.length > 0 && !isExpanded) {
       setIsExpanded(true);
     } else if (e.target.value.length === 0 && isExpanded) {
@@ -28,14 +26,14 @@ export function InputBox() {
   };
 
   const handleSubmit = async () => {
-    if (input.trim().length > 0) {
-      setIsLoading(true)
+    if (paperRetrievalQuery.trim().length > 0) {
+      setPaperRetrievalLoading(true)
       try {
-        const data = await fetchQueryResult(input); // Call fetchQueryResult with the input
+        const data = await fetchQueryResult(paperRetrievalQuery); // Call fetchQueryResult with the paperRetrievalQuery
         console.log("Response data:", data); // Handle the returned data as needed
         if (data) {
           const newSearchPaperPage: SearchPaperPage = {
-            query: input,
+            query: paperRetrievalQuery,
             queryResult: data,
             library: []
           };
@@ -45,12 +43,12 @@ export function InputBox() {
       } catch (error) {
         console.error("Error fetching response:", error);
       }
-      setIsLoading(false)
+      setPaperRetrievalLoading(false)
     }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === "Enter" && !e.shiftKey && input.trim().length > 0) {
+    if (e.key === "Enter" && !e.shiftKey && paperRetrievalQuery.trim().length > 0) {
       e.preventDefault(); // Prevent new line
       handleSubmit();
     }
@@ -60,7 +58,7 @@ export function InputBox() {
     <div className="w-full p-4 ">
       <div className="max-w-3xl mx-auto p-2 relative bg-green-300/50 rounded-full shadow-xl overflow-hidden flex flex-row justify-center items-center">
         <Textarea
-          value={input}
+          value={paperRetrievalQuery}
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
           placeholder="Enter your problem statement..."
@@ -71,7 +69,7 @@ export function InputBox() {
           <Button
             size="icon"
             onClick={handleSubmit}
-            disabled={input.trim().length === 0 && isLoading}
+            disabled={paperRetrievalQuery.trim().length === 0 && paperRetrievalLoading}
             className="bg-gray-800 text-white rounded-full w-12 h-12 flex items-center justify-center transition-colors duration-300"
           >
             <Send className="h-6 w-6" />

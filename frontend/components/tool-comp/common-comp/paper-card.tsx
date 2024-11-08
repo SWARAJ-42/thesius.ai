@@ -81,7 +81,7 @@ export function PaperCard({paper}: PaperCardProps) {
             <Card className="bg-secondary/10">
               <CardContent className="p-3">
                 <p className="text-sm text-muted-foreground">
-                  {paper.tldr}
+                  {paper.tldr?.text}
                 </p>
               </CardContent>
             </Card>

@@ -1,3 +1,9 @@
+import sys
+import os
+
+# Adjust the path to point to the project root
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../..')))
+
 import pandas as pd
 import openai
 import api.repository.search_engine.utils as utils
@@ -30,8 +36,3 @@ def get_query_result(query):
     }
     
     return response
-
-
-
-
-# get_query_result("what is Retrieval-Augmented Generation")
