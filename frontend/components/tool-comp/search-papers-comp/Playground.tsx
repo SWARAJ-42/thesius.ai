@@ -5,6 +5,7 @@ import { InputBox } from "./SubComponents/input-box";
 import SearchPaperContext from "@/context/SearchPapersContext";
 import { PaperCard } from "../common-comp/paper-card";
 import { PaperData } from "@/lib/tools/searchengine/fetchresponse";
+import FollowUpQuestionsCard from "../common-comp/follow-ups";
 
 function Playground() {
   const searchpapercontext = useContext(SearchPaperContext);
@@ -27,6 +28,13 @@ function Playground() {
       );
     }
   }
+  if (paperRetrievalLoading) {
+    return (
+      <div className="w-full h-[100vh]">
+        <InputBox />
+      </div>
+    );
+  }
 
   const query = searchPaperPage.query;
   const queryResult = searchPaperPage.queryResult;
@@ -38,6 +46,9 @@ function Playground() {
         <div className="max-w-3xl my-1 p-3 mx-auto bg-gray-200 rounded-xl">
           <div className="text-gray-700 bg-gray-300 p-3 my-1 rounded-xl font-semibold">
             {queryResult.final_answer}
+          </div>
+          <div className="text-gray-700 p-3 my-1 rounded-xl font-semibold">
+            <FollowUpQuestionsCard questions={queryResult.followup_questions} />
           </div>
         </div>
         {queryResult.data.map((paper: PaperData) => (

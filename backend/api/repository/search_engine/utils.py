@@ -190,23 +190,28 @@ def answer_question(
         )
 
         # Follow-up questions
-        response = openai.beta.chat.completions.parse(
-            model="gpt-3.5-turbo",
+        from openai import OpenAI
+        from pydantic import BaseModel
+        client = OpenAI(api_key=constants.OPENAI_API_KEY)
+        class Followups(BaseModel):
+            followup_questions: list[str]
+        response_followup = client.beta.chat.completions.parse(
+            model="gpt-4o-mini",
             messages=[
                 {"role": "system", "content": "You are a research expert. You will be given a research question, generate a list of 3 most suitable follow-up or related questions in the format provided."},
-                {"role": "user", "content": "..."}
+                {"role": "user", "content": f"Research Question: {question}"}
             ],
-            response_format=list[str],
+            response_format=Followups,
         )
 
         gpt_response = response.choices[0].message.content
-        followup_questions = response.choices[0].message.parsed
+        followup_response = response_followup.choices[0].message.parsed
 
-        return {"gpt_answer":gpt_response,  "followup_questions": followup_questions}
+        return {"gpt_answer":gpt_response,  "followup_questions": followup_response.followup_questions}
     
     except Exception as e:
         print(e)
-        return {"gpt_answer":"",  "followup_questions":""}
+        return {"gpt_answer":"",  "followup_questions":[]}
 
 
 def get_langchain_response(docs, query, k=5):

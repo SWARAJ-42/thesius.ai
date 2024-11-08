@@ -23,7 +23,7 @@ interface PaperCardProps {
 }
 
 export function PaperCard({paper}: PaperCardProps) {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
 
   return (
     <Card className="max-w-3xl mt-2">
@@ -67,7 +67,7 @@ export function PaperCard({paper}: PaperCardProps) {
           <CollapsibleTrigger asChild>
             <Button
               variant="ghost"
-              className="flex w-full justify-between px-2 py-0"
+              className="flex w-full justify-between px-2 py-0 bg-gray-100"
             >
               <span className="font-semibold">TLDR</span>
               {isOpen ? (

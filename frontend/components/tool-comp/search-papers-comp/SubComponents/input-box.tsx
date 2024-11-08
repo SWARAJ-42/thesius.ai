@@ -61,7 +61,7 @@ export function InputBox() {
           value={paperRetrievalQuery}
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
-          placeholder="Enter your problem statement..."
+          placeholder="Enter your query..."
           className="w-full pr-16 py-4 px-6 text-gray-700 font-semibold text-md leading-tight focus:outline-none resize-none overflow-hidden rounded-full"
           style={{ minHeight: "20px", maxHeight: "60px" }}
         />

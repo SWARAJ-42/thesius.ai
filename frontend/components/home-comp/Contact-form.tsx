@@ -66,7 +66,7 @@ export default function ContactForm() {
                       <label htmlFor="message" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Message</label>
                       <Textarea id="message" placeholder="Your message here..." required className="min-h-[150px] bg-white/30" />
                     </div>
-                    <Button className="w-full bg-[#9000BF] hover:bg-purple-700" type="submit" disabled={isSubmitting}>
+                    <Button className="w-full bg-green-500 hover:bg-green-700" type="submit" disabled={isSubmitting}>
                       {isSubmitting ? (
                         <>
                           <MessageSquare className="mr-2 h-4 w-4 animate-spin" />
@@ -90,7 +90,7 @@ export default function ContactForm() {
                   height={300}
                   className="object-cover w-[70%] h-[70%] mx-auto"
                 />
-                <div className="absolute inset-0 bg-gradient-to-br from-purple-300/60 to-purple-400/60 mix-blend-overlay" />
+                <div className="absolute inset-0 bg-gradient-to-br from-green-300/60 to-green-400/60 mix-blend-overlay" />
                 <div className="absolute bottom-4 left-4 right-4 p-4 bg-white/40 backdrop-blur-sm rounded-lg shadow-lg">
                   <h4 className="text-lg font-semibold mb-2">Get in Touch</h4>
                   <p className="text-sm text-zinc-600">We're here to help and answer any question you might have. We look forward to hearing from you!</p>

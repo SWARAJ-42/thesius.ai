@@ -33,27 +33,26 @@ const Hero = () => {
       {icons.map(({ component: Icon, position }, index) => (
         <Icon
           key={index}
-          className={`-z-[1] animate-bounce-slow fixed text-6xl text-purple-600 opacity-20 animate-float ${position}`}
+          className={`-z-[1] animate-bounce-slow fixed text-6xl text-green-700 opacity-20 animate-float ${position}`}
         />
       ))}
 
       <div className="scale-in-center w-[80%] md:w-[40%] flex flex-col justify-center items-center z-10">
         <div className="my-4 text-4xl md:text-6xl text-center font-bold text-[#2b2b2b]">
-          Cut through the noise — AI brings you the right information fast
+          From Idea to Impact — Discover Research That Drives Innovation
         </div>
         <div className="py-4 text-lg text-center font-bold text-[#4b4b4b]">
-          Research shouldn’t slow you down. Our platform finds the essential
-          business data you need in moments, whether it’s breaking news or deep
-          financials. You get the right information faster, freeing up your time
-          for real, impactful work.
+          Research should drive your work forward, not slow it down. Our
+          platform brings you the papers you need — quickly and reliably. Spend
+          less time searching and more time bringing your crazy ideas to life.
         </div>
       </div>
 
-      <div className="flex my-3 z-10">
-        <Button className="mx-3 px-8 py-8 text-md md:text-2xl text-white text-center font-semibold bg-purple-500 hover:bg-purple-700 rounded-lg shadow-lg">
+      <div className="scale-in-center flex my-3 z-10">
+        <Button className="mx-3 px-8 py-8 text-md md:text-2xl text-white text-center font-semibold bg-green-500 hover:bg-green-700 rounded-lg shadow-lg">
           Get Started
         </Button>
-        <Button className="mx-3 px-8 py-8 text-md md:text-2xl text-white text-center font-semibold bg-purple-500 hover:bg-purple-700 rounded-lg shadow-lg">
+        <Button className="mx-3 px-8 py-8 text-md md:text-2xl text-white text-center font-semibold bg-green-500 hover:bg-green-700 rounded-lg shadow-lg">
           Watch Demo
         </Button>
       </div>
@@ -62,4 +61,3 @@ const Hero = () => {
 };
 
 export default Hero;
-

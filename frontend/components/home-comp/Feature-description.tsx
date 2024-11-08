@@ -72,7 +72,7 @@ export function FeatureDescription() {
             <div
               ref={ref}
               key={index}
-              className={`feature-animation ${isVisible ? feature.animation[0] : feature.animation[1]} flex flex-col ${feature.design} justify-between items-center mx-auto max-w-6xl min-h-[300px] rounded-2xl overflow-hidden bg-gradient-to-r from-purple-400 to-purple-200 shadow-lg`}
+              className={`feature-animation ${isVisible ? feature.animation[0] : feature.animation[1]} flex flex-col ${feature.design} justify-between items-center mx-auto max-w-6xl min-h-[300px] rounded-2xl overflow-hidden bg-gradient-to-r from-green-300 to-green-200 shadow-lg`}
             >
               <div className="flex-1 relative w-full md:w-1/2 hidden sm:block">
                 <Image
@@ -88,7 +88,7 @@ export function FeatureDescription() {
                 <p className="text-md md:text-xl text-[#3b3b3b]/90 mb-6">
                   {feature.description}
                 </p>
-                <button className="bg-white text-xl text-purple-600 px-8 py-4 rounded-full font-semibold hover:bg-opacity-90 transition-colors duration-300">
+                <button className="bg-white text-xl text-green-600 px-8 py-4 rounded-full font-semibold hover:bg-opacity-90 transition-colors duration-300">
                   {feature.buttonText}
                 </button>
               </div>

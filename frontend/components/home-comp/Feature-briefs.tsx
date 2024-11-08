@@ -14,7 +14,7 @@ import reportsimg from "@/assets/Home/FeatureBrief/reports.png";
 import searchimg from "@/assets/Home/FeatureBrief/search.png";
 import { useRef } from "react";
 import useVisibility from "@/lib/visibility-detector";
-import "./custom-styles/3-feature-briefs.css";  
+import "./custom-styles/3-feature-briefs.css";
 
 export function FeatureBriefs() {
   interface Feature {
@@ -25,32 +25,32 @@ export function FeatureBriefs() {
   }
   const services: Feature[] = [
     {
-      name: "PS Lookup",
+      name: "Research Pathway",
       icon: notesimg,
-      color: "bg-purple-100/50 hover:bg-purple-200/30",
+      color: "bg-green-100/50 hover:bg-green-200/30",
       description:
-        "Get a clear plan of action based on your problem statement, along with all the relevant data you need",
+        "Get a clear, guided roadmap based on your query, with key research insights and recommended resources for deeper exploration",
     },
     {
-      name: "Financial Overview",
+      name: "Core Findings",
       icon: reportsimg,
-      color: "bg-purple-100/50 hover:bg-purple-200/30",
+      color: "bg-green-100/50 hover:bg-green-200/30",
       description:
-        "Quick access to critical financial details from industry and financial reports based on your research problem",
+        "Access essential papers that directly address your research question, giving you a solid foundation without the hassle.",
     },
     {
-      name: "Latest Developments",
+      name: "Explore Further",
       icon: newsimg,
-      color: "bg-purple-100/50 hover:bg-purple-200/30",
+      color: "bg-green-100/50 hover:bg-green-200/30",
       description:
-        "Stay informed with up-to-date news and trends that matter for your research",
+        "Pick the results that resonate most with your research, then ask follow-up questions to dive deeper and uncover more relevant insights.",
     },
     {
-      name: "Manage the search",
+      name: "Optimize Each Result",
       icon: searchimg,
-      color: "bg-purple-100/50 hover:bg-purple-200/30",
+      color: "bg-green-100/50 hover:bg-green-200/30",
       description:
-        "All the right data of your project, neatly organized and easy to find.",
+        "Engage with each study by exploring similar research papers, checking citations for reliability, delving into references, and much more to broaden your perspective.",
     },
   ];
 
@@ -59,16 +59,16 @@ export function FeatureBriefs() {
   const visibilities = elementRefs.map((ref) => useVisibility(ref, 0));
 
   return (
-    <Card className="w-[90%] lg:w-[60%] mx-auto my-32 shadow-2xl rounded-2xl bg-purple-300/20 backdrop-blur-md px-4 sm:px-6 lg:px-8 py-12 md:py-24 overflow-hidden">
+    <Card className="w-[90%] lg:w-[60%] mx-auto my-32 shadow-2xl rounded-2xl bg-green-300/20 backdrop-blur-md px-4 sm:px-6 lg:px-8 py-12 md:py-24 overflow-hidden">
       <CardHeader>
         <CardTitle className="text-3xl md:text-5xl font-bold text-center text-primary">
-          New teammates for your research project.
+          New teammate for your research project.
         </CardTitle>
       </CardHeader>
       <CardContent>
         <CardDescription className="text-center text-md md:text-lg text-[#3b3b3b]">
           Access the most important data with ease. We bring together relevant
-          information so you can focus on what really matters.
+          information and guide you to focus on what really matters.
         </CardDescription>
         <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4 max-w-5xl mx-auto">
           {services.map((service, index) => (
@@ -76,8 +76,14 @@ export function FeatureBriefs() {
               ref={elementRefs[index]}
               key={index}
               className={`${
-                visibilities[index] ? (index % 2 === 0 ? "slide-in-left" : "slide-in-right") : "slide-out"
-              } flex items-center p-4 rounded-lg shadow-xl ${service.color} transition-colors duration-300 w-full text-left overflow-hidden`}
+                visibilities[index]
+                  ? index % 2 === 0
+                    ? "slide-in-left"
+                    : "slide-in-right"
+                  : "slide-out"
+              } flex items-center p-4 rounded-lg shadow-xl ${
+                service.color
+              } transition-colors duration-300 w-full text-left overflow-hidden`}
             >
               <div className="flex-shrink-0 mr-4">
                 <Image
@@ -103,6 +109,3 @@ export function FeatureBriefs() {
     </Card>
   );
 }
-
-
-
