@@ -188,10 +188,25 @@ def answer_question(
             stop=stop_sequence,
             temperature=0.7
         )
-        return response.choices[0].message.content
+
+        # Follow-up questions
+        response = openai.beta.chat.completions.parse(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": "You are a research expert. You will be given a research question, generate a list of 3 most suitable follow-up or related questions in the format provided."},
+                {"role": "user", "content": "..."}
+            ],
+            response_format=list[str],
+        )
+
+        gpt_response = response.choices[0].message.content
+        followup_questions = response.choices[0].message.parsed
+
+        return {"gpt_answer":gpt_response,  "followup_questions": followup_questions}
+    
     except Exception as e:
         print(e)
-        return ""
+        return {"gpt_answer":"",  "followup_questions":""}
 
 
 def get_langchain_response(docs, query, k=5):

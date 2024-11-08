@@ -34,6 +34,7 @@ export interface PaperData {
 export interface QueryResult {
   data: PaperData[];
   final_answer: string;
+  followup_questions: string[]
 }
 
 export const fetchQueryResult = async (query: string): Promise<QueryResult | null> => {

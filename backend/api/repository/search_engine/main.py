@@ -32,7 +32,8 @@ def get_query_result(query):
 
     response = {
         'data': jsonable_encoder([dict(record) for record in df_list]),
-        'final_answer': str(gpt_response)  
+        'final_answer': str(gpt_response["gpt_answer"]),
+        'followup_questions': jsonable_encoder([str(question) for question in gpt_response["followup_questions"]])
     }
     
     return response
