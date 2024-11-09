@@ -6,23 +6,31 @@ import SearchPaperContext from "@/context/SearchPapersContext";
 import { PaperCard } from "../common-comp/paper-card";
 import { PaperData } from "@/lib/tools/searchengine/fetchresponse";
 import FollowUpQuestionsCard from "../common-comp/follow-ups";
+import DiveDeeper from "./SubComponents/DiveDeeper";
+import { Sparkles, Search, Brain } from "lucide-react";
 
 function Playground() {
   const searchpapercontext = useContext(SearchPaperContext);
-  
-  const { searchPaperPage, setSearchPaperPage, paperRetrievalLoading, setPaperRetrievalLoading, paperRetrievalQuery, setPaperRetrievalQuery } = searchpapercontext;
+
+  const {
+    searchPaperPage,
+    setSearchPaperPage,
+    paperRetrievalLoading,
+    setPaperRetrievalLoading,
+    paperRetrievalQuery,
+    setPaperRetrievalQuery,
+  } = searchpapercontext;
 
   if (!searchPaperPage) {
     if (paperRetrievalLoading) {
-        return (
-          <div className="w-full h-[100vh]">
-            <InputBox />
-          </div>
-        );
-    }
-    else {
       return (
-        <div className="w-full h-[100vh] flex justify-center items-center">
+        <div className="mx-auto max-w-7xl w-full h-[100vh]">
+          <InputBox />
+        </div>
+      );
+    } else {
+      return (
+        <div className="max-w-3xl mx-auto w-full h-[100vh] flex justify-center items-center">
           <InputBox />
         </div>
       );
@@ -30,7 +38,7 @@ function Playground() {
   }
   if (paperRetrievalLoading) {
     return (
-      <div className="w-full h-[100vh]">
+      <div className="mx-auto max-w-7xl w-full h-[100vh]">
         <InputBox />
       </div>
     );
@@ -40,20 +48,47 @@ function Playground() {
   const queryResult = searchPaperPage.queryResult;
 
   return (
-    <div className="w-full h-[100vh]">
+    <div className="mx-auto max-w-7xl w-full h-[100vh]">
       <InputBox />
-      <div className="mx-auto w-fit">
-        <div className="max-w-3xl my-1 p-3 mx-auto bg-gray-200 rounded-xl">
-          <div className="text-gray-700 bg-gray-300 p-3 my-1 rounded-xl font-semibold">
+      <div className="mx-auto max-w-7xl w-fit flex flex-row-reverse">
+        <div className="max-w-3xl ml-2 p-3 h-fit rounded-xl">
+          <div className="text-3xl my-2 font-bold text-white flex items-center">
+            <span className="mr-2">AI Summary</span>
+            <span>
+              <Sparkles />
+            </span>
+          </div>
+          <div className="text-gray-700 bg-gray-200 p-3 my-1 rounded-xl font-semibold">
             {queryResult.final_answer}
           </div>
-          <div className="text-gray-700 p-3 my-1 rounded-xl font-semibold">
+          <div className="text-gray-700 rounded-xl font-semibold">
             <FollowUpQuestionsCard questions={queryResult.followup_questions} />
           </div>
+          <div className="rounded-xl">
+            <div className="text-3xl my-2 font-bold text-white flex items-center">
+              <span className="mr-2">Dive Deeper</span>
+              <span>
+                <Brain />
+              </span>
+            </div>
+            <div className="overflow-y-scroll h-[300px] pr-2 rounded-xl">
+              <DiveDeeper />
+            </div>
+          </div>
         </div>
-        {queryResult.data.map((paper: PaperData) => (
-          <PaperCard paper={paper} />
-        ))}
+        <div className="my-1 rounded-xl">
+          <div className="text-3xl my-2 font-bold text-white flex items-center">
+          <span className="mr-2">Results</span>
+            <span>
+              <Search />
+            </span>
+          </div>
+          <div className="overflow-y-scroll max-h-[80vh] pr-2 rounded-xl">
+            {queryResult.data.map((paper: PaperData) => (
+              <PaperCard paper={paper} />
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -16,13 +16,16 @@ import {
   ChevronUp,
   BookOpen,
 } from "lucide-react";
-import { PaperData, isOpenAccessPdf } from "@/lib/tools/searchengine/fetchresponse";
+import {
+  PaperData,
+  isOpenAccessPdf,
+} from "@/lib/tools/searchengine/fetchresponse";
 
 interface PaperCardProps {
-  paper: PaperData;  // We expect PaperData to be passed as a prop
+  paper: PaperData; // We expect PaperData to be passed as a prop
 }
 
-export function PaperCard({paper}: PaperCardProps) {
+export function PaperCard({ paper }: PaperCardProps) {
   const [isOpen, setIsOpen] = useState(true);
 
   return (
@@ -63,7 +66,7 @@ export function PaperCard({paper}: PaperCardProps) {
             </Card>
           </CollapsibleContent>
         </Collapsible> */}
-        <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+        {/* <Collapsible open={isOpen} onOpenChange={setIsOpen}>
           <CollapsibleTrigger asChild>
             <Button
               variant="ghost"
@@ -86,10 +89,15 @@ export function PaperCard({paper}: PaperCardProps) {
               </CardContent>
             </Card>
           </CollapsibleContent>
-        </Collapsible>
+        </Collapsible> */}
+        <Card className="bg-secondary/10">
+          <CardContent className="p-3">
+            <p className="text-sm text-muted-foreground">{paper.abstract}</p>
+          </CardContent>
+        </Card>
         <div className="grid grid-cols-2 gap-4">
           <Card className="bg-primary/5">
-            <CardContent className="p-3 flex items-center justify-between">
+            <CardContent className="p-3 flex flex-col items-center justify-between">
               <div className="flex items-center gap-2">
                 <TrendingUp size={16} className="text-primary" />
                 <span className="text-sm font-semibold">Citations:</span>
@@ -103,11 +111,13 @@ export function PaperCard({paper}: PaperCardProps) {
             </CardContent>
           </Card>
           <Card className={paper.isOpenAccess ? "bg-green-100" : "bg-red-100"}>
-            <CardContent className="p-3 flex items-center justify-between">
+            <CardContent className="p-3 flex flex-col items-center justify-between">
               <div className="flex items-center gap-2">
                 <BookOpen
                   size={16}
-                  className={paper.isOpenAccess ? "text-green-600" : "text-red-600"}
+                  className={
+                    paper.isOpenAccess ? "text-green-600" : "text-red-600"
+                  }
                 />
                 <span className="text-sm font-semibold">
                   {paper.isOpenAccess ? "Open Access" : "Closed Access"}
@@ -115,7 +125,11 @@ export function PaperCard({paper}: PaperCardProps) {
               </div>
               {paper.isOpenAccess && (
                 <a
-                  href={isOpenAccessPdf(paper.openAccessPdf) ? paper.openAccessPdf.url: ""}
+                  href={
+                    isOpenAccessPdf(paper.openAccessPdf)
+                      ? paper.openAccessPdf.url
+                      : ""
+                  }
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-1 text-sm text-blue-600 hover:underline"
