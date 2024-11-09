@@ -44,4 +44,4 @@ def get_query_result(query):
 
     return response
 
-print(get_query_result(query="what is a retrieval augmented generation ?"))
+# print(get_query_result(query="what is a retrieval augmented generation ?"))

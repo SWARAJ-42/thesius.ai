@@ -1,4 +1,7 @@
+"use client";
 import React from "react";
+import { useRouter } from "next/navigation";
+
 import {
   FaRobot,
   FaChartLine,
@@ -28,6 +31,7 @@ const icons = [
 ];
 
 const Hero = () => {
+  const router = useRouter();
   return (
     <div className="mt-[100px] relative h-[70vh] flex flex-col justify-center items-center overflow-hidden">
       {icons.map(({ component: Icon, position }, index) => (
@@ -49,7 +53,10 @@ const Hero = () => {
       </div>
 
       <div className="scale-in-center flex my-3 z-10">
-        <Button className="mx-3 px-8 py-8 text-md md:text-2xl text-white text-center font-semibold bg-green-500 hover:bg-green-700 rounded-lg shadow-lg">
+      <Button
+      className="mx-3 px-8 py-8 text-md md:text-2xl text-white text-center font-semibold bg-green-500 hover:bg-green-700 rounded-lg shadow-lg"
+      onClick={() => router.push("/auth/login")}
+    >
           Get Started
         </Button>
         <Button className="mx-3 px-8 py-8 text-md md:text-2xl text-white text-center font-semibold bg-green-500 hover:bg-green-700 rounded-lg shadow-lg">
