@@ -72,7 +72,7 @@ function Playground() {
               </span>
             </div>
             <div className="overflow-y-scroll h-[300px] pr-2 rounded-xl">
-              <DiveDeeper />
+              <DiveDeeper renderedPapers={queryResult.data} />
             </div>
           </div>
         </div>
@@ -85,7 +85,7 @@ function Playground() {
           </div>
           <div className="overflow-y-scroll max-h-[80vh] pr-2 rounded-xl">
             {queryResult.data.map((paper: PaperData) => (
-              <PaperCard paper={paper} />
+              <PaperCard query={query} query_answer={queryResult.final_answer} paper={paper} />
             ))}
           </div>
         </div>

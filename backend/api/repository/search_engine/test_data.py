@@ -1,7 +1,7 @@
 dummy_papers = [
     {
-        "paperId": "1a23b4c56d7e8f90123g4h567i8j9kl0m123n456",
-        "url": "https://www.semanticscholar.org/paper/1a23b4c56d7e8f90123g4h567i8j9kl0m123n456",
+        "paperId": "5c5751d45e298cea054f32b392c12c61027d2fe7",
+        "url": "https://www.semanticscholar.org/paper/5c5751d45e298cea054f32b392c12c61027d2fe7",
         "title": "A Survey of Retrieval-Augmented Generation Models",
         "abstract": "This survey explores Retrieval-Augmented Generation (RAG) models, which combine information retrieval with generative models, discussing recent advances, architectures, and applications in knowledge-intensive NLP tasks.",
         "venue": "Conference on Neural Information Processing Systems",
@@ -21,8 +21,8 @@ dummy_papers = [
         },
     },
     {
-        "paperId": "2b34c5d678ef90123g4h5i67j8kl0m1n234o5678",
-        "url": "https://www.semanticscholar.org/paper/2b34c5d678ef90123g4h5i67j8kl0m1n234o5678",
+        "paperId": "5c5751d45e298cea054f32b392c12c61027d2fe7",
+        "url": "https://www.semanticscholar.org/paper/5c5751d45e298cea054f32b392c12c61027d2fe7",
         "title": "Retrieval-Augmented Generation for Conversational AI",
         "abstract": "This paper examines how retrieval-augmented generation enhances conversational AI, leveraging external documents to improve context-specific responses, and evaluates performance across datasets.",
         "venue": "Annual Conference of the Association for Computational Linguistics",
@@ -42,8 +42,8 @@ dummy_papers = [
         },
     },
     {
-        "paperId": "3c45d6e789f0123g4h5i67j8kl9m0n123p45678q",
-        "url": "https://www.semanticscholar.org/paper/3c45d6e789f0123g4h5i67j8kl9m0n123p45678q",
+        "paperId": "5c5751d45e298cea054f32b392c12c61027d2fe7",
+        "url": "https://www.semanticscholar.org/paper/5c5751d45e298cea054f32b392c12c61027d2fe7",
         "title": "Scaling Retrieval-Augmented Generation in Open-Domain QA",
         "abstract": "This study addresses challenges in scaling retrieval-augmented generation for open-domain question answering, proposing optimizations for high-volume data and evaluating retrieval effectiveness.",
         "venue": "International Conference on Machine Learning",
@@ -63,8 +63,8 @@ dummy_papers = [
         },
     },
     {
-        "paperId": "4d56e7f8901g23h4i5j67kl8m9n01234p567890q",
-        "url": "https://www.semanticscholar.org/paper/4d56e7f8901g23h4i5j67kl8m9n01234p567890q",
+        "paperId": "5c5751d45e298cea054f32b392c12c61027d2fe7",
+        "url": "https://www.semanticscholar.org/paper/5c5751d45e298cea054f32b392c12c61027d2fe7",
         "title": "Enhancing Document Retrieval for Generative Tasks in NLP",
         "abstract": "This research improves document retrieval within RAG models by introducing hierarchical indexing, boosting efficiency in generative tasks like summarization and QA.",
         "venue": "European Conference on Information Retrieval",
@@ -84,8 +84,8 @@ dummy_papers = [
         },
     },
     {
-        "paperId": "5e67f89012g34h5i67j8kl9m0n123456p78901qr",
-        "url": "https://www.semanticscholar.org/paper/5e67f89012g34h5i67j8kl9m0n123456p78901qr",
+        "paperId": "5c5751d45e298cea054f32b392c12c61027d2fe7",
+        "url": "https://www.semanticscholar.org/paper/5c5751d45e298cea054f32b392c12c61027d2fe7",
         "title": "Cross-Lingual Retrieval-Augmented Generation for Low-Resource Languages",
         "abstract": "Explores how RAG models can be adapted for low-resource languages through cross-lingual retrieval, discussing language-specific challenges and potential solutions.",
         "venue": "Conference on Empirical Methods in Natural Language Processing",

@@ -4,11 +4,7 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
+import { useRouter } from "next/navigation"; // import router to navigate programmatically
 import {
   ExternalLink,
   TrendingUp,
@@ -16,20 +12,30 @@ import {
   ChevronUp,
   BookOpen,
 } from "lucide-react";
-import {
-  PaperData,
-  isOpenAccessPdf,
-} from "@/lib/tools/searchengine/fetchresponse";
+import { PaperData, isOpenAccessPdf } from "@/lib/tools/searchengine/fetchresponse";
 
-interface PaperCardProps {
-  paper: PaperData; // We expect PaperData to be passed as a prop
+export interface PaperCardProps {
+  paper: PaperData; 
+  query: string;
+  query_answer: string;
 }
 
-export function PaperCard({ paper }: PaperCardProps) {
+export function PaperCard({ paper, query, query_answer }: PaperCardProps) {
   const [isOpen, setIsOpen] = useState(true);
+  const router = useRouter(); // initialize the router
+
+  const handleCardClick = () => {
+    const parcel:PaperCardProps = {
+      paper: paper,
+      query: query,
+      query_answer: query_answer
+    }
+    const paperData = encodeURIComponent(JSON.stringify(parcel)); // Encode the paper data
+    router.push(`/paperdetails/${paper.paperId}?paperData=${paperData}`); // Navigate with query parameter
+  };
 
   return (
-    <Card className="max-w-3xl mt-2">
+    <Card className="max-w-3xl mt-2 cursor-pointer" onClick={handleCardClick}>
       <CardHeader>
         <CardTitle className="text-lg font-bold">{paper.title}</CardTitle>
         <div className="flex flex-wrap gap-2 mt-2">
@@ -42,54 +48,7 @@ export function PaperCard({ paper }: PaperCardProps) {
         </div>
       </CardHeader>
       <CardContent className="grid gap-4">
-        {/* <Collapsible open={isOpen} onOpenChange={setIsOpen}>
-          <CollapsibleTrigger asChild>
-            <Button
-              variant="ghost"
-              className="flex w-full justify-between px-2 py-0"
-            >
-              <span className="font-semibold">Abstract</span>
-              {isOpen ? (
-                <ChevronUp className="h-4 w-4" />
-              ) : (
-                <ChevronDown className="h-4 w-4" />
-              )}
-            </Button>
-          </CollapsibleTrigger>
-          <CollapsibleContent className="mt-2">
-            <Card className="bg-secondary/10">
-              <CardContent className="p-3">
-                <p className="text-sm text-muted-foreground">
-                  {paper.abstract}
-                </p>
-              </CardContent>
-            </Card>
-          </CollapsibleContent>
-        </Collapsible> */}
-        {/* <Collapsible open={isOpen} onOpenChange={setIsOpen}>
-          <CollapsibleTrigger asChild>
-            <Button
-              variant="ghost"
-              className="flex w-full justify-between px-2 py-0 bg-gray-100"
-            >
-              <span className="font-semibold">TLDR</span>
-              {isOpen ? (
-                <ChevronUp className="h-4 w-4" />
-              ) : (
-                <ChevronDown className="h-4 w-4" />
-              )}
-            </Button>
-          </CollapsibleTrigger>
-          <CollapsibleContent className="mt-2">
-            <Card className="bg-secondary/10">
-              <CardContent className="p-3">
-                <p className="text-sm text-muted-foreground">
-                  {paper.tldr?.text}
-                </p>
-              </CardContent>
-            </Card>
-          </CollapsibleContent>
-        </Collapsible> */}
+        {/* Display paper abstract */}
         <Card className="bg-secondary/10">
           <CardContent className="p-3">
             <p className="text-sm text-muted-foreground">{paper.abstract}</p>
@@ -144,3 +103,53 @@ export function PaperCard({ paper }: PaperCardProps) {
     </Card>
   );
 }
+
+
+{/* <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+  <CollapsibleTrigger asChild>
+    <Button
+      variant="ghost"
+      className="flex w-full justify-between px-2 py-0"
+    >
+      <span className="font-semibold">Abstract</span>
+      {isOpen ? (
+        <ChevronUp className="h-4 w-4" />
+      ) : (
+        <ChevronDown className="h-4 w-4" />
+      )}
+    </Button>
+  </CollapsibleTrigger>
+  <CollapsibleContent className="mt-2">
+    <Card className="bg-secondary/10">
+      <CardContent className="p-3">
+        <p className="text-sm text-muted-foreground">
+          {paper.abstract}
+        </p>
+      </CardContent>
+    </Card>
+  </CollapsibleContent>
+</Collapsible> */}
+{/* <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+  <CollapsibleTrigger asChild>
+    <Button
+      variant="ghost"
+      className="flex w-full justify-between px-2 py-0 bg-gray-100"
+    >
+      <span className="font-semibold">TLDR</span>
+      {isOpen ? (
+        <ChevronUp className="h-4 w-4" />
+      ) : (
+        <ChevronDown className="h-4 w-4" />
+      )}
+    </Button>
+  </CollapsibleTrigger>
+  <CollapsibleContent className="mt-2">
+    <Card className="bg-secondary/10">
+      <CardContent className="p-3">
+        <p className="text-sm text-muted-foreground">
+          {paper.tldr?.text}
+        </p>
+      </CardContent>
+    </Card>
+  </CollapsibleContent>
+</Collapsible> */}
