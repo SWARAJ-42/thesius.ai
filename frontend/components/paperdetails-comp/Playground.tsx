@@ -36,9 +36,9 @@ import {
 } from "@/components/ui/collapsible";
 import RelavantPapers from "./SubComponents/relevant-papers";
 import PaperRelevance from "./SubComponents/query-answer";
-import { Citation, PaperResponse } from "@/lib/paperdetails/schema";
-import { PaperData } from "@/lib/tools/searchengine/fetchresponse";
-import fetchPaperDetails from "@/lib/paperdetails/fetchResponse";
+import { AllRelatedPapersLinks, Citation, PaperResponse } from "@/lib/paperdetails/schema";
+// import { PaperData } from "@/lib/tools/searchengine/fetchresponse";
+import {fetchPaperDetails, SearchRelatedPaperPdfLinks} from "@/lib/paperdetails/fetchResponse";
 import Link from "next/link";
 import { PaperCardProps } from "../tool-comp/common-comp/paper-card";
 
@@ -79,6 +79,7 @@ export default function Component() {
   const [isOpen, setIsOpen] = useState(false);
   const [parsedPaperprops, setParsedPaperProps] = useState<PaperCardProps | null>(null); // State to store parsedPaper
   const [mainPaperDetails, setMainPaper] = useState<PaperResponse | null>(null); // State to store fetched paper details
+  const [relatedPapers, setRelatedPapers] = useState<AllRelatedPapersLinks | null>(null)
   const searchParams = useSearchParams();
   const paperData = searchParams.get("paperData");
 
@@ -90,9 +91,14 @@ export default function Component() {
         console.log("Parsed paper data:", parsed);
 
         const fetchedPaper = await fetchPaperDetails(parsed.paper.paperId); // Call fetch function
+        const relatedPapers = await SearchRelatedPaperPdfLinks(parsed.query)
         if (fetchedPaper) {
           setMainPaper(fetchedPaper); // Store fetched data in state
           console.log("Fetched paper details:", fetchedPaper);
+        }
+        if (relatedPapers) {
+          setRelatedPapers(relatedPapers)
+          console.log("Fetched related papers from links:", relatedPapers);
         }
       } else {
         notFound();
@@ -102,7 +108,7 @@ export default function Component() {
   }, [paperData]);
 
   const parsedPaper = parsedPaperprops?.paper
-  if (mainPaperDetails && parsedPaper) {
+  if (mainPaperDetails && parsedPaper ) {
     return (
       <div className="container mx-auto p-6">
         <PaperRelevance query={parsedPaperprops.query} answer={parsedPaperprops.query_answer} />
@@ -269,7 +275,7 @@ export default function Component() {
             </div>
           </div>
           <div className="bg-background rounded-xl ml-2">
-            <RelavantPapers />
+            {relatedPapers?.results && <RelavantPapers results={relatedPapers?.results} />}
           </div>
         </div>
       </div>

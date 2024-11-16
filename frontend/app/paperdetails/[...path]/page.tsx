@@ -6,9 +6,11 @@ import Layout from "./layout";
 
 const Page = () => {
   return (
-    <div className="flex h-[100vh] bg-gray-800 overflow-y-scroll">
-        <ExpandableSidebar />
-        <Playground />
+    <div className="min-h-[100vh]">
+      <div className="flex h-[100vh] bg-gray-800 overflow-y-scroll">
+          <ExpandableSidebar />
+          <Playground />
+      </div>
     </div>
   );
 };

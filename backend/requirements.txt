@@ -14,3 +14,4 @@ streamlit==1.39.0
 transformers==4.44.2
 scikit-learn==1.5.2
 ipython==8.29.0
+bs4==0.0.2

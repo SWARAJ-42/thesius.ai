@@ -62,3 +62,13 @@ export interface PaperResponse {
     venue: string;
     year: number;
 }
+
+export interface RelatedPapersLink {
+    title: string,
+    description: string,
+    url: string
+}
+
+export interface AllRelatedPapersLinks {
+    results: RelatedPapersLink[]
+}
