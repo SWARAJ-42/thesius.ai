@@ -3,6 +3,7 @@
 import React, { useContext } from "react";
 import { InputBox } from "./SubComponents/input-box";
 import SearchPaperContext from "@/context/SearchPapersContext";
+import { useSearchPaper } from "@/context/SearchPapersContext";
 import { PaperCard } from "../common-comp/paper-card";
 import { PaperData } from "@/lib/tools/searchengine/fetchresponse";
 import FollowUpQuestionsCard from "../common-comp/follow-ups";
@@ -10,8 +11,6 @@ import DiveDeeper from "./SubComponents/DiveDeeper";
 import { Sparkles, Search, Brain } from "lucide-react";
 
 function Playground() {
-  const searchpapercontext = useContext(SearchPaperContext);
-
   const {
     searchPaperPage,
     setSearchPaperPage,
@@ -19,7 +18,7 @@ function Playground() {
     setPaperRetrievalLoading,
     paperRetrievalQuery,
     setPaperRetrievalQuery,
-  } = searchpapercontext;
+  } = useSearchPaper(); // Use the hook
 
   if (!searchPaperPage) {
     if (paperRetrievalLoading) {

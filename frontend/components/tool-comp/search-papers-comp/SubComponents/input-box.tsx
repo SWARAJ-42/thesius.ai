@@ -7,6 +7,7 @@ import { Send} from "lucide-react";
 import { fetchQueryResult } from "@/lib/tools/searchengine/fetchresponse"; // Import your fetchQueryResult function
 import SearchPaperContext, { SearchPaperPage, useSearchPaper } from "@/context/SearchPapersContext";
 
+
 export function InputBox() {
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -14,7 +15,7 @@ export function InputBox() {
   if (!SearchPaperContext) {
     return <div>some problem occured sorry for the inconvinience !</div>
   }
-  const {searchPaperPage, setSearchPaperPage, paperRetrievalLoading, setPaperRetrievalLoading, paperRetrievalQuery, setPaperRetrievalQuery} = searchPaperContext
+  const {searchPaperPage, setSearchPaperPage, paperRetrievalLoading, setPaperRetrievalLoading, paperRetrievalQuery, setPaperRetrievalQuery} = useSearchPaper()
 
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setPaperRetrievalQuery(e.target.value);

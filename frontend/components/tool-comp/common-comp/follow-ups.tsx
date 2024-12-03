@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
-import SearchPaperContext, { SearchPaperPage } from "@/context/SearchPapersContext"
+import SearchPaperContext, { SearchPaperPage, useSearchPaper } from "@/context/SearchPapersContext"
 import { Search } from "lucide-react"
 import { useContext } from "react"
 import { fetchQueryResult } from "@/lib/tools/searchengine/fetchresponse";
@@ -17,7 +17,7 @@ export default function FollowUpQuestionsCard({ questions = [
 ] }: FollowUpQuestionsProps) {
 
   const searchpapercontext = useContext(SearchPaperContext);
-  const { searchPaperPage, setSearchPaperPage, paperRetrievalLoading, setPaperRetrievalLoading, paperRetrievalQuery, setPaperRetrievalQuery } = searchpapercontext;
+  const { searchPaperPage, setSearchPaperPage, paperRetrievalLoading, setPaperRetrievalLoading, paperRetrievalQuery, setPaperRetrievalQuery } = useSearchPaper();
 
   const handleClick = async (question: string) => {
     setPaperRetrievalQuery(question)

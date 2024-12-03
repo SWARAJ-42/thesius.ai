@@ -1,5 +1,5 @@
 import React from 'react';
-import Navbar from '@/components/global-comp/Navbar';
+import Navbar from '@/components/global-comp/navbar';
 
 function About() {
   return (

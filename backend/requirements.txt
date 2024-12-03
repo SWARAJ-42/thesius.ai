@@ -5,7 +5,6 @@ SQLAlchemy==2.0.36
 passlib==1.7.4
 bcrypt==4.2.0
 python-jose==3.3.0
-openai==1.53.1
 nltk==3.9.1
 langchain-community==0.3.3
 tiktoken==0.8.0
