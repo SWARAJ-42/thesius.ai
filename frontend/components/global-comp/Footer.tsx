@@ -105,7 +105,7 @@ export function Footer() {
                 placeholder="Enter your email"
                 className="w-full"
               />
-              <Button type="submit" className="w-full">
+              <Button type="submit" className="w-full bg-green-500/50 hover:bg-green-700/50 text-gray-800 font-semibold">
                 Subscribe
               </Button>
             </form>

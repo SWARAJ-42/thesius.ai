@@ -28,35 +28,45 @@ export function FeatureDescription() {
         alt: "Feature Image 1",
       },
       design: "md:flex-row",
-      heading: "Head-starter",
+      heading: "Project-Ready Research",
       description:
-        "Got a problem statement? Just share it, and our AI will gather relevant information—ranging from news to financials—and deliver a customized roadmap to guide you through solving your specific challenge.",
-      buttonText: "Learn More",
+        "Working on a big idea? Share your vision, and our AI will find the most relevant research and guide you step-by-step — from essential studies to practical resources. See exactly how each paper supports your project, helping you bring your ideas to life with clarity and confidence",
+      buttonText: "Get Started",
       animation: ["slide-in-right", "slide-out-left"],
+    },
+    {
+      image: {
+        src: headstartimg,
+        alt: "Feature Image 1",
+      },
+      design: "md:flex-row-reverse",
+      heading: "Smart Discovery",
+      description:
+        "Enter your query, and we instantly connect you with the most relevant research papers, complete with a concise overview to get you started faster. ",
+      buttonText: "Get Started",
+      animation: ["slide-in-left", "slide-out-right"],
     },
     {
       image: {
         src: newsimg,
         alt: "Feature Image 2",
       },
-      design: "md:flex-row-reverse",
-      heading: "News Buddy",
-      description:
-        "Find the news you’re looking for in seconds. We quickly gather the most relevant stories, saving you hours of searching and helping you turn headlines into meaningful research for your reports.",
-      buttonText: "Explore",
-      animation: ["slide-in-left", "slide-out-right"],
+      design: "md:flex-row",
+      heading: "Dig Deeper",
+      description: "Select multiple research papers from your results and dive deeper into them with follow-up questions. Our AI guides you through further exploration, uncovering more insights from each paper to support your research",
+      buttonText: "Get Started",
+      animation: ["slide-in-right", "slide-out-left"],
     },
     {
       image: {
         src: researchimg,
         alt: "Feature Image 3",
       },
-      design: "md:flex-row",
-      heading: "Smarter Research",
-      description:
-        "Read reports the faster and smarter way. Get the crux that matters from annual reports, company websites, and other sources, delivering detailed data and research to strengthen your reports and elevate their relevance.",
-      buttonText: "Discover",
-      animation: ["slide-in-right", "slide-out-left"],
+      design: "md:flex-row-reverse",
+      heading: "Paper Exploration",
+      description: "Select any research paper to view detailed information such as citations, key findings, and many more. Engage directly with the paper, ask questions, and explore additional insights to support your work",
+      buttonText: "Get Started",
+      animation: ["slide-in-left", "slide-out-eight"],
     },
   ];
 
@@ -72,13 +82,13 @@ export function FeatureDescription() {
             <div
               ref={ref}
               key={index}
-              className={`feature-animation ${isVisible ? feature.animation[0] : feature.animation[1]} flex flex-col ${feature.design} justify-between items-center mx-auto max-w-6xl min-h-[300px] rounded-2xl overflow-hidden bg-gradient-to-r from-green-300 to-green-200 shadow-lg`}
+              className={`feature-animation ${isVisible ? feature.animation[0] : feature.animation[1]} flex flex-col ${feature.design} px-10 justify-between items-center mx-auto max-w-6xl min-h-[300px] rounded-2xl overflow-hidden bg-gradient-to-r backdrop-blur-sm from-green-500/30 to-green-200/30 shadow-lg`}
             >
-              <div className="flex-1 relative w-full md:w-1/2 hidden sm:block">
+              <div className="flex-1 relative w-full hidden sm:block px-4">
                 <Image
                   src={feature.image.src}
                   alt={feature.image.alt}
-                  className="rounded-l-2xl h-[400px] w-[400px] mx-auto"
+                  className="rounded-xl h-[270px] mx-auto"
                 />
               </div>
               <div className="flex-1 p-8 md:p-12 lg:p-16 w-full md:w-1/2 flex flex-col items-center md:items-start text-center md:text-left">
@@ -88,7 +98,7 @@ export function FeatureDescription() {
                 <p className="text-md md:text-xl text-[#3b3b3b]/90 mb-6">
                   {feature.description}
                 </p>
-                <button className="bg-white text-xl text-green-600 px-8 py-4 rounded-full font-semibold hover:bg-opacity-90 transition-colors duration-300">
+                <button className="bg-white text-xl text-green-600 px-8 py-4 rounded-xl font-semibold hover:bg-opacity-90 transition-colors duration-300">
                   {feature.buttonText}
                 </button>
               </div>

@@ -6,7 +6,6 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => (
     <main className="h-[100vh]">
       <SearchPaperProvider>
         {children}
-        <Footer />
       </SearchPaperProvider>
     </main>
   </div>

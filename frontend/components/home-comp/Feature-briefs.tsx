@@ -75,13 +75,15 @@ export function FeatureBriefs() {
             <div
               ref={elementRefs[index]}
               key={index}
-              className={`${
-                visibilities[index]
-                  ? index % 2 === 0
-                    ? "slide-in-left"
-                    : "slide-in-right"
-                  : "slide-out"
-              } flex items-center p-4 rounded-lg shadow-xl ${
+              // ${
+              //   visibilities[index]
+              //     ? index % 2 === 0
+              //       ? "slide-in-left"
+              //       : "slide-in-right"
+              //     : "slide-out"
+              // }
+              className={`
+              flex items-center p-4 rounded-lg shadow-xl ${
                 service.color
               } transition-colors duration-300 w-full text-left overflow-hidden`}
             >
