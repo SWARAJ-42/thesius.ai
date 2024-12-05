@@ -29,7 +29,7 @@ export default function PageNumberInput({ currentPage, numPages, setCurrentPage 
   };
 
   return (
-    <div className="page-number-input my-3 text-center">
+    <div className="page-number-input my-3 text-center text-white">
       <label htmlFor="page-input" className="mr-2">
         Go to page:
       </label>
@@ -38,11 +38,11 @@ export default function PageNumberInput({ currentPage, numPages, setCurrentPage 
         type="number"
         value={inputPage}
         onChange={handlePageChange}
-        className="bg-black p-2 rounded-md text-white w-16 text-center"
+        className="bg-green-700 p-2 rounded-md text-white w-16 text-center"
         min={1}
         max={numPages}
       />
-      <button className="bg-blue-500 p-2 ml-2 rounded-md" onClick={goToPage}>
+      <button className="bg-green-700 text-white mx-2 p-2 rounded-full hover:bg-green-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" onClick={goToPage}>
         Go
       </button>
     </div>

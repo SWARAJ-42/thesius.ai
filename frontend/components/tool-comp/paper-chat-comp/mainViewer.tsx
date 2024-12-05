@@ -9,12 +9,11 @@ import { options, maxWidth, resizeObserverOptions } from "@/lib/tools/paper-chat
 import { PDFFile, PDFDocumentProxy } from "@/types/pdfTypes";
 import TextSelectionPopup from "./TextSelectionPopup";
 import PageControls from "./PageControls";
-import { z } from "zod";
+import { isValidUrl } from "@/lib/tools/paper-chat/validateURL"; // Utility function for URL validation
 
 import "react-pdf/dist/esm/Page/AnnotationLayer.css";
 import "react-pdf/dist/esm/Page/TextLayer.css";
 import "./Sample.css";
-import { Button } from "@/components/ui/button"
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
   "pdfjs-dist/build/pdf.worker.min.mjs",
@@ -175,11 +174,11 @@ export default function MainViewer() {
     }
     return 1;
   });
-
   const onResize = useCallback<ResizeObserverCallback>((entries) => {
     const [entry] = entries;
     if (entry) setContainerWidth(entry.contentRect.width);
   }, []);
+  const [error, setError] = useState<string | null>(null); // Error state
 
   useResizeObserver(containerRef, resizeObserverOptions, onResize);
 
@@ -187,6 +186,11 @@ export default function MainViewer() {
     setNumPages(nextNumPages);
     extractTextFromPage(fileURL || file, 1, setExtractedText);
   }
+
+  function onDocumentLoadError() {
+    setError("Failed to load the PDF. Please check the URL or file.");
+  }
+  
 
   function handleTextSelection(event: React.MouseEvent) {
     const selection = window.getSelection();
@@ -208,9 +212,16 @@ export default function MainViewer() {
     }
   }
 
-  function handleURLChange(event: React.ChangeEvent<HTMLInputElement>) {
-    setFileURL(event.target.value);
+  function handleURLChange(url: string) {
+    if (isValidUrl(url)) {  // Validate the URL
+      setFileURL(url);
+      setError(null); // Clear error if valid URL
+    } else {
+      setError("Invalid URL format. Please enter a valid URL."); // Set error if invalid
+    }
   }
+  
+  
 
   useEffect(() => {
     extractTextFromPage(fileURL || file, currentPage, setExtractedText);
@@ -226,29 +237,24 @@ export default function MainViewer() {
 
   return (
     <div className="flex">
+      {error && <div className="z-50 absolute left-[10px] font-bold text-red-500">{error}</div>}
       <div
         className="Example bg-[#525659] h-screen overflow-y-scroll"
         onMouseUp={handleTextSelection}
       >
-        <div className="flex flex-col items-center p-4">
-          <input
-            type="text"
-            placeholder="Enter PDF URL"
-            onChange={handleURLChange}
-            className="p-2 border border-gray-300 rounded mb-4"
-          />
-          <PageControls
-            currentPage={currentPage}
-            numPages={numPages}
-            onFileChange={handleFileChange}
-            setCurrentPage={setCurrentPage}
-          />
-        </div>
+        <PageControls
+          currentPage={currentPage}
+          numPages={numPages}
+          onFileChange={handleFileChange}
+          setCurrentPage={setCurrentPage}
+          handleURLChange={handleURLChange}
+        />
         <div className="Example__container">
           <div className="Example__container__document" ref={setContainerRef}>
             <Document
               file={fileURL || file}
-              onLoadSuccess={onDocumentLoadSuccess}
+              onLoadSuccess={onDocumentLoadSuccess} // Success handler
+              onLoadError={onDocumentLoadError}     // Error handler
               options={options}
             >
               <Page

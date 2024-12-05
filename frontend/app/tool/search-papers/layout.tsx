@@ -1,4 +1,3 @@
-import { Footer } from "@/components/global-comp/Footer";
 import { SearchPaperProvider } from "@/context/SearchPapersContext";
 
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => (

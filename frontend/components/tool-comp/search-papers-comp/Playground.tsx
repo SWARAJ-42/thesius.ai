@@ -23,7 +23,7 @@ function Playground() {
   if (!searchPaperPage) {
     if (paperRetrievalLoading) {
       return (
-        <div className="mx-auto max-w-7xl w-full h-[100vh]">
+        <div className="mx-auto max-w-7xl w-full">
           <InputBox />
         </div>
       );
@@ -47,11 +47,11 @@ function Playground() {
   const queryResult = searchPaperPage.queryResult;
 
   return (
-    <div className="mx-auto max-w-7xl w-full h-[100vh]">
+    <div className="mx-auto max-w-7xl w-full">
       <InputBox />
       <div className="mx-auto max-w-7xl w-fit flex flex-row-reverse">
         <div className="max-w-3xl ml-2 p-3 h-fit rounded-xl">
-          <div className="text-3xl my-2 font-bold text-white flex items-center">
+          <div className="text-3xl my-2 font-bold text-gray-900 flex items-center">
             <span className="mr-2">AI Summary</span>
             <span>
               <Sparkles />
@@ -64,7 +64,7 @@ function Playground() {
             <FollowUpQuestionsCard questions={queryResult.followup_questions} />
           </div>
           <div className="rounded-xl">
-            <div className="text-3xl my-2 font-bold text-white flex items-center">
+            <div className="text-3xl my-2 font-bold text-gray-900 flex items-center">
               <span className="mr-2">Dive Deeper</span>
               <span>
                 <Brain />
@@ -76,7 +76,7 @@ function Playground() {
           </div>
         </div>
         <div className="my-1 rounded-xl">
-          <div className="text-3xl my-2 font-bold text-white flex items-center">
+          <div className="text-3xl my-2 font-bold text-gray-900 flex items-center">
           <span className="mr-2">Results</span>
             <span>
               <Search />

@@ -34,7 +34,7 @@ export default function PaperRelevance({
       <CardContent className="p-6 rounded-xl">
         <h2 className="text-xl font-semibold mb-4 flex items-center">
           <MessageSquare className="mr-2" />
-          why this paper ?
+          Answer
         </h2>
         <p className="text-lg leading-relaxed">{answer}</p>
       </CardContent>

@@ -11,18 +11,17 @@ export default function TextSelectionPopup({ selectedText, popUpPosition }: Text
 
   return (
     <div
-      className="pop-up"
+      className="pop-up rounded-full bg-green-500"
       style={{
         position: "fixed",
         top: `${popUpPosition.top}px`,
         left: `${popUpPosition.left}px`,
-        background: "#fff",
         border: "1px solid #ccc",
         padding: "5px",
         zIndex: 10,
       }}
     >
-      <button className="text-black p-2 rounded-sm bg-blue-400">Ask AI</button>
+      <button className="bg-green-700 text-white text-[12px] p-2 rounded-full hover:bg-green-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">Ask AI</button>
     </div>
   );
 }

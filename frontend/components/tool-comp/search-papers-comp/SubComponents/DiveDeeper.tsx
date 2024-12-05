@@ -54,7 +54,7 @@ export default function DiveDeeper({ renderedPapers }: RenderedPapersProp) {
   }, [renderedPapers]);
 
   return (
-    <div className="max-w-4xl mx-auto p-4 bg-gray-200 min-h-full space-y-6 rounded-xl">
+    <div className="max-w-4xl mx-auto p-4 bg-white shadow-xl min-h-full space-y-6 rounded-xl">
       <h1 className="text-lg font-bold">
         Select the papers from the results for further to chat with them
       </h1>

@@ -31,6 +31,10 @@ export default function RelavantPapers({results} : RelatedPapersLinkProps) {
                 {/* <MessageSquare className="mr-2 h-4 w-4" /> */}
                 Download
               </Link>
+              <Link href={`${paper.url}`} className="whitespace-nowrap font-semibold bg-black mx-2 p-2 rounded-md text-white text-sm">
+                {/* <MessageSquare className="mr-2 h-4 w-4" /> */}
+                Chat with the paper
+              </Link>
             </li>
           </>
         ))}

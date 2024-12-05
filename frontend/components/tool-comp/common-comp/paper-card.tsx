@@ -35,7 +35,7 @@ export function PaperCard({ paper, query, query_answer }: PaperCardProps) {
   };
 
   return (
-    <Card className="max-w-3xl mt-2 cursor-pointer" onClick={handleCardClick}>
+    <Card className="max-w-3xl mt-2 cursor-pointer hover:bg-gray-100" onClick={handleCardClick}>
       <CardHeader>
         <CardTitle className="text-lg font-bold">{paper.title}</CardTitle>
         <div className="flex flex-wrap gap-2 mt-2">

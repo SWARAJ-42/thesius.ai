@@ -3,13 +3,15 @@
 import { ExpandableSidebar } from "@/components/tool-comp/common-comp/expandable-sidebar";
 import Playground from "@/components/paperdetails-comp/Playground";
 import Layout from "./layout";
+import { Footer } from "@/components/global-comp/Footer";
 
 const Page = () => {
   return (
     <div className="min-h-[100vh]">
-      <div className="flex h-[100vh] bg-gray-800 overflow-y-scroll">
+      <div className="h-[100vh] bg-gray-100 overflow-y-scroll">
           <ExpandableSidebar />
           <Playground />
+          <Footer />
       </div>
     </div>
   );
