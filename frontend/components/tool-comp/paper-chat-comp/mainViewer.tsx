@@ -7,13 +7,14 @@ import { textFilterSchema } from "@/app/api/use-object/textFilterSchema";
 import { extractTextFromPage } from "@/lib/tools/paper-chat/pdfUtils";
 import { options, maxWidth, resizeObserverOptions } from "@/lib/tools/paper-chat/config";
 import { PDFFile, PDFDocumentProxy } from "@/types/pdfTypes";
-import TextSelectionPopup from "./TextSelectionPopup";
-import PageControls from "./PageControls";
-import { isValidUrl } from "@/lib/tools/paper-chat/validateURL"; // Utility function for URL validation
+import TextSelectionPopup from "./SubComponents/TextSelectionPopup";
+import PageControls from "./SubComponents/PageControls";
+import { isValidUrl } from "@/lib/tools/paper-chat/validateUrl"; // Utility function for URL validation
 
 import "react-pdf/dist/esm/Page/AnnotationLayer.css";
 import "react-pdf/dist/esm/Page/TextLayer.css";
 import "./Sample.css";
+import ChatInterface from "./SubComponents/ChatInterface";
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
   "pdfjs-dist/build/pdf.worker.min.mjs",
@@ -268,7 +269,7 @@ export default function MainViewer() {
           </div>
         </div>
       </div>
-
+      <ChatInterface />
       <TextSelectionPopup
         selectedText={selectedText}
         popUpPosition={popUpPosition}
