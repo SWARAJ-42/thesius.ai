@@ -121,6 +121,7 @@ export function InputBox() {
 
   return (
     <div className="w-full p-4">
+      {!paperRetrievalLoading && !searchPaperPage && <div className="text-gray-600 text-center text-6xl font-bold mb-2">Thesius search</div>}
       <div className="mx-auto p-2 relative bg-green-300/50 rounded-full overflow-hidden flex flex-row justify-center items-center">
         <Textarea
           value={paperRetrievalQuery}

@@ -9,6 +9,7 @@ import { PaperData } from "@/lib/tools/searchengine/fetchresponse";
 import FollowUpQuestionsCard from "../common-comp/follow-ups";
 import DiveDeeper from "./SubComponents/DiveDeeper";
 import { Sparkles, Search, Brain } from "lucide-react";
+import SearchResultSkeleton from "@/components/loading-skeletons/search-result-skeleton";
 
 function Playground() {
   const {
@@ -25,6 +26,7 @@ function Playground() {
       return (
         <div className="mx-auto max-w-7xl w-full">
           <InputBox />
+          <SearchResultSkeleton />
         </div>
       );
     } else {
@@ -39,6 +41,7 @@ function Playground() {
     return (
       <div className="mx-auto max-w-7xl w-full h-[100vh]">
         <InputBox />
+        <SearchResultSkeleton />
       </div>
     );
   }

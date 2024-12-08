@@ -41,6 +41,8 @@ import { AllRelatedPapersLinks, Citation, PaperResponse } from "@/lib/paperdetai
 import {fetchPaperDetails, SearchRelatedPaperPdfLinks} from "@/lib/paperdetails/fetchResponse";
 import Link from "next/link";
 import { PaperCardProps } from "../tool-comp/common-comp/paper-card";
+import { Footer } from "../global-comp/Footer";
+import PaperDetailSkeleton from "../loading-skeletons/paper-detail-skeleton";
 
 interface CitationProps {
   paper: Citation;
@@ -80,6 +82,7 @@ export default function Component() {
   const [parsedPaperprops, setParsedPaperProps] = useState<PaperCardProps | null>(null); // State to store parsedPaper
   const [mainPaperDetails, setMainPaper] = useState<PaperResponse | null>(null); // State to store fetched paper details
   const [relatedPapers, setRelatedPapers] = useState<AllRelatedPapersLinks | null>(null)
+  const [paperDetailsLoading, setpaperDetailsLoading] = useState(true); // Loading state
   const searchParams = useSearchParams();
   const paperData = searchParams.get("paperData");
 
@@ -99,8 +102,10 @@ export default function Component() {
         if (relatedPapers) {
           setRelatedPapers(relatedPapers)
           console.log("Fetched related papers from links:", relatedPapers);
+          setpaperDetailsLoading(false)
         }
       } else {
+        setpaperDetailsLoading(false)
         notFound();
       }
     };
@@ -108,6 +113,15 @@ export default function Component() {
   }, [paperData]);
 
   const parsedPaper = parsedPaperprops?.paper
+
+  if (paperDetailsLoading) {
+    return (
+      <div className="container mx-auto p-6">
+        <PaperDetailSkeleton />
+      </div>
+    )
+  }
+
   if (mainPaperDetails && parsedPaper ) {
     return (
       <div className="container mx-auto p-6">
