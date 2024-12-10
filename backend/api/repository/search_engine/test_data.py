@@ -11,7 +11,7 @@ dummy_papers = [
         "influentialCitationCount": 51,
         "isOpenAccess": True,
         "openAccessPdf": {
-            "url": "https://papers.nips.cc/2021/1234-survey-rag.pdf",
+            "url": "https://arxiv.org/pdf/2308.00479",
             "status": "OPEN_ACCESS",
         },
         "fieldsOfStudy": ["Computer Science", "Artificial Intelligence"],
@@ -32,7 +32,7 @@ dummy_papers = [
         "influentialCitationCount": 33,
         "isOpenAccess": True,
         "openAccessPdf": {
-            "url": "https://aclweb.org/anthology/2020.acl-conv-ai.pdf",
+            "url": "https://arxiv.org/pdf/2308.00479",
             "status": "OPEN_ACCESS",
         },
         "fieldsOfStudy": ["Natural Language Processing", "Artificial Intelligence"],
@@ -53,7 +53,7 @@ dummy_papers = [
         "influentialCitationCount": 47,
         "isOpenAccess": False,
         "openAccessPdf": {
-            "url": "https://icml.cc/2019/qa_rag_scaling.pdf",
+            "url": "https://arxiv.org/pdf/2308.00479",
             "status": "CLOSED_ACCESS",
         },
         "fieldsOfStudy": ["Machine Learning", "Information Retrieval"],
@@ -74,7 +74,7 @@ dummy_papers = [
         "influentialCitationCount": 25,
         "isOpenAccess": True,
         "openAccessPdf": {
-            "url": "https://ecir2022.org/hierarchical-rag.pdf",
+            "url": "https://arxiv.org/pdf/2308.00479",
             "status": "OPEN_ACCESS",
         },
         "fieldsOfStudy": ["Information Retrieval", "Natural Language Processing"],
@@ -95,7 +95,7 @@ dummy_papers = [
         "influentialCitationCount": 18,
         "isOpenAccess": False,
         "openAccessPdf": {
-            "url": "https://emnlp.org/2023/cross-lingual-rag.pdf",
+            "url": "https://arxiv.org/pdf/2308.00479",
             "status": "OPEN_ACCESS",
         },
         "fieldsOfStudy": ["Natural Language Processing", "Computational Linguistics"],

@@ -6,6 +6,12 @@ import { BsRobot, BsSend } from "react-icons/bs";
 import { FaUserAlt } from "react-icons/fa";
 import { MdAttachFile, MdClose } from "react-icons/md";
 import Image from "next/image";
+import "./chatinterface.css"
+
+import ReactMarkdown from "react-markdown";
+import rehypeKatex from "rehype-katex";
+import remarkMath from "remark-math";
+import "katex/dist/katex.min.css"; // Import Katex CSS
 
 export default function ChatPage() {
   const { messages, input, handleInputChange, handleSubmit } = useChat();
@@ -88,7 +94,14 @@ export default function ChatPage() {
                       className="rounded-md mb-2"
                     />
                   ))}
-                <p className="text-sm">{m.content}</p>
+                {/* <p className="text-sm">{m.content}</p> */}
+                <ReactMarkdown
+                  className="markdown text-sm"
+                  remarkPlugins={[remarkMath]}
+                  rehypePlugins={[rehypeKatex]}
+                >
+                  {m.content}
+                </ReactMarkdown>
               </div>
             </div>
           </div>

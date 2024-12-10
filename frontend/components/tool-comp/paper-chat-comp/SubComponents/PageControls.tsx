@@ -53,7 +53,7 @@ export default function PageControls({
           </span>
         </label>
 
-        <div className="border p-2 rounded-full">
+        {/* <div className="border p-2 rounded-full">
           <input
             type="text"
             placeholder="PDF URL"
@@ -67,7 +67,7 @@ export default function PageControls({
           >
             Load
           </button>
-        </div>
+        </div> */}
 
         <div className="flex justify-center items-center">
           <button

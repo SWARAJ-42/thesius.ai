@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { ArrowLeft, MessageSquare, ThumbsUp, ThumbsDown } from "lucide-react"
+import { useRouter } from 'next/navigation'
 
 interface QueryAnswerCardProps {
   query: string
@@ -13,7 +14,8 @@ export default function PaperRelevance({
   answer = "The capital of France is Paris. Paris is not only the political center of France but also its cultural and economic heart. Known for its iconic landmarks like the Eiffel Tower, the Louvre Museum, and Notre-Dame Cathedral, Paris attracts millions of visitors each year. The city is divided into 20 arrondissements (districts) and is crossed by the River Seine. Paris has been a center of art, fashion, gastronomy, and intellectual thought for centuries, earning it the nickname 'City of Light'.",  
 }: QueryAnswerCardProps) {
   const [feedback, setFeedback] = useState<'like' | 'dislike' | null>(null)
-  const onBack = () => console.log("Back button clicked")
+  const router = useRouter(); // initialize the router
+  const onBack = () => router.push(`/tool/search-papers`);
   return (
     <Card className="w-full mx-auto shadow-lg rounded-xl my-2 p-2">
       <CardHeader className="bg-gray-700 text-primary-foreground relative p-6 rounded-xl">
@@ -23,7 +25,7 @@ export default function PaperRelevance({
           onClick={onBack} 
           className="absolute top-4 left-4 text-primary-foreground hover:bg-primary/90"
         >
-          <ArrowLeft className="h-6 w-6" />
+          <ArrowLeft className="h-6 w-6 text-white" />
           <span className="sr-only">Go back</span>
         </Button>
         <div className="ml-12">

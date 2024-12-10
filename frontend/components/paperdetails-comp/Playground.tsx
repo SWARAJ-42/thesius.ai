@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { notFound, useSearchParams } from "next/navigation";
+import { notFound, useRouter, useSearchParams } from "next/navigation";
 import {
   Card,
   CardContent,
@@ -36,9 +36,16 @@ import {
 } from "@/components/ui/collapsible";
 import RelavantPapers from "./SubComponents/relevant-papers";
 import PaperRelevance from "./SubComponents/query-answer";
-import { AllRelatedPapersLinks, Citation, PaperResponse } from "@/lib/paperdetails/schema";
+import {
+  AllRelatedPapersLinks,
+  Citation,
+  PaperResponse,
+} from "@/lib/paperdetails/schema";
 // import { PaperData } from "@/lib/tools/searchengine/fetchresponse";
-import {fetchPaperDetails, SearchRelatedPaperPdfLinks} from "@/lib/paperdetails/fetchResponse";
+import {
+  fetchPaperDetails,
+  SearchRelatedPaperPdfLinks,
+} from "@/lib/paperdetails/fetchResponse";
 import Link from "next/link";
 import { PaperCardProps } from "../tool-comp/common-comp/paper-card";
 import { Footer } from "../global-comp/Footer";
@@ -79,12 +86,15 @@ function PaperCardCiteRef({ paper }: CitationProps) {
 export default function Component() {
   const [activeTab, setActiveTab] = useState("references");
   const [isOpen, setIsOpen] = useState(false);
-  const [parsedPaperprops, setParsedPaperProps] = useState<PaperCardProps | null>(null); // State to store parsedPaper
+  const [parsedPaperprops, setParsedPaperProps] =
+    useState<PaperCardProps | null>(null); // State to store parsedPaper
   const [mainPaperDetails, setMainPaper] = useState<PaperResponse | null>(null); // State to store fetched paper details
-  const [relatedPapers, setRelatedPapers] = useState<AllRelatedPapersLinks | null>(null)
+  const [relatedPapers, setRelatedPapers] =
+    useState<AllRelatedPapersLinks | null>(null);
   const [paperDetailsLoading, setpaperDetailsLoading] = useState(true); // Loading state
   const searchParams = useSearchParams();
   const paperData = searchParams.get("paperData");
+  const router = useRouter(); // initialize the router
 
   useEffect(() => {
     const getPaperDetails = async () => {
@@ -94,38 +104,50 @@ export default function Component() {
         console.log("Parsed paper data:", parsed);
 
         const fetchedPaper = await fetchPaperDetails(parsed.paper.paperId); // Call fetch function
-        const relatedPapers = await SearchRelatedPaperPdfLinks(parsed.query)
+        const relatedPapers = await SearchRelatedPaperPdfLinks(parsed.query);
         if (fetchedPaper) {
           setMainPaper(fetchedPaper); // Store fetched data in state
           console.log("Fetched paper details:", fetchedPaper);
         }
         if (relatedPapers) {
-          setRelatedPapers(relatedPapers)
+          setRelatedPapers(relatedPapers);
           console.log("Fetched related papers from links:", relatedPapers);
-          setpaperDetailsLoading(false)
+          setpaperDetailsLoading(false);
         }
       } else {
-        setpaperDetailsLoading(false)
+        setpaperDetailsLoading(false);
         notFound();
       }
     };
     getPaperDetails();
   }, [paperData]);
 
-  const parsedPaper = parsedPaperprops?.paper
+  const handleButtonClick = (title: string, url: any) => {
+    const parcel = {
+      title: title,
+      url: url
+    }
+    const paperData = encodeURIComponent(JSON.stringify(parcel)); // Encode the paper data
+    router.push(`/tool/paper-chat?paperData=${paperData}`); // Navigate with query parameter
+  };
+
+  const parsedPaper = parsedPaperprops?.paper;
 
   if (paperDetailsLoading) {
     return (
       <div className="container mx-auto p-6">
         <PaperDetailSkeleton />
       </div>
-    )
+    );
   }
 
-  if (mainPaperDetails && parsedPaper ) {
+  if (mainPaperDetails && parsedPaper) {
     return (
       <div className="container mx-auto p-6">
-        <PaperRelevance query={parsedPaperprops.query} answer={parsedPaperprops.query_answer} />
+        <PaperRelevance
+          query={parsedPaperprops.query}
+          answer={parsedPaperprops.query_answer}
+        />
         <div className="flex">
           <div>
             <div className="container mx-auto p-4 bg-background rounded-xl">
@@ -170,39 +192,48 @@ export default function Component() {
                     )}
                   </div>
                 </CardContent>
-                <Card
-                  className={
-                    parsedPaper.isOpenAccess ? "bg-green-100 m-4" : "bg-red-100 m-4"
-                  }
-                >
-                  <CardContent className="p-3 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <BookOpen
-                        size={16}
-                        className={
-                          parsedPaper.isOpenAccess
-                            ? "text-green-600"
-                            : "text-red-600"
-                        }
-                      />
-                      <span className="text-sm font-semibold">
-                        {parsedPaper.isOpenAccess
-                          ? "Chat with this paper"
-                          : "Closed Access"}
-                      </span>
-                    </div>
-                    {parsedPaper.isOpenAccess && (
-                      <a
-                        href={parsedPaper.openAccessPdf?.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-1 text-sm text-blue-600 hover:underline"
-                      >
-                        View PDF <ExternalLink size={14} />
-                      </a>
-                    )}
-                  </CardContent>
-                </Card>
+                <div className="flex justify-between items-center">
+                  <Card
+                    className={
+                      parsedPaper.isOpenAccess
+                        ? "bg-green-100 m-4 flex-grow"
+                        : "bg-red-100 m-4 flex-grow"
+                    }
+                  >
+                    <CardContent className="p-3 flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <BookOpen
+                          size={16}
+                          className={
+                            parsedPaper.isOpenAccess
+                              ? "text-green-600"
+                              : "text-red-600"
+                          }
+                        />
+                        <span className="text-sm font-semibold">
+                          {parsedPaper.isOpenAccess
+                            ? "Research paper is accessible"
+                            : "Research paper is not accessible"}
+                        </span>
+                      </div>
+                      {parsedPaper.isOpenAccess && (
+                        <a
+                          href={parsedPaper.openAccessPdf?.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-1 text-sm text-blue-600 hover:underline"
+                        >
+                          View PDF <ExternalLink size={14} />
+                        </a>
+                      )}
+                    </CardContent>
+                  </Card>
+                  {parsedPaper.isOpenAccess ? (
+                    <Button onClick={()=>{handleButtonClick(mainPaperDetails.title, parsedPaper.openAccessPdf?.url)}} className="mx-4 w-1/3 font-bold rounded-xl p-5">Chat with this paper</Button>
+                  ) : (
+                    <></>
+                  )}
+                </div>
               </Card>
               <Collapsible
                 open={isOpen}
@@ -289,7 +320,9 @@ export default function Component() {
             </div>
           </div>
           <div className="bg-background rounded-xl ml-2">
-            {relatedPapers?.results && <RelavantPapers results={relatedPapers?.results} />}
+            {relatedPapers?.results && (
+              <RelavantPapers results={relatedPapers?.results} />
+            )}
           </div>
         </div>
       </div>

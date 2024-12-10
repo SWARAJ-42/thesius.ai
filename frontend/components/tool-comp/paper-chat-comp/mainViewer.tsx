@@ -5,7 +5,11 @@ import { Document, Page, pdfjs } from "react-pdf";
 import { experimental_useObject as useObject } from "ai/react";
 import { textFilterSchema } from "@/app/api/use-object/textFilterSchema";
 import { extractTextFromPage } from "@/lib/tools/paper-chat/pdfUtils";
-import { options, maxWidth, resizeObserverOptions } from "@/lib/tools/paper-chat/config";
+import {
+  options,
+  maxWidth,
+  resizeObserverOptions,
+} from "@/lib/tools/paper-chat/config";
 import { PDFFile, PDFDocumentProxy } from "@/types/pdfTypes";
 import TextSelectionPopup from "./SubComponents/TextSelectionPopup";
 import PageControls from "./SubComponents/PageControls";
@@ -15,6 +19,7 @@ import "react-pdf/dist/esm/Page/AnnotationLayer.css";
 import "react-pdf/dist/esm/Page/TextLayer.css";
 import "./Sample.css";
 import ChatInterface from "./SubComponents/ChatInterface";
+import { useSearchParams } from "next/navigation";
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
   "pdfjs-dist/build/pdf.worker.min.mjs",
@@ -180,6 +185,9 @@ export default function MainViewer() {
     if (entry) setContainerWidth(entry.contentRect.width);
   }, []);
   const [error, setError] = useState<string | null>(null); // Error state
+  const searchParams = useSearchParams();
+  const paperData = searchParams.get("paperData");
+  const [responseUrl, setResponseUrl] = useState<string | null>(null)
 
   useResizeObserver(containerRef, resizeObserverOptions, onResize);
 
@@ -191,7 +199,6 @@ export default function MainViewer() {
   function onDocumentLoadError() {
     setError("Failed to load the PDF. Please check the URL or file.");
   }
-  
 
   function handleTextSelection(event: React.MouseEvent) {
     const selection = window.getSelection();
@@ -214,7 +221,8 @@ export default function MainViewer() {
   }
 
   function handleURLChange(url: string) {
-    if (isValidUrl(url)) {  // Validate the URL
+    if (isValidUrl(url)) {
+      // Validate the URL
       setFileURL(url);
       setError(null); // Clear error if valid URL
     } else {
@@ -222,15 +230,55 @@ export default function MainViewer() {
     }
   }
   
-  
-
   useEffect(() => {
-    extractTextFromPage(fileURL || file, currentPage, setExtractedText);
+    // Fetch and parse paper data
+    const getPaperDetails = async () => {
+      if (paperData) {
+        const parsed = JSON.parse(decodeURIComponent(paperData));
+        console.log("Parsed paper data:", parsed);
+        if (parsed.url && parsed.url !== responseUrl) {
+          setResponseUrl(parsed.url); // Only update if URL has changed
+        }
+      }
+    };
+  
+    getPaperDetails();
+  }, [paperData]); // Only depends on `paperData`
+  
+  useEffect(() => {
+    // Fetch PDF blob
+    const fetchPDF = async () => {
+      if (responseUrl) {
+        try {
+          const response = await fetch(`/api/helpers/fetch-pdf?url=${encodeURIComponent(responseUrl)}`);
+          const blob = await response.blob();
+          setFileURL(URL.createObjectURL(blob)); // Set file URL
+        } catch (error) {
+          console.error("Error fetching PDF:", error);
+        }
+      }
+    };
+  
+    fetchPDF();
+  }, [responseUrl]); // Only depends on `responseUrl`
+  
+  useEffect(() => {
+    // Extract text and handle localStorage
+    if (fileURL || file) {
+      extractTextFromPage(fileURL || file, currentPage, setExtractedText);
+    }
+  
     if (typeof window !== "undefined") {
       window.localStorage.setItem(LOCAL_STORAGE_KEY, currentPage.toString());
     }
-    setIsClient(true);
-  }, [currentPage, file, fileURL]);
+  
+    setIsClient(true); // Set client-side flag
+  }, [currentPage, file, fileURL]); // Only depends on these values
+  
+  if (!isClient) {
+    return null;
+  }
+  
 
   if (!isClient) {
     return null;
@@ -238,7 +286,11 @@ export default function MainViewer() {
 
   return (
     <div className="flex">
-      {error && <div className="z-50 absolute left-[10px] font-bold text-red-500">{error}</div>}
+      {error && (
+        <div className="z-50 absolute left-[10px] font-bold text-red-500">
+          {error}
+        </div>
+      )}
       <div
         className="Example bg-[#525659] h-screen overflow-y-scroll"
         onMouseUp={handleTextSelection}
@@ -255,7 +307,7 @@ export default function MainViewer() {
             <Document
               file={fileURL || file}
               onLoadSuccess={onDocumentLoadSuccess} // Success handler
-              onLoadError={onDocumentLoadError}     // Error handler
+              onLoadError={onDocumentLoadError} // Error handler
               options={options}
             >
               <Page

@@ -93,7 +93,7 @@ export function Footer() {
             <p className="text-sm">Indian Institute of Technology, Kharagpur</p>
             <p className="text-sm">Kharagpur, West Bengal 721302</p>
             <p className="text-sm">Phone: 6372632223</p>
-            <p className="text-sm">Email: stratanova42@gmail.com</p>
+            <p className="text-sm">Email: thesius42@gmail.com</p>
           </div>
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">
@@ -114,7 +114,7 @@ export function Footer() {
         <div className="mt-8 pt-8 border-t border-gray-200">
           <div className="text-center">
             <p className="text-sm">
-              &copy; {new Date().getFullYear()} Stratanova. All rights
+              &copy; {new Date().getFullYear()} Thesius.ai all rights
               reserved.
             </p>
           </div>

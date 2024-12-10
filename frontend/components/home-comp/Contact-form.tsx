@@ -22,7 +22,7 @@ export default function ContactForm() {
   }
 
   return (
-    <section className="w-[90%] mb-32 mx-auto rounded-2xl py-12 bg-none">
+    <section id='contact' className="w-[90%] mb-32 mx-auto rounded-2xl py-12 bg-none">
       <div className="container px-4 md:px-6 mx-auto">
         <div className="flex flex-col items-center space-y-4 text-center">
           <div className="space-y-2">

@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { Menu, Transition } from "@headlessui/react";
+import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import CompanyLogo from "@/assets/Navbar/logo.png";
 import ProfileLogo from "@/assets/Navbar/user.png";
 
@@ -23,6 +25,12 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const toolsLinks = [
+    { name: "Thesius Search", href: "/tool/search-papers" },
+    { name: "Research Paper Chat", href: "/tool/paper-chat" },
+    { name: "Project Planner (comming soon)", href: "/" },
+  ];
+
   return (
     <>
       {/* Regular Navbar for larger screens */}
@@ -42,20 +50,71 @@ export default function Navbar() {
         </Link>
         <div className="w-[80%] mx-auto px-4">
           <ul className="flex justify-center items-center h-16 space-x-8">
-            {["about", "tools", "contact"].map((item) => (
-              <li key={item}>
-                <Link
-                  href={`/${item.toLowerCase()}`}
-                  className={`text-lg font-medium transition-colors duration-300 ${
+            <li>
+              <Menu as="div" className="relative inline-block text-left">
+                <Menu.Button
+                  className={`inline-flex items-center text-lg font-medium transition-colors duration-300 ${
                     isScrolled
                       ? "text-gray-800 hover:text-blue-600"
                       : "text-black hover:text-black"
                   }`}
                 >
-                  {item}
-                </Link>
-              </li>
-            ))}
+                  Tools
+                  <ChevronDownIcon className="ml-2 -mr-1 h-5 w-5" aria-hidden="true" />
+                </Menu.Button>
+                <Transition
+                  enter="transition ease-out duration-100"
+                  enterFrom="transform opacity-0 scale-95"
+                  enterTo="transform opacity-100 scale-100"
+                  leave="transition ease-in duration-75"
+                  leaveFrom="transform opacity-100 scale-100"
+                  leaveTo="transform opacity-0 scale-95"
+                >
+                  <Menu.Items className="absolute left-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-green-200 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                    <div className="px-1 py-1">
+                      {toolsLinks.map((tool) => (
+                        <Menu.Item key={tool.name}>
+                          {({ active }) => (
+                            <Link
+                              href={tool.href}
+                              className={`${
+                                active ? "bg-green-500 text-white" : "text-gray-900"
+                              } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                            >
+                              {tool.name}
+                            </Link>
+                          )}
+                        </Menu.Item>
+                      ))}
+                    </div>
+                  </Menu.Items>
+                </Transition>
+              </Menu>
+            </li>
+            <li>
+              <Link
+                href="/about"
+                className={`text-lg font-medium transition-colors duration-300 ${
+                  isScrolled
+                    ? "text-gray-800 hover:text-blue-600"
+                    : "text-black hover:text-black"
+                }`}
+              >
+                About
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="#contact"
+                className={`text-lg font-medium transition-colors duration-300 ${
+                  isScrolled
+                    ? "text-gray-800 hover:text-blue-600"
+                    : "text-black hover:text-black"
+                }`}
+              >
+                Contact
+              </Link>
+            </li>
           </ul>
         </div>
         <div className="w-[10%] flex items-center justify-center">
@@ -123,17 +182,40 @@ export default function Navbar() {
               />
             </Link>
             <ul className="flex flex-col items-center space-y-4">
-              {["about", "tools", "contact"].map((item) => (
-                <li key={item}>
-                  <Link
-                    href={`/${item.toLowerCase()}`}
-                    onClick={() => setIsModalOpen(false)}
-                    className="text-2xl font-medium text-gray-800 hover:text-blue-600"
-                  >
-                    {item}
-                  </Link>
-                </li>
-              ))}
+              <li>
+                <Link
+                  href="/about"
+                  onClick={() => setIsModalOpen(false)}
+                  className="text-2xl font-medium text-gray-800 hover:text-blue-600"
+                >
+                  About
+                </Link>
+              </li>
+              <li>
+                <span className="text-2xl font-medium text-gray-800">Tools</span>
+                <ul className="mt-2 space-y-2">
+                  {toolsLinks.map((tool) => (
+                    <li key={tool.name}>
+                      <Link
+                        href={tool.href}
+                        onClick={() => setIsModalOpen(false)}
+                        className="text-xl font-medium text-gray-600 hover:text-blue-600"
+                      >
+                        {tool.name}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </li>
+              <li>
+                <Link
+                  href="/contact"
+                  onClick={() => setIsModalOpen(false)}
+                  className="text-2xl font-medium text-gray-800 hover:text-blue-600"
+                >
+                  Contact
+                </Link>
+              </li>
             </ul>
             <Image
               src={ProfileLogo}
@@ -148,3 +230,4 @@ export default function Navbar() {
     </>
   );
 }
+
