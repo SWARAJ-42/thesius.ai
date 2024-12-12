@@ -6,18 +6,23 @@ import { BsRobot, BsSend } from "react-icons/bs";
 import { FaUserAlt } from "react-icons/fa";
 import { MdAttachFile, MdClose } from "react-icons/md";
 import Image from "next/image";
-import "./chatinterface.css"
+import "./chatinterface.css";
 
 import ReactMarkdown from "react-markdown";
 import rehypeKatex from "rehype-katex";
 import remarkMath from "remark-math";
 import "katex/dist/katex.min.css"; // Import Katex CSS
+import { useSinglePaperChatState } from "@/context/viewerContext";
 
 export default function ChatPage() {
-  const { messages, input, handleInputChange, handleSubmit } = useChat();
+  const { messages, input, stop, isLoading, setInput, handleInputChange, handleSubmit } =
+    useChat();
   const [files, setFiles] = useState<FileList | undefined>(undefined);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isMounted, setIsMounted] = useState(false);
+
+  // Context provider
+  const { inputText, setInputText } = useSinglePaperChatState();
 
   const handlePaste = (event: ClipboardEvent) => {
     const fileToFileList = (file: File): FileList => {
@@ -46,6 +51,14 @@ export default function ChatPage() {
       window.removeEventListener("paste", handlePaste);
     };
   }, []);
+
+  useEffect(() => {
+    if (inputText.length > 0) {
+      setInput(inputText);
+      // console.log(input)
+      setInputText("");
+    }
+  }, [inputText]);
 
   if (!isMounted) return null;
 
@@ -163,7 +176,7 @@ export default function ChatPage() {
           >
             <MdAttachFile className="w-5 h-5" />
           </button>
-          <input
+          <textarea
             className="flex-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
             value={input}
             placeholder="Ask anything..."
@@ -175,6 +188,13 @@ export default function ChatPage() {
           >
             <BsSend className="w-5 h-5" />
           </button>
+          {isLoading && <button
+            className="p-2 bg-red-300 text-black rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 font-bold"
+            type="button"
+            onClick={() => stop()}
+          >
+            stop
+          </button>}
         </div>
       </form>
     </div>

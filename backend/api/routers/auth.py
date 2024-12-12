@@ -1,13 +1,13 @@
 from datetime import timedelta, datetime, timezone
 from typing import Annotated
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Response
 from pydantic import BaseModel
 from fastapi.security import OAuth2PasswordRequestForm
 from jose import jwt
 from dotenv import load_dotenv
 import os
 from api.models import User
-from api.deps import db_dependency, bcrypt_context
+from api.deps import db_dependency, bcrypt_context, user_dependency
 from api.repository.search_engine.main import get_query_result
 
 load_dotenv()
@@ -19,6 +19,7 @@ router = APIRouter(
 
 SECRET_KEY = os.getenv("AUTH_SECRET_KEY")
 ALGORITHM = os.getenv("AUTH_ALGORITHM")
+ACCESS_TOKEN_EXPIRE_MINUTES = 20
 
 class UserCreateRequest(BaseModel):
     username: str
@@ -27,7 +28,7 @@ class UserCreateRequest(BaseModel):
     password: str
     
 class Token(BaseModel):
-    access_token: str
+    auth_token: str
     token_type: str
     
     
@@ -58,14 +59,20 @@ async def create_user(db: db_dependency, create_user_request: UserCreateRequest)
     return {"message": "Registration successful", "status_code": status.HTTP_201_CREATED}
     
 @router.post('/token', response_model=Token)
-async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
+async def login_for_access_token(response: Response, form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
                                  db: db_dependency):
     user = authenticate_user(form_data.username, form_data.password, db)
     if not user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Could not validate user")
-    token = create_access_token(user.email, user.id, timedelta(minutes=20))
+    token = create_access_token(user.username, user.id, timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES))
+    response.set_cookie(key="auth_token", value=f"{token}", httponly=True, max_age=ACCESS_TOKEN_EXPIRE_MINUTES*60)
+    return {'auth_token': token, 'token_type': 'bearer'}
     
-    return {'access_token': token, 'token_type': 'bearer'}
+@router.post("/auth/logout")
+async def logout(response: Response):
+    response.delete_cookie("auth_token")
+    return {"message": "Logged out"}
 
-
-    
+@router.get("/protected")
+async def protected_route(current_user: user_dependency):
+    return {"message": f"Hello, {current_user['email']}! This is a protected route."}

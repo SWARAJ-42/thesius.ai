@@ -1,6 +1,6 @@
 'use client'
 
-import Image from 'next/image'
+import Image, { StaticImageData } from 'next/image'
 import Link from 'next/link'
 import { Motion } from '@/components/ui/motion'
 import { Twitter, Linkedin, Github } from 'lucide-react'
@@ -8,7 +8,7 @@ import { Twitter, Linkedin, Github } from 'lucide-react'
 interface TeamMemberProps {
   name: string
   role: string
-  imageUrl: string
+  imageUrl: StaticImageData
   socialLinks: {
     twitter?: string
     linkedin?: string
@@ -32,11 +32,6 @@ export function TeamMember({ name, role, imageUrl, socialLinks, isReversed }: Te
         <h3 className="text-2xl font-semibold text-gray-900 mb-2">{name}</h3>
         <p className="text-lg text-gray-600 mb-4">{role}</p>
         <div className={`flex space-x-4 ${isReversed ? "justify-start": "justify-end"}`}>
-          {socialLinks.twitter && (
-            <Link href={socialLinks.twitter} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-blue-500 transition-colors">
-              <Twitter size={24} />
-            </Link>
-          )}
           {socialLinks.linkedin && (
             <Link href={socialLinks.linkedin} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-blue-700 transition-colors">
               <Linkedin size={24} />
@@ -45,6 +40,11 @@ export function TeamMember({ name, role, imageUrl, socialLinks, isReversed }: Te
           {socialLinks.github && (
             <Link href={socialLinks.github} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-gray-900 transition-colors">
               <Github size={24} />
+            </Link>
+          )}
+          {socialLinks.twitter && (
+            <Link href={socialLinks.twitter} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-blue-500 transition-colors">
+              <Twitter size={24} />
             </Link>
           )}
         </div>

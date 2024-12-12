@@ -69,6 +69,7 @@ $$
 \\int_0^\\infty e^{-x^2} dx = \\frac{\\sqrt{\\pi}}{2}
 $$
     `,
+    abortSignal: req.signal,
     messages,
   });
 

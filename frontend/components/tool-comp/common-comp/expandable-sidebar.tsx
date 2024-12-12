@@ -2,7 +2,9 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { ChevronRight, ChevronLeft, Home, Settings, Users, HelpCircle, Menu } from "lucide-react"
+import { ChevronRight, ChevronLeft, Home, Settings, Users, HelpCircle, Menu, User } from "lucide-react"
+import Link from "next/link"
+import { CollapsibleMenu } from "./collapsible-menu"
 
 export function ExpandableSidebar() {
   const [isExpanded, setIsExpanded] = useState(false)
@@ -32,13 +34,16 @@ export function ExpandableSidebar() {
           </div>
 
           <ScrollArea className="flex-grow">
-            <nav className="space-y-2 p-2">
-              <SidebarItem icon={<Home className="h-4 w-4" />} text="Home" isExpanded={isExpanded} />
-              <SidebarItem icon={<Users className="h-4 w-4" />} text="Users" isExpanded={isExpanded} />
-              <SidebarItem icon={<Settings className="h-4 w-4" />} text="Settings" isExpanded={isExpanded} />
-              <SidebarItem icon={<HelpCircle className="h-4 w-4" />} text="Help" isExpanded={isExpanded} />
+            <nav className="flex flex-col space-y-2 p-2">
+              <div>
+                <SidebarItem icon={<Home className="h-4 w-4" />} text="Home" isExpanded={isExpanded} />
+                {isExpanded && <CollapsibleMenu />}
+              </div>
             </nav>
           </ScrollArea>
+          <div className="m-2">
+            <SidebarItem icon={<User className="h-4 w-4" />} text="Dashboard" isExpanded={isExpanded} />
+          </div>
         </div>
       </div>
 
@@ -66,12 +71,12 @@ function SidebarItem({
   isExpanded: boolean
 }) {
   return (
-    <Button
-      variant="ghost"
-      className={`w-full ${isExpanded ? 'px-4 justify-start' : 'px-2 justify-center'}`}
+    <Link
+      href={"/"}
+      className={`flex items-center w-full ${isExpanded ? 'px-4 justify-start' : 'px-2 justify-center'}  hover:bg-green-500/50 rounded-xl p-2`}
     >
-      {icon}
+      <div>{icon}</div>
       {isExpanded && <span className="ml-2">{text}</span>}
-    </Button>
+    </Link>
   )
 }

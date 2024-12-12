@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Search, ChevronRight } from "lucide-react";
 import { PaperData } from "@/lib/tools/searchengine/fetchresponse";
+import MultiAbstractChatModal from "./multi-abstract-modal";
 
 interface PaperCheckBox {
   paperId: string;
@@ -15,7 +16,7 @@ interface PaperCheckBox {
   citationCount: number;
 }
 
-interface RenderedPapersProp {
+export interface RenderedPapersProp {
   renderedPapers: PaperData[];
 }
 
@@ -23,6 +24,7 @@ export default function DiveDeeper({ renderedPapers }: RenderedPapersProp) {
   const [papers, setPapers] = useState<PaperCheckBox[]>([]);
   const [selectedPapers, setSelectedPapers] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedPapersData, setSelectedPapersData] = useState<PaperData[]>([])
   const router = useRouter();
 
   const filteredPapers = papers.filter((paper) =>
@@ -37,11 +39,6 @@ export default function DiveDeeper({ renderedPapers }: RenderedPapersProp) {
     );
   };
 
-  const handleProceed = () => {
-    // const selectedPaperDetails = papers.filter(paper => selectedPapers.includes(paper.paperId))
-    // router.push(`/tool/selected-papers-chat?papers=${encodeURIComponent(JSON.stringify(selectedPaperDetails))}`)
-    router.push(`/tool/selected-papers-chat?ids=${selectedPapers.join(",")}`);
-  };
 
   useEffect(() => {
     const papersCheckBox = renderedPapers.map((paper) => ({
@@ -51,7 +48,14 @@ export default function DiveDeeper({ renderedPapers }: RenderedPapersProp) {
       citationCount: paper.citationCount,
     }));
     setPapers(papersCheckBox);
-  }, [renderedPapers]);
+
+    const handleProceed = () => {
+      const selectedPaperDetails = renderedPapers.filter(paper => selectedPapers.includes(paper.paperId))
+      setSelectedPapersData(selectedPaperDetails)
+    };
+    handleProceed()
+
+  }, [renderedPapers, selectedPapers]);
 
   return (
     <div className="max-w-4xl mx-auto p-4 bg-white shadow-xl min-h-full space-y-6 rounded-xl">
@@ -71,7 +75,8 @@ export default function DiveDeeper({ renderedPapers }: RenderedPapersProp) {
           size={20}
         />
       </div>
-      <div className="flex justify-end">
+      <MultiAbstractChatModal renderedPapers={selectedPapersData} />
+      {/* <div className="flex justify-end">
         <Button
           onClick={handleProceed}
           disabled={selectedPapers.length === 0}
@@ -80,7 +85,7 @@ export default function DiveDeeper({ renderedPapers }: RenderedPapersProp) {
           <span>Chat with selected papers</span>
           <ChevronRight size={20} />
         </Button>
-      </div>
+      </div> */}
       <ul className="space-y-4">
         {filteredPapers.map((paper) => (
           <li

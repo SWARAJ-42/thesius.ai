@@ -4,6 +4,7 @@ import Playground from "@/components/tool-comp/search-papers-comp/Playground";
 import Layout from "./layout";
 import { Footer } from "@/components/global-comp/Footer";
 import { useSearchPaper } from "@/context/SearchPapersContext";
+import ProtectedRoute from "@/components/global-comp/protected-route";
 
 
 const Page = () => {
@@ -16,11 +17,13 @@ const Page = () => {
     setPaperRetrievalQuery,
   } = useSearchPaper(); // Use the hook
   return (
-    <div className="h-[100vh] bg-gray-100 overflow-y-scroll">
-        <ExpandableSidebar />
-        <Playground />
-        {searchPaperPage && <Footer/>}
-    </div>
+    <ProtectedRoute>
+      <div className="h-[100vh] bg-gray-100 overflow-y-scroll">
+          <ExpandableSidebar />
+          <Playground />
+          {searchPaperPage && <Footer/>}
+      </div>
+    </ProtectedRoute>
   );
 };
 

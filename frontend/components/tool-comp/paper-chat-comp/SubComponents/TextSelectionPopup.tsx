@@ -1,5 +1,6 @@
 "use client"
-import React from "react";
+import { useSinglePaperChatState } from "@/context/viewerContext";
+import React, { useEffect } from "react";
 
 type TextSelectionPopupProps = {
   selectedText: string | null;
@@ -8,7 +9,11 @@ type TextSelectionPopupProps = {
 
 export default function TextSelectionPopup({ selectedText, popUpPosition }: TextSelectionPopupProps) {
   if (!selectedText || !popUpPosition) return null;
-
+  const {inputText, setInputText} = useSinglePaperChatState()
+  const handleClick = () => {
+    // console.log("text selected and sent to input")
+    setInputText(selectedText)
+  }
   return (
     <div
       className="pop-up rounded-full bg-green-500"
@@ -21,7 +26,7 @@ export default function TextSelectionPopup({ selectedText, popUpPosition }: Text
         zIndex: 10,
       }}
     >
-      <button className="bg-green-700 text-white text-[12px] p-2 rounded-full hover:bg-green-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">Ask AI</button>
+      <button onClick={handleClick} className="bg-green-700 text-white text-[12px] p-2 rounded-full hover:bg-green-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">Ask AI</button>
     </div>
   );
 }

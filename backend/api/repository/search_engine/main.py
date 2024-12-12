@@ -28,6 +28,9 @@ def get_query_result(query):
     df, query = utils.rerank(df, query, column_name='title_abs')
     gpt_response = utils.answer_question(df=df, question=query, debug=False)
 
+    # alternate for testing
+    # gpt_response = {"gpt_answer": "This is a sample output for testing", "followup_questions":["followup one", "followup two", "followup three"]}
+
     df = df.drop(columns=['title_abs', 'n_tokens', 'specter_embeddings'])
     
     # Ensure data is JSON serializable

@@ -22,4 +22,3 @@ def health_check():
 app.include_router(auth.router)
 app.include_router(search_engine.router)
 app.include_router(paper_details.router)
-# app.include_router(routines.router)

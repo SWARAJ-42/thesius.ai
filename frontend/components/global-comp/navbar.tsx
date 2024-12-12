@@ -105,7 +105,7 @@ export default function Navbar() {
             </li>
             <li>
               <Link
-                href="#contact"
+                href="/#contact"
                 className={`text-lg font-medium transition-colors duration-300 ${
                   isScrolled
                     ? "text-gray-800 hover:text-blue-600"
@@ -209,7 +209,7 @@ export default function Navbar() {
               </li>
               <li>
                 <Link
-                  href="/contact"
+                  href="/#contact"
                   onClick={() => setIsModalOpen(false)}
                   className="text-2xl font-medium text-gray-800 hover:text-blue-600"
                 >
