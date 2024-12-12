@@ -20,6 +20,7 @@ import "react-pdf/dist/esm/Page/TextLayer.css";
 import "./Sample.css";
 import ChatInterface from "./SubComponents/ChatInterface";
 import { useSearchParams } from "next/navigation";
+import BackButton from "@/components/global-comp/back-button";
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
   "pdfjs-dist/build/pdf.worker.min.mjs",
@@ -286,6 +287,7 @@ export default function MainViewer() {
 
   return (
     <div className="flex">
+      <BackButton />
       {error && (
         <div className="z-50 absolute left-[10px] font-bold text-red-500">
           {error}

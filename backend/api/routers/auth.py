@@ -62,17 +62,18 @@ async def create_user(db: db_dependency, create_user_request: UserCreateRequest)
 async def login_for_access_token(response: Response, form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
                                  db: db_dependency):
     user = authenticate_user(form_data.username, form_data.password, db)
-    if not user:
+    if not user: 
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Could not validate user")
     token = create_access_token(user.username, user.id, timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES))
     response.set_cookie(key="auth_token", value=f"{token}", httponly=True, max_age=ACCESS_TOKEN_EXPIRE_MINUTES*60)
     return {'auth_token': token, 'token_type': 'bearer'}
     
-@router.post("/auth/logout")
+@router.post("/logout")
 async def logout(response: Response):
     response.delete_cookie("auth_token")
     return {"message": "Logged out"}
 
 @router.get("/protected")
-async def protected_route(current_user: user_dependency):
-    return {"message": f"Hello, {current_user['email']}! This is a protected route."}
+async def protected_route(db: db_dependency, current_user: user_dependency):
+    user = db.query(User).filter(User.id == current_user["id"]).first()
+    return { "userData" :user , "message": "Successfull authentication"}

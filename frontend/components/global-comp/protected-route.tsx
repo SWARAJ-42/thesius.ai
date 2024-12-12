@@ -3,40 +3,55 @@
 import { useEffect, useState, ReactNode } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import LoadingPage from "./loading-page";
+import { useAuth, User } from "@/context/AuthContext";
 
 interface ProtectedRouteProps {
   children: ReactNode;
+  route: boolean; // New prop
 }
 
-const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
+interface ProtectedAuthResponse {
+  userData: User;
+  message: string;
+}
+
+const ProtectedRoute = ({ children, route = true }: ProtectedRouteProps) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [authorized, setAuthorized] = useState<boolean>(false);
   const router = useRouter();
 
+  const { user, setUser } = useAuth();
+
   useEffect(() => {
     const checkAuthorization = async () => {
       try {
-        const response = await axios.get("http://localhost:8000/auth/protected", {
+        const response = await axios.get<ProtectedAuthResponse>("http://localhost:8000/auth/protected", {
           withCredentials: true,
         });
         if (response.status === 200) {
           setAuthorized(true);
+          setUser(response.data.userData);
         }
       } catch (error) {
         console.error("Not authorized:", error);
         setAuthorized(false);
-        router.push("/auth/login");
+
+        // Use the `route` condition here
+        if (route) {
+          router.push("/auth/login");
+        }
       } finally {
         setLoading(false);
       }
     };
 
     checkAuthorization();
-  }, [router]);
+  }, [router, route]);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div><LoadingPage /></div>;
 
-  if (!authorized) return null; // Optionally, show a "Not authorized" message here.
+  if (!authorized && route) return null; // Optionally, show a "Not authorized" message here.
 
   return <>{children}</>;
 };

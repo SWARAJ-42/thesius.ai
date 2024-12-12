@@ -17,7 +17,7 @@ const Page = () => {
     setPaperRetrievalQuery,
   } = useSearchPaper(); // Use the hook
   return (
-    <ProtectedRoute>
+    <ProtectedRoute route={true}>
       <div className="h-[100vh] bg-gray-100 overflow-y-scroll">
           <ExpandableSidebar />
           <Playground />

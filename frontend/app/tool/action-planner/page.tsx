@@ -29,7 +29,7 @@ export default function ChatPage() {
   return (
     <>
         <ExpandableSidebar />
-        <div className="flex h-screen overflow-hidden bg-gray-800 text-white pl-20">
+        <div className="flex h-screen overflow-hidden bg-gray-400 text-white pl-20">
         {/* Left Sidebar */}
         <Sheet>
             <SheetTrigger asChild>
@@ -43,7 +43,7 @@ export default function ChatPage() {
             </div>
             </SheetContent>
         </Sheet>
-        <aside className="w-64 bg-gray-700 text-white hidden md:block overflow-y-auto">
+        <aside className="w-64 bg-gray-400 text-black hidden md:block overflow-y-auto">
             <div className="h-full p-4">
             <LeftSidebar />
             </div>
@@ -51,12 +51,12 @@ export default function ChatPage() {
 
         {/* Chat Playground */}
         <main className="flex-1 flex flex-col md:w-1/4">
-            <header className="bg-primary text-primary-foreground p-4 text-center">
+            <header className="bg-gray-300 text-gray-800 p-4 text-center">
             <h1 className="text-2xl font-bold">Thesius.ai Cross domain research</h1>
             </header>
-            <ScrollArea className="flex-1 p-4">
+            <ScrollArea className="flex-1 p-4 bg-gray-100">
             {messages.map((message) => (
-                <Card key={message.id} className={`mb-4 ${message.sender === 'user' ? 'ml-auto' : 'mr-auto'} max-w-[70%] bg-gray-500 text-white border-none`}>
+                <Card key={message.id} className={`mb-4 ${message.sender === 'user' ? 'ml-auto bg-gray-400' : 'mr-auto bg-green-400'} max-w-[70%] text-white border-none`}>
                 <CardContent className="p-3 flex items-start gap-3">
                     <Avatar>
                     <AvatarFallback className='text-black font-bold'>{message.sender === 'user' ? 'U' : 'AI'}</AvatarFallback>
@@ -98,7 +98,7 @@ export default function ChatPage() {
             </div>
             </SheetContent>
         </Sheet>
-        <aside className="hidden md:block md:w-[30%] bg-gray-700 overflow-y-auto">
+        <aside className="hidden md:block md:w-[30%] bg-gray-400 overflow-y-auto">
             <ScrollArea className="h-full p-4">
             <RoadmapGuide />
             </ScrollArea>
@@ -118,7 +118,7 @@ function LeftSidebar() {
             <h3 className="text-sm font-medium mb-2">Upload File</h3>
             <label htmlFor="file-upload" className="cursor-pointer">
               <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-primary transition-colors">
-                <Upload className="mx-auto h-8 w-8 text-gray-400" />
+                <Upload className="mx-auto h-8 w-8 text-gray-600" />
                 <span className="mt-2 block text-sm text-gray-600">Click to upload</span>
               </div>
               <input id="file-upload" type="file" className="hidden" />
@@ -126,7 +126,7 @@ function LeftSidebar() {
           </div>
           <div>
             <h3 className="text-sm mb-2 font-bold">Context</h3>
-            <Textarea className='bg-gray-500' placeholder="Add context for the conversation..." rows={4} />
+            <Textarea className='bg-gray-200' placeholder="Add context for the conversation..." rows={4} />
           </div>
           <Button className="w-full">
             <PlusCircle className="w-4 h-4 mr-2" />

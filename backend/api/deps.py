@@ -48,14 +48,14 @@ async def get_current_user(request: Request):
     
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        email: str = payload.get("sub")
+        username: str = payload.get("sub")
         user_id: int = payload.get("id")
-        if not email or not user_id:
+        if not username or not user_id:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Invalid token payload",
             )
-        return {"email": email, "id": user_id}
+        return {"username": username, "id": user_id}
     except JWTError:
         print("Error: JWTerror")
         raise HTTPException(

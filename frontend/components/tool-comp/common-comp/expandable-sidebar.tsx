@@ -36,13 +36,13 @@ export function ExpandableSidebar() {
           <ScrollArea className="flex-grow">
             <nav className="flex flex-col space-y-2 p-2">
               <div>
-                <SidebarItem icon={<Home className="h-4 w-4" />} text="Home" isExpanded={isExpanded} />
+                <SidebarItem route="/" icon={<Home className="h-4 w-4" />} text="Home" isExpanded={isExpanded} />
                 {isExpanded && <CollapsibleMenu />}
               </div>
             </nav>
           </ScrollArea>
           <div className="m-2">
-            <SidebarItem icon={<User className="h-4 w-4" />} text="Dashboard" isExpanded={isExpanded} />
+            <SidebarItem route="/dashboard" icon={<User className="h-4 w-4" />} text="Dashboard" isExpanded={isExpanded} />
           </div>
         </div>
       </div>
@@ -51,7 +51,7 @@ export function ExpandableSidebar() {
         variant="ghost"
         size="icon"
         onClick={toggleFullSidebar}
-        className={`sm:hidden z-10 fixed top-1/2 -translate-y-1/2 transition-all duration-300 ease-in-out p-2 m-2 rounded-full ${
+        className={`sm:hidden z-10 fixed top-1/2 -translate-y-1/2 transition-all duration-300 ease-in-out p-2 m-4 bg-green-300 hover:bg-green-600 rounded-full ${
           isCompletelyHidden ? 'left-0' : isExpanded ? 'left-64' : 'left-16'
         }`}
       >
@@ -65,14 +65,16 @@ function SidebarItem({
   icon,
   text,
   isExpanded,
+  route
 }: {
   icon: React.ReactNode
   text: string
   isExpanded: boolean
+  route: string
 }) {
   return (
     <Link
-      href={"/"}
+      href={route}
       className={`flex items-center w-full ${isExpanded ? 'px-4 justify-start' : 'px-2 justify-center'}  hover:bg-green-500/50 rounded-xl p-2`}
     >
       <div>{icon}</div>

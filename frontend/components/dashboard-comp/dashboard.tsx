@@ -23,6 +23,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
+import { useAuth } from "@/context/AuthContext"
 
 export function DashboardComponent() {
   const [projects, setProjects] = useState([
@@ -44,6 +45,7 @@ export function DashboardComponent() {
   })
   const [isOpen, setIsOpen] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const {user, logout} = useAuth()
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -68,29 +70,23 @@ export function DashboardComponent() {
   }
 
   return (
-    <div className="container mx-auto mt-16 p-6">
+    <div className="container mx-auto mt-16 p-6 max-w-7xl">
       <header className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-5xl font-bold">Project Dashboard</h1>
+          <h1 className="text-5xl font-bold">Welcome back {user?.username}! </h1>
           <p className="text-2xl text-black mt-2">
-            Welcome back! Here's an overview of your projects.
+            Here's an overview of your projects.
           </p>
+          <Button onClick={()=>{logout()}} className="bg-red-500 hover:bg-red-600 font-bold text-xl my-2">logout</Button>
         </div>
-        <Image
-          src="/placeholder.svg?height=40&width=40"
-          alt="User Avatar"
-          width={40}
-          height={40}
-          className="rounded-full"
-        />
       </header>
 
       <main>
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-semibold">Your Projects</h2>
-          <Dialog open={isOpen} onOpenChange={setIsOpen}>
+          <h2 className="text-2xl font-semibold">Your project workspace (comming soon !)</h2>
+          {/* <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
-              <Button className="text-black bg-purple-600/30 hover:bg-purple-600/40">
+              <Button className="text-black bg-green-600/30 hover:bg-green-600/40">
                 <PlusCircle className="mr-2 h-4 w-4" />
                 Add Project
               </Button>
@@ -149,7 +145,7 @@ export function DashboardComponent() {
                     <Button
                       type="button"
                       variant="outline"
-                      className="bg-purple-600/40 hover:bg-purple-600/50"
+                      className="bg-green-600/40 hover:bg-green-600/50"
                       onClick={() => fileInputRef.current?.click()}
                     >
                       <Upload className="mr-2 h-4 w-4" />
@@ -160,17 +156,17 @@ export function DashboardComponent() {
                     </span>
                   </div>
                 </div>
-                <Button type="submit" className="text-black w-full bg-purple-600/40 hover:bg-purple-600/50">Add Project</Button>
+                <Button type="submit" className="text-black w-full bg-green-600/40 hover:bg-green-600/50">Add Project</Button>
               </form>
             </DialogContent>
-          </Dialog>
+          </Dialog> */}
         </div>
 
-        <div className="flex flex-wrap gap-6">
+        {/* <div className="flex flex-wrap gap-6">
           {projects.map((project) => (
             <Card
               key={project.id}
-              className="w-full md:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] shadow-md bg-purple-600/10"
+              className="w-full md:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] shadow-md bg-green-600/10"
             >
               <CardHeader>
                 <CardTitle className="text-lg font-medium">
@@ -182,7 +178,7 @@ export function DashboardComponent() {
                 <div className="flex mt-4">
                   <Button
                     variant="outline"
-                    className="flex-1 mr-2 bg-purple-600/20 hover:bg-purple-600/30"
+                    className="flex-1 mr-2 bg-green-600/20 hover:bg-green-600/30"
                     aria-label={`Enter ${project.name}`}
                   >
                     <Pencil className="mr-2 h-4 w-4" />
@@ -190,7 +186,7 @@ export function DashboardComponent() {
                   </Button>
                   <Button
                     variant="outline"
-                    className="flex-1 ml-2 bg-purple-600/20 hover:bg-purple-600/30"
+                    className="flex-1 ml-2 bg-green-600/20 hover:bg-green-600/30"
                     aria-label={`Delete ${project.name}`}
                   >
                     <Trash2 className="mr-2 h-4 w-4" />
@@ -200,7 +196,7 @@ export function DashboardComponent() {
               </CardContent>
             </Card>
           ))}
-        </div>
+        </div> */}
       </main>
     </div>
   )

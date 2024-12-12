@@ -253,7 +253,7 @@ function ResourceCard({ title, description, url, icon: Icon }) {
 export function RoadmapGuide() {
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold">Chatbot Development Roadmap</h2>
+      <h2 className="text-2xl font-bold text-black">Chatbot Development Roadmap</h2>
       {steps.map((step, index) => (
         <Card key={index}>
           <CardHeader>

@@ -3,10 +3,11 @@
 import Navbar from "@/components/global-comp/navbar";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useContext, useState } from "react";
-import AuthContext from "@/context/AuthContext";
+import { useContext, useEffect, useState } from "react";
+import AuthContext, { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 interface AuthContextType {
     user: any;
@@ -18,6 +19,8 @@ const Login = () => {
   const authContext = useContext(AuthContext);
   const [loading, setLoading] = useState(false)
   const [loginMessage, setLoginMessage] = useState("")
+  const router = useRouter()
+  const {user} = useAuth()
 
   if (!authContext) {
     throw new Error("AuthContext not provided. Make sure AuthProvider wraps the Login component.");
@@ -32,11 +35,17 @@ const Login = () => {
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
     const response = await login(email, password);
-    if (response?.error) {
-      setLoginMessage(response?.error)
+    if (response?.message) {
+      setLoginMessage(response.message)
     }
     setLoading(false)
   };
+
+  useEffect(() => {
+    if (user) {
+      router.push("/dashboard")
+    }
+  }, [user])
 
   return (
     <div className="h-[100vh] flex justify-center items-center">
