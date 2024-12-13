@@ -9,10 +9,10 @@ import os
 
 load_dotenv()
 
-SMTP_SERVER = os.getenv("SMTP_SERVER")
-SMTP_PORT = os.getenv("SMTP_PORT")
-EMAIL_ADDRESS = os.getenv("EMAIL_ADDRESS")
-EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
+SMTP_SERVER = os.getenv("SMTP_SERVER", "")
+SMTP_PORT = os.getenv("SMTP_PORT", "")
+EMAIL_ADDRESS = os.getenv("EMAIL_ADDRESS", "")
+EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD", "").encode("ascii", "ignore").decode("ascii").strip()
 
 # Pydantic model for form data
 class ContactForm(BaseModel):
