@@ -13,13 +13,23 @@ export default function ContactForm() {
   const [isSubmitted, setIsSubmitted] = useState(false)
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    setIsSubmitting(true)
-    // Simulate form submission
-    await new Promise(resolve => setTimeout(resolve, 2000))
-    setIsSubmitting(false)
-    setIsSubmitted(true)
-  }
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    console.log(formData)
+  
+    const response = await fetch('http://127.0.0.1:8000/contact/submit', {
+      method: 'POST',
+      body: formData,
+    });
+  
+    const result = await response.json();
+    if (result.success) {
+      setIsSubmitted(true)
+    } else {
+      alert('Something went wrong.');
+    }
+  };
+  
 
   return (
     <section id='contact' className="w-[90%] mb-32 mx-auto rounded-2xl py-12 bg-none">
@@ -38,7 +48,7 @@ export default function ContactForm() {
           <div className="rounded-lg bg-none text-card-foreground shadow-xl overflow-hidden">
             <div className="md:grid md:grid-cols-2">
               {/* Left Column - Form */}
-              <div className="bg-white/30 backdrop-blur-sm p-12 sm:p-12">
+              <div className="bg-white/30 backdrop-blur-sm p-12 sm:p-12 lg:min-h-[550px]">
                 <h3 className="text-2xl font-semibold leading-none tracking-tight mb-4">Send Us a Message</h3>
                 {isSubmitted ? (
                   <div className="flex flex-col items-center space-y-4 h-full justify-center">
@@ -51,20 +61,20 @@ export default function ContactForm() {
                     <div className="space-y-2">
                       <label htmlFor="name" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Name</label>
                       <div className="relative">
-                        <Input id="name" placeholder="Your full name" required className="pl-10 bg-white/30" />
+                        <Input name='name' id="name" placeholder="Your full name" required className="pl-10 bg-white/30" />
                         <User className="absolute left-3 top-2.5 h-5 w-5 text-zinc-400" />
                       </div>
                     </div>
                     <div className="space-y-2">
                       <label htmlFor="email" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Email</label>
                       <div className="relative">
-                        <Input id="email" placeholder="you@example.com" type="email" required className="pl-10 bg-white/30" />
+                        <Input name="email" id="email" placeholder="you@example.com" type="email" required className="pl-10 bg-white/30" />
                         <Mail className="absolute left-3 top-2.5 h-5 w-5 text-zinc-400" />
                       </div>
                     </div>
                     <div className="space-y-2">
                       <label htmlFor="message" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Message</label>
-                      <Textarea id="message" placeholder="Your message here..." required className="min-h-[150px] bg-white/30" />
+                      <Textarea name='message' id="message" placeholder="Your message here..." required className="min-h-[150px] bg-white/30" />
                     </div>
                     <Button className="w-full bg-green-500 hover:bg-green-700" type="submit" disabled={isSubmitting}>
                       {isSubmitting ? (
@@ -86,9 +96,9 @@ export default function ContactForm() {
                 <Image
                   src={mail}
                   alt="Contact us"
-                  width={300}
-                  height={300}
-                  className="object-cover w-[70%] h-[70%] mx-auto"
+                  width={350}
+                  height={350}
+                  className="object-cover mx-auto"
                 />
                 <div className="absolute inset-0 bg-gradient-to-br from-green-300/60 to-green-400/60 mix-blend-overlay" />
                 <div className="absolute bottom-4 left-4 right-4 p-4 bg-white/40 backdrop-blur-sm rounded-lg shadow-lg">
