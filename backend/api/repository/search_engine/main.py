@@ -7,12 +7,15 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../.
 import openai
 import pandas as pd
 import api.repository.search_engine.utils as utils
-import api.repository.search_engine.constants as constants
 import api.repository.search_engine.test_data as test_data
 import nltk
-nltk.download("stopwords")
+from dotenv import load_dotenv
+import os
 
-openai.api_key = constants.OPENAI_API_KEY
+nltk.download("stopwords")
+load_dotenv()
+
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 from fastapi.encoders import jsonable_encoder
 

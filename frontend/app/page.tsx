@@ -4,7 +4,6 @@ import ContactForm from "@/components/home-comp/Contact-form";
 import { FeatureBriefs } from "@/components/home-comp/Feature-briefs";
 import { FeatureDescription } from "@/components/home-comp/Feature-description";
 import Hero from "@/components/home-comp/Hero";
-import { Problem } from "@/components/home-comp/Problem";
 import VisibilityDetector from "@/components/home-comp/visibility";
 
 export default function Home() {

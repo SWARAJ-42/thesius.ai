@@ -1,6 +1,11 @@
 from bs4 import BeautifulSoup
 import requests
-from api.repository.scrapeRelated.constants import BING_API_KEY
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+BING_API_KEY = os.getenv("BING_API_KEY")
 
 async def search_bing_for_pdf(query):
     headers = {"Ocp-Apim-Subscription-Key": BING_API_KEY}

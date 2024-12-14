@@ -1,4 +1,3 @@
-import api.repository.search_engine.constants as constants
 import requests
 import nltk
 from transformers import AutoTokenizer, AutoModel
@@ -12,7 +11,13 @@ from langchain_community.llms import OpenAI
 from IPython.display import display, Markdown
 import streamlit as st
 import re
+from dotenv import load_dotenv
+import os
 
+load_dotenv()
+
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+S2_KEY = os.getenv("S2_KEY")
 
 tokenizer = AutoTokenizer.from_pretrained("allenai/specter2_base")
 model = AutoModel.from_pretrained("allenai/specter2_base")
@@ -22,7 +27,7 @@ def search(query, limit=20, fields=["title", "abstract", "tldr", "venue", "year"
     # space between the  query to be removed and replaced with +
     query = query.replace(" ", "+")
     url = f'https://api.semanticscholar.org/graph/v1/paper/search?query={query}&limit={limit}&fields={",".join(fields)}'
-    headers = {"Accept": "*/*", "x-api-key": constants.S2_KEY}
+    headers = {"Accept": "*/*", "x-api-key": S2_KEY}
 
     response = requests.get(url, headers=headers)
     return response.json()
@@ -192,7 +197,7 @@ def answer_question(
         # Follow-up questions
         from openai import OpenAI
         from pydantic import BaseModel
-        client = OpenAI(api_key=constants.OPENAI_API_KEY)
+        client = OpenAI(api_key=OPENAI_API_KEY)
         class Followups(BaseModel):
             followup_questions: list[str]
         response_followup = client.beta.chat.completions.parse(
@@ -243,7 +248,7 @@ def get_langchain_response(docs, query, k=5):
     )
 
     chain = load_qa_with_sources_chain(
-        OpenAI(temperature=0, openai_api_key=constants.OPENAI_API_KEY),
+        OpenAI(temperature=0, openai_api_key=OPENAI_API_KEY),
         chain_type="map_reduce",
         return_intermediate_steps=True,
         question_prompt=QUESTION_PROMPT,
