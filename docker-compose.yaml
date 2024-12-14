@@ -5,7 +5,7 @@ services:
     build:
       context: ./backend
     env_file:
-      - ./backend/.env
+      - ./.env
     volumes:
       - ./backend/:/app
     ports:
@@ -15,9 +15,9 @@ services:
     build:
       context: ./frontend
     env_file:
-      - ./frontend/.env.local
+      - ./.env
     volumes:
-      - ./frontend:/app
+      - /app/node_modules
     ports:
       - "3000:3000"
     depends_on:
