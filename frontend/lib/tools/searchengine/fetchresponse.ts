@@ -39,7 +39,7 @@ export interface QueryResult {
 
 export const fetchQueryResult = async (query: string): Promise<QueryResult | null> => {
   try {
-    const response = await axios.post<QueryResult>('http://localhost:8000/searchpapers/get-results', { query });
+    const response = await axios.post<QueryResult>('http://localhost:8000/searchpapers/get-results', { query }, {withCredentials: true});
 
     if (response.data) {
       const queryData: QueryResult = {
