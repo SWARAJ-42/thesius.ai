@@ -1,27 +1,14 @@
 services:
   backend:
-    image: biswalswaraj88/thesiusai-backend:latest
+    image: biswalswaraj88/thesius-app:backend
     env_file:
       - .env
     ports:
       - "8000:8000"
-    deploy:
-      restart_policy:
-        condition: on-failure
 
   frontend:
-    image: biswalswaraj88/thesiusai-frontend:latest
+    image: biswalswaraj88/thesius-app:frontend
     env_file:
       - .env
     ports:
       - "80:3000"
-    deploy:
-      restart_policy:
-        condition: on-failure
-
-# Add this section to configure authentication for pulling private images
-x-credentials:
-  docker:
-    registry: "https://index.docker.io/"
-    username: "${DOCKER_USERNAME}" # Replace with actual username or use .env
-    password: "${DOCKER_PASSWORD}" # Replace with actual password or use .env
