@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Mail, MessageSquare, User, Send, CheckCircle } from "lucide-react"
 import mail from "@/assets/Home/ContactForm/envelope.png"
+import { BACKEND_URL } from '@/lib/constants';
 
 export default function ContactForm() {
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -17,7 +18,7 @@ export default function ContactForm() {
     const formData = new FormData(event.currentTarget);
     console.log(formData)
   
-    const response = await fetch('http://127.0.0.1:8000/contact/submit', {
+    const response = await fetch(`${BACKEND_URL}/contact/submit`, {
       method: 'POST',
       body: formData,
     });

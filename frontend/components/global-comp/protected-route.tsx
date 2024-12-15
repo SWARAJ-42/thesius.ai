@@ -5,6 +5,7 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import LoadingPage from "./loading-page";
 import { useAuth, User } from "@/context/AuthContext";
+import { BACKEND_URL } from "@/lib/constants";
 
 interface ProtectedRouteProps {
   children: ReactNode;
@@ -26,7 +27,7 @@ const ProtectedRoute = ({ children, route = true }: ProtectedRouteProps) => {
   useEffect(() => {
     const checkAuthorization = async () => {
       try {
-        const response = await axios.get<ProtectedAuthResponse>("http://localhost:8000/auth/protected", {
+        const response = await axios.get<ProtectedAuthResponse>(`${BACKEND_URL}/auth/protected`, {
           withCredentials: true,
         });
         if (response.status === 200) {

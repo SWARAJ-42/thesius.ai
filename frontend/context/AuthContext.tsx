@@ -3,6 +3,7 @@
 import React, { createContext, useState, ReactNode, Context, useContext } from 'react';
 import axios from 'axios'; // Import axios directly
 import { useRouter } from 'next/navigation';
+import { BACKEND_URL } from '@/lib/constants';
 
 export interface User {
   id: string;
@@ -38,7 +39,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     try {
       // Specify the response type directly within the axios call
       const response = await axios.post<AuthResponse>(
-        'http://localhost:8000/auth/token',
+        `${BACKEND_URL}/auth/token`,
         new URLSearchParams({
           username,
           password
@@ -62,7 +63,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const logout = async () => {
     try {
-      await axios.post('http://localhost:8000/auth/logout', {}, { withCredentials: true });
+      await axios.post(`${BACKEND_URL}/auth/logout`, {}, { withCredentials: true });
       delete axios.defaults.headers.common['Authorization'];
       // localStorage.removeItem('token');
       setUser(null);

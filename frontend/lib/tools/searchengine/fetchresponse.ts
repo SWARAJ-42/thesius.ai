@@ -1,3 +1,4 @@
+import { BACKEND_URL } from '@/lib/constants';
 import axios from 'axios';
 
 export interface OpenAccessPdf {
@@ -39,7 +40,7 @@ export interface QueryResult {
 
 export const fetchQueryResult = async (query: string): Promise<QueryResult | null> => {
   try {
-    const response = await axios.post<QueryResult>('http://localhost:8000/searchpapers/get-results', { query }, {withCredentials: true});
+    const response = await axios.post<QueryResult>(`${BACKEND_URL}/searchpapers/get-results`, { query }, {withCredentials: true});
 
     if (response.data) {
       const queryData: QueryResult = {
