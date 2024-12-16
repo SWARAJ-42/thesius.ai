@@ -11,9 +11,8 @@ services:
       - ./.env
     volumes:
       - ./backend/:/app
-    ports:
-      - "8000:8000"
-    restart: always
+    expose:  # Backend is now internal only
+      - "8000"
 
   frontend:
     build:

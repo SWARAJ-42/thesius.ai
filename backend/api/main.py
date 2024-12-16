@@ -9,10 +9,14 @@ Base.metadata.create_all(bind=engine)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=['http://localhost'],
+    allow_origins=[
+        "http://localhost",
+        "http://<YOUR_CUSTOM_DNS>",
+        "http://<YOUR_CUSTOM_IP>"
+    ],  # Add custom DNS and IP
     allow_credentials=True,
-    allow_methods=['*'],
-    allow_headers=['*'],
+    allow_methods=["*"],  # Restrict if needed
+    allow_headers=["*"],  # Restrict if needed
 )
 
 @app.get("/")
