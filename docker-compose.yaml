@@ -5,21 +5,24 @@ services:
     build:
       context: ./backend
       platforms:
-        - linux/arm64
         - linux/amd64
+        - linux/arm64
+    image: biswalswaraj88/thesius-app:backend
     env_file:
       - ./.env
     volumes:
       - ./backend/:/app
-    expose:  # Backend is now internal only
+    expose:
       - "8000"
+    restart: always
 
   frontend:
     build:
       context: ./frontend
       platforms:
-        - linux/arm64
         - linux/amd64
+        - linux/arm64
+    image: biswalswaraj88/thesius-app:frontend
     env_file:
       - ./.env
     volumes:
