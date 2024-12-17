@@ -2,10 +2,10 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from api.routers import auth, search_engine, paper_details, contact
 from api.database import Base, engine
-from dotenv import load_env
+from dotenv import load_dotenv
 import os
 
-load_env()
+load_dotenv()
 
 app = FastAPI()
 

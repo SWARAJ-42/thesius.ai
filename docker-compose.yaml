@@ -12,8 +12,8 @@ services:
       - ./.env
     volumes:
       - ./backend/:/app
-    expose:
-      - "8000"
+    ports:
+      - "8000:8000"
     restart: always
 
   frontend:
