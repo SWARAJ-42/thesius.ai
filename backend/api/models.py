@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Table
+from sqlalchemy import Column, Integer, String, ForeignKey, Table, Boolean
 from sqlalchemy.orm import relationship
 from .database import Base
 
@@ -9,3 +9,4 @@ class User(Base):
     fullname = Column(String, unique=True, index=True)
     email = Column(String, unique=True, index=True)
     hashed_password = Column(String)
+    is_verified = Column(Boolean, default=False)
