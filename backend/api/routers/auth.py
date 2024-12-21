@@ -37,8 +37,10 @@ class Token(BaseModel):
 def authenticate_user(email: str, password: str, db):
     user = db.query(User).filter(User.email == email).first()
     if not user:
+        print("user doesnot exist")
         return False
     if not bcrypt_context.verify(password, user.hashed_password):
+        print("password incorrect")
         return False
     return user
 
@@ -96,10 +98,13 @@ async def verify_email(token: str, db: db_dependency):
 @router.post('/token', response_model=Token)
 async def login_for_access_token(response: Response, form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
                                  db: db_dependency):
+    print(form_data.username, form_data.password)
     user = authenticate_user(form_data.username, form_data.password, db)
     if not user: 
+        print("Could not validate user")
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Could not validate user")
     if not user.is_verified:
+        print("verify your email to login")
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="verify your email to login")
     token = create_access_token(user.username, user.id, timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES))
     response.set_cookie(key="auth_token", value=f"{token}", httponly=True, max_age=ACCESS_TOKEN_EXPIRE_MINUTES*60)

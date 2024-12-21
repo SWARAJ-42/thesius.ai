@@ -19,14 +19,24 @@ import {
 } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
-import { Send, Trash2, X } from "lucide-react";
+import { LoaderIcon, Send, Trash2, X } from "lucide-react";
+import { Loader2 } from "lucide-react"; // Import the loading icon
 import { RenderedPapersProp } from "./DiveDeeper";
 import { useChat } from "ai/react";
 import { BsSend } from "react-icons/bs";
 import { useRouter } from "next/navigation";
 import { PaperCardProps } from "../../common-comp/paper-card";
 import { PaperData } from "@/lib/tools/searchengine/fetchresponse";
-import { askQuestionAboutSelectedPapers, deleteChatSession, sendRenderedPapers } from "@/lib/tools/searchengine/SendRagData";
+import {
+  askQuestionAboutSelectedPapers,
+  deleteChatSession,
+  sendRenderedPapers,
+} from "@/lib/tools/searchengine/SendRagData";
+import ReactMarkdown from "react-markdown";
+import rehypeKatex from "rehype-katex";
+import remarkMath from "remark-math";
+import "katex/dist/katex.min.css"; // Import Katex CSS
+import "./styles.css"
 
 type Message = {
   role: "user" | "bot";
@@ -36,24 +46,22 @@ type Message = {
 export default function MultiAbstractChatModal({
   renderedPapers,
 }: RenderedPapersProp) {
-  const { stop, isLoading } =
-    useChat();
+  const { stop, isLoading } = useChat();
   const [messages, setMessages] = useState<Message[]>([
-    { role: "user", content: "Hello!" },
     { role: "bot", content: "Hi there! How can I assist you?" },
   ]);
-  const [input, setInput] = useState("")
+  const [input, setInput] = useState("");
   const router = useRouter();
-  const [chatSetupLoading, setchatsetupLoading] = useState(false)
-  const [isOpen, setIsOpen] = useState(false)
+  const [chatSetupLoading, setchatsetupLoading] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
-  const openDialog = () => setIsOpen(true)
-  const closeDialog = () => setIsOpen(false)
+  const openDialog = () => setIsOpen(true);
+  const closeDialog = () => setIsOpen(false);
   const handleCloseClick = () => {
-    console.log("Dialog closed by clicking the close button")
-    deleteChatSession()
-    closeDialog()
-  }
+    console.log("Dialog closed by clicking the close button");
+    deleteChatSession();
+    closeDialog();
+  };
 
   const addMessage = (role: "user" | "bot", content: string) => {
     setMessages((prevMessages: Message[]) => [
@@ -65,7 +73,7 @@ export default function MultiAbstractChatModal({
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInput(event.target.value); // Update the input state
   };
-  
+
   const handleClearChat = () => {
     setMessages([]);
   };
@@ -76,26 +84,26 @@ export default function MultiAbstractChatModal({
       query: paper.title,
       query_answer: "",
     };
-    deleteChatSession()
+    deleteChatSession();
     const paperData = encodeURIComponent(JSON.stringify(parcel)); // Encode the paper data
     router.push(`/paperdetails/${paper.paperId}?paperData=${paperData}`); // Navigate with query parameter
   };
 
   const handleSendRagData = async () => {
     try {
-      setchatsetupLoading(true)
+      setchatsetupLoading(true);
       await sendRenderedPapers({
         renderedPapers: renderedPapers,
-        create_new_chat_instance: true
+        create_new_chat_instance: true,
       });
-      setchatsetupLoading(false)
-      openDialog()
-      console.log('Data sent successfully!');
+      setchatsetupLoading(false);
+      openDialog();
+      console.log("Data sent successfully!");
     } catch (error) {
-      closeDialog()
-      console.error('Failed to send data:', error);
+      closeDialog();
+      console.error("Failed to send data:", error);
     }
-  }
+  };
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault(); // Prevent default form submission
@@ -108,12 +116,12 @@ export default function MultiAbstractChatModal({
     ]);
 
     // Clear the input field
-    const query = input
+    const query = input;
     setInput("");
 
     // Optionally, handle bot response logic here
-    const response = await askQuestionAboutSelectedPapers({query: query})
-    if (response){
+    const response = await askQuestionAboutSelectedPapers({ query: query });
+    if (response) {
       setMessages((prevMessages) => [
         ...prevMessages,
         { role: "bot", content: response.rag_response },
@@ -123,8 +131,17 @@ export default function MultiAbstractChatModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <Button onClick={()=>{handleSendRagData()}} disabled={renderedPapers.length == 0}>
-        Chat with the selected results
+      <Button
+        onClick={() => {
+          handleSendRagData();
+        }}
+        disabled={renderedPapers.length == 0 || chatSetupLoading}
+      >
+        {!chatSetupLoading ? (
+          "Chat with the selected results"
+        ) : (
+          <Loader2 className="h-4 w-4 animate-spin" />
+        )}
       </Button>
       <DialogContent className="max-w-5xl w-[80vw] h-[80vh] max-h-[900px] overflow-hidden p-0">
         <DialogHeader className="p-6 pb-0">
@@ -147,7 +164,13 @@ export default function MultiAbstractChatModal({
                         : "bg-gray-200"
                     }`}
                   >
-                    {message.content}
+                    <ReactMarkdown
+                      className="markdown text-sm"
+                      remarkPlugins={[remarkMath]}
+                      rehypePlugins={[rehypeKatex]}
+                    >
+                      {message.content}
+                    </ReactMarkdown>
                   </span>
                 </div>
               ))}
@@ -227,14 +250,14 @@ export default function MultiAbstractChatModal({
           </ScrollArea>
         </div>
         <DialogClose asChild>
-            <Button
-              size="icon"
-              className="z-20 absolute right-4 top-4 rounded-md bg-gray-200 hover:bg-gray-300"
-              onClick={handleCloseClick}
-            >
-              <X className="h-4 w-4 text-black" />
-            </Button>
-          </DialogClose>
+          <Button
+            size="icon"
+            className="z-20 absolute right-4 top-4 rounded-md bg-gray-200 hover:bg-gray-300"
+            onClick={handleCloseClick}
+          >
+            <X className="h-4 w-4 text-black" />
+          </Button>
+        </DialogClose>
       </DialogContent>
     </Dialog>
   );

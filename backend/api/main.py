@@ -12,6 +12,7 @@ app = FastAPI()
 Base.metadata.create_all(bind=engine)
 
 allowed_origins = os.getenv("ALLOWED_ORIGINS", "").split(",")
+print(allowed_origins)
 
 app.add_middleware(
     CORSMiddleware,
