@@ -34,6 +34,7 @@ const RegisterForm = () => {
         password: password,
       });
       router.push("/auth/login")
+      alert("Registration successfull, Before you login please check your mail for a verification link")
     } catch(error) {
       console.error('Failed to register user:', error);
     }

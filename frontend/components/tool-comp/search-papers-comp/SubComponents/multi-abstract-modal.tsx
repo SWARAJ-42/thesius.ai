@@ -25,6 +25,7 @@ import { BsSend } from "react-icons/bs";
 import { useRouter } from "next/navigation";
 import { PaperCardProps } from "../../common-comp/paper-card";
 import { PaperData } from "@/lib/tools/searchengine/fetchresponse";
+import { sendRenderedPapers } from "@/lib/tools/searchengine/SendRagData";
 
 export default function MultiAbstractChatModal({
   renderedPapers,
@@ -47,10 +48,22 @@ export default function MultiAbstractChatModal({
     router.push(`/paperdetails/${paper.paperId}?paperData=${paperData}`); // Navigate with query parameter
   };
 
+  const handleSendRagData = async () => {
+    try {
+      await sendRenderedPapers({
+        renderedPapers: renderedPapers,
+        create_new_chat_instance: true
+      });
+      console.log('Data sent successfully!');
+    } catch (error) {
+      console.error('Failed to send data:', error);
+    }
+  }
+
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button disabled={renderedPapers.length == 0}>
+        <Button onClick={()=>{handleSendRagData()}} disabled={renderedPapers.length == 0}>
           Chat with the selected results
         </Button>
       </DialogTrigger>
