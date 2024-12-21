@@ -26,23 +26,13 @@ import { BsSend } from "react-icons/bs";
 import { useRouter } from "next/navigation";
 import { PaperCardProps } from "../../common-comp/paper-card";
 import { PaperData } from "@/lib/tools/searchengine/fetchresponse";
-import { askQuestionAboutSelectedPapers, deleteChatSession, sendRenderedPapers } from "@/lib/tools/searchengine/SendRagData";
-
-type Message = {
-  role: "user" | "bot";
-  content: string;
-};
+import { deleteChatSession, sendRenderedPapers } from "@/lib/tools/searchengine/SendRagData";
 
 export default function MultiAbstractChatModal({
   renderedPapers,
 }: RenderedPapersProp) {
-  const { stop, isLoading } =
+  const { messages, input, stop, isLoading, setMessages, handleInputChange, handleSubmit } =
     useChat();
-  const [messages, setMessages] = useState<Message[]>([
-    { role: "user", content: "Hello!" },
-    { role: "bot", content: "Hi there! How can I assist you?" },
-  ]);
-  const [input, setInput] = useState("")
   const router = useRouter();
   const [chatSetupLoading, setchatsetupLoading] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
@@ -55,17 +45,6 @@ export default function MultiAbstractChatModal({
     closeDialog()
   }
 
-  const addMessage = (role: "user" | "bot", content: string) => {
-    setMessages((prevMessages: Message[]) => [
-      ...prevMessages,
-      { role, content },
-    ]);
-  };
-
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setInput(event.target.value); // Update the input state
-  };
-  
   const handleClearChat = () => {
     setMessages([]);
   };
@@ -96,30 +75,6 @@ export default function MultiAbstractChatModal({
       console.error('Failed to send data:', error);
     }
   }
-
-  const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault(); // Prevent default form submission
-    if (input.trim() === "") return; // Ignore empty submissions
-
-    // Add the user's query to the message list
-    setMessages((prevMessages) => [
-      ...prevMessages,
-      { role: "user", content: input.trim() },
-    ]);
-
-    // Clear the input field
-    const query = input
-    setInput("");
-
-    // Optionally, handle bot response logic here
-    const response = await askQuestionAboutSelectedPapers({query: query})
-    if (response){
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        { role: "bot", content: response.rag_response },
-      ]);
-    }
-  };
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>

@@ -21,3 +21,9 @@ torch --index-url https://download.pytorch.org/whl/cu118
 torchvision --index-url https://download.pytorch.org/whl/cu118
 torchaudio --index-url https://download.pytorch.org/whl/cu118
 itsdangerous==2.2.0
+pinecone-notebooks==0.1.1
+langchain-text-splitters==0.3.2
+langchain-openai==0.2.13
+langchain-pinecone==0.2.0
+pinecone-client==5.0.1
+pinecone[grpc]==5.3.1
