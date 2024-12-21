@@ -21,7 +21,7 @@ router = APIRouter(
 
 SECRET_KEY = os.getenv("AUTH_SECRET_KEY")
 ALGORITHM = os.getenv("AUTH_ALGORITHM")
-ACCESS_TOKEN_EXPIRE_MINUTES = 20
+ACCESS_TOKEN_EXPIRE_MINUTES = 1440
 
 class UserCreateRequest(BaseModel):
     username: str
@@ -63,7 +63,7 @@ async def create_user(db: db_dependency, create_user_request: UserCreateRequest)
     token = generate_token(create_user_request.email)
     await send_verification_email(create_user_request.email, token)
 
-    return {"message": "Registration successful, Before you login please check your mail for a verification link", "status_code": status.HTTP_201_CREATED}
+    return {"message": "Registration successfull, Before you login please check your mail for a verification link", "status_code": status.HTTP_201_CREATED}
 
 from fastapi.responses import RedirectResponse
 
