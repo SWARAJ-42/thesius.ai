@@ -6,7 +6,7 @@ services:
       context: ./backend
       platforms:
         - linux/amd64
-        - linux/arm64
+        # - linux/arm64
     image: biswalswaraj88/thesius-app:backend
     env_file:
       - ./.env
@@ -14,6 +14,8 @@ services:
       - ./backend/:/app
     ports:
       - "8000:8000"
+    depends_on:
+      - redis
     restart: always
 
   frontend:
@@ -21,7 +23,7 @@ services:
       context: ./frontend
       platforms:
         - linux/amd64
-        - linux/arm64
+        # - linux/arm64
     image: biswalswaraj88/thesius-app:frontend
     env_file:
       - ./.env
@@ -35,3 +37,7 @@ services:
     image: redis/redis-stack:latest
     ports:
       - "6379:6379"
+    environment:
+      - REDIS_PASSWORD=jbfiu23fb9d23d2323d2if4h
+    command: ["redis-server", "--requirepass", "jbfiu23fb9d23d2323d2if4h"]
+    restart: always

@@ -12,12 +12,12 @@ from contextlib import asynccontextmanager
 load_dotenv()
 
 # Initialize Redis connection
-redis_instance = Redis(host="localhost", port=6379, decode_responses=True)
+redis_instance = Redis(host="localhost", port=6379, password=os.getenv("REDIS_PASSWORD"), decode_responses=True)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup logic
-    FastAPICache.init(RedisBackend(redis_instance), prefix="fastapi-cache")
+    FastAPICache.init(RedisBackend(redis_instance),  prefix="fastapi-cache")
     yield
     # Shutdown logic (if needed)
     redis_instance.close()

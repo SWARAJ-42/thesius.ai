@@ -1,8 +1,12 @@
 from redis.commands.json.path import Path
 from redis import Redis
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Initialize Redis connection
-redis_instance = Redis(host="localhost", port=6379, decode_responses=True)
+redis_instance = Redis(host="localhost", port=6379, password=os.getenv("REDIS_PASSWORD"), decode_responses=True)
 
 
 def store_json(key: str, json_data: dict):
