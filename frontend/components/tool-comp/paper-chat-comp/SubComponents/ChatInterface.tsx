@@ -15,7 +15,7 @@ import "katex/dist/katex.min.css"; // Import Katex CSS
 import { useSinglePaperChatState } from "@/context/viewerContext";
 
 export default function ChatPage() {
-  const { messages, input, stop, isLoading, setInput, handleInputChange, handleSubmit } =
+  const { messages, setMessages, input, stop, isLoading, setInput, handleInputChange, handleSubmit } =
     useChat();
   const [files, setFiles] = useState<FileList | undefined>(undefined);
   const fileInputRef = useRef<HTMLInputElement>(null);

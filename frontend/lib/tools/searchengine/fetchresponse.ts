@@ -34,6 +34,7 @@ export interface PaperData {
 
 export interface QueryResult {
   data: PaperData[];
+  query: string
   final_answer: string;
   followup_questions: string[]
 }
@@ -41,6 +42,40 @@ export interface QueryResult {
 export const fetchQueryResult = async (query: string): Promise<QueryResult | null> => {
   try {
     const response = await axios.post<QueryResult>(`${BACKEND_URL}/searchpapers/get-results`, { query }, {withCredentials: true});
+
+    if (response.data) {
+      const queryData: QueryResult = {
+        ...response.data,
+        data: response.data.data.map((paper) => ({
+          paperId: paper.paperId,
+          title: paper.title,
+          abstract: paper.abstract,
+          venue: paper.venue,
+          year: paper.year,
+          citationCount: Number(paper.citationCount),
+          influentialCitationCount: Number(paper.influentialCitationCount),
+          isOpenAccess: paper.isOpenAccess === 'True' || paper.isOpenAccess === true,
+          openAccessPdf: typeof paper.openAccessPdf === 'string' ? safeJsonParseAndCheck<OpenAccessPdf>(paper.openAccessPdf, isOpenAccessPdf) : paper.openAccessPdf,
+          fieldsOfStudy: Array.isArray(paper.fieldsOfStudy) ? paper.fieldsOfStudy : safeJsonParse(paper.fieldsOfStudy) ?? [],
+          tldr: typeof paper.tldr === 'string' ? safeJsonParseAndCheck<Tldr>(paper.tldr, isTldr) : paper.tldr,
+          similarity: Number(paper.similarity),
+        })),
+      };
+
+      // console.log("Parsed Query Data:", queryData);
+      return queryData;
+    } else {
+      return null;
+    }
+  } catch (error) {
+    console.error("Error fetching query result:", error);
+    return null;
+  }
+};
+
+export const fetchQueryResultCache = async (): Promise<QueryResult | null> => {
+  try {
+    const response = await axios.get<QueryResult>(`${BACKEND_URL}/searchpapers/get-results-cache`, {withCredentials: true});
 
     if (response.data) {
       const queryData: QueryResult = {

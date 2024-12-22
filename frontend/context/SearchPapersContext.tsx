@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, ReactNode, useState, useContext } from "react";
-import { QueryResult } from "@/lib/tools/searchengine/fetchresponse";
+import { QueryResult } from "@/lib/tools/searchengine/fetchResponse";
 
 export interface SearchPaperPage {
   query: string;

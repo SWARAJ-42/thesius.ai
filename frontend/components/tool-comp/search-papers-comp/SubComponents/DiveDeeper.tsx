@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Search, ChevronRight } from "lucide-react";
-import { PaperData } from "@/lib/tools/searchengine/fetchresponse";
+import { PaperData } from "@/lib/tools/searchengine/fetchResponse";
 import MultiAbstractChatModal from "./multi-abstract-modal";
 
 interface PaperCheckBox {

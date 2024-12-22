@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Response
+from fastapi import APIRouter, HTTPException, Response, status
 from pydantic import BaseModel
 from api.repository.search_engine.main import get_query_result
 from api.repository.search_engine.schema import *
@@ -8,6 +8,9 @@ from api.repository.abstract_rag.utils.markdown_generator import organize_papers
 from api.repository.abstract_rag.utils.markdown_splitter import split_markdown_by_headers
 from api.repository.abstract_rag.utils.conv_rag_paper_data import convert_paper_data_to_dict
 from api.repository.abstract_rag.utils.vectorstore_operations import upload_to_pinecone_vectorstore, delete_namespace_from_index
+
+# Redis function imports
+from api.repository.redis_operations import redis_operations
 
 # Do all the RAG setup
 from api.repository.abstract_rag import rag_setup
@@ -29,7 +32,25 @@ async def get_query_result_endpoint(query: QueryModel, user: user_dependency):
     try:
         # Call the function and pass the query from the request body
         result = get_query_result(query.query)
+
+        # store the data in cache
+        redis_operations.store_json(key=f"search-result:{user['id']}", json_data=result)
+
         return result  # Returns the response in JSON format
+
+    except Exception as e:
+        # Handle any errors that may occur during the process
+        raise HTTPException(status_code=500, detail=str(e))
+    
+@router.get("/get-results-cache")
+async def get_search_result_cache(user: user_dependency):
+    try:
+        # store the data in cache
+        result = redis_operations.fetch_json(key=f"search-result:{user['id']}")
+
+        # print(result['data'])
+
+        return result['data']  # Returns the response in JSON format
 
     except Exception as e:
         # Handle any errors that may occur during the process
@@ -38,11 +59,7 @@ async def get_query_result_endpoint(query: QueryModel, user: user_dependency):
 @router.post("/send-rag-data")
 async def send_rag_data_endpoint(data: RagDataProps, user: user_dependency):
     try:
-        # Log the received data or handle as needed
-        # print(f"User {user['username']} sent data: {data.renderedPapers}")
-        # print(data.renderedPapers)
         converted_papers = convert_paper_data_to_dict(data.renderedPapers)
-        # print(converted_papers)
         markdown_document = organize_papers_to_markdown(converted_papers)
         md_header_splits = split_markdown_by_headers(markdown_document)
         docsearch = upload_to_pinecone_vectorstore(documents=md_header_splits, index_name=rag_setup.index_name, embeddings=rag_setup.embeddings, namespace=f"{user['id']}")

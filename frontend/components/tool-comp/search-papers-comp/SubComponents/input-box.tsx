@@ -4,7 +4,7 @@ import { useContext, useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Send } from "lucide-react";
-import { fetchQueryResult } from "@/lib/tools/searchengine/fetchresponse";
+import { fetchQueryResult } from "@/lib/tools/searchengine/fetchResponse";
 import SearchPaperContext, { SearchPaperPage, useSearchPaper } from "@/context/SearchPapersContext";
 import React from "react";
 

@@ -3,7 +3,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import SearchPaperContext, { SearchPaperPage, useSearchPaper } from "@/context/SearchPapersContext"
 import { Search } from "lucide-react"
 import { useContext } from "react"
-import { fetchQueryResult } from "@/lib/tools/searchengine/fetchresponse";
+import { fetchQueryResult } from "@/lib/tools/searchengine/fetchResponse";
 
 
 interface FollowUpQuestionsProps {

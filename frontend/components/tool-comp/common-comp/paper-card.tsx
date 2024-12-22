@@ -12,7 +12,7 @@ import {
   ChevronUp,
   BookOpen,
 } from "lucide-react";
-import { PaperData, isOpenAccessPdf } from "@/lib/tools/searchengine/fetchresponse";
+import { PaperData, isOpenAccessPdf } from "@/lib/tools/searchengine/fetchResponse";
 
 export interface PaperCardProps {
   paper: PaperData; 

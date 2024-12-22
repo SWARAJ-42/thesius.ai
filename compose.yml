@@ -12,3 +12,8 @@ services:
       - .env
     ports:
       - "80:3000"
+
+  redis:
+    image: redis/redis-stack:latest
+    ports:
+      - "6379:6379"

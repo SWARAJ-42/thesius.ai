@@ -26,7 +26,7 @@ import { useChat } from "ai/react";
 import { BsSend } from "react-icons/bs";
 import { useRouter } from "next/navigation";
 import { PaperCardProps } from "../../common-comp/paper-card";
-import { PaperData } from "@/lib/tools/searchengine/fetchresponse";
+import { PaperData } from "@/lib/tools/searchengine/fetchResponse";
 import {
   askQuestionAboutSelectedPapers,
   deleteChatSession,

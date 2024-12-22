@@ -1,7 +1,7 @@
 // TypeScript File: sendRequest.ts
 import { BACKEND_URL } from '@/lib/constants';
 import axios from 'axios';
-import { PaperData } from './fetchresponse';
+import { PaperData } from './fetchResponse';
 
 export interface RagDataProps {
   renderedPapers: PaperData[];

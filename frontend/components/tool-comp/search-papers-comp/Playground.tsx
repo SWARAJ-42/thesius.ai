@@ -1,11 +1,16 @@
 "use client";
 
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { InputBox } from "./SubComponents/input-box";
-import SearchPaperContext from "@/context/SearchPapersContext";
+import SearchPaperContext, {
+  SearchPaperPage,
+} from "@/context/SearchPapersContext";
 import { useSearchPaper } from "@/context/SearchPapersContext";
 import { PaperCard } from "../common-comp/paper-card";
-import { PaperData } from "@/lib/tools/searchengine/fetchresponse";
+import {
+  fetchQueryResultCache,
+  PaperData,
+} from "@/lib/tools/searchengine/fetchResponse";
 import FollowUpQuestionsCard from "../common-comp/follow-ups";
 import DiveDeeper from "./SubComponents/DiveDeeper";
 import { Sparkles, Search, Brain } from "lucide-react";
@@ -20,6 +25,29 @@ function Playground() {
     paperRetrievalQuery,
     setPaperRetrievalQuery,
   } = useSearchPaper(); // Use the hook
+
+  useEffect(() => {
+    const get_cache = async () => {
+      if (searchPaperPage) return; // Prevent fetching if data already exists
+      try {
+        const data = await fetchQueryResultCache();
+        console.log("Response data:", data);
+        if (data) {
+          const newSearchPaperPage: SearchPaperPage = {
+            query: data.query,
+            queryResult: data,
+            library: [],
+          };
+          setSearchPaperPage(newSearchPaperPage);
+          setPaperRetrievalQuery(data.query)
+        }
+      } catch (error) {
+        console.error("Error fetching response:", error);
+      }
+    };
+  
+    get_cache();
+  }, [paperRetrievalQuery, setSearchPaperPage]); // Remove `searchPaperPage` from the dependency array  
 
   if (!searchPaperPage) {
     if (paperRetrievalLoading) {
@@ -47,7 +75,7 @@ function Playground() {
   }
 
   const query = searchPaperPage.query;
-  const queryResult = searchPaperPage.queryResult;
+  const queryResult = searchPaperPage.queryResult
 
   return (
     <div className="mx-auto max-w-7xl w-full">
@@ -80,14 +108,18 @@ function Playground() {
         </div>
         <div className="my-1 rounded-xl">
           <div className="text-3xl my-2 font-bold text-gray-900 flex items-center">
-          <span className="mr-2">Results</span>
+            <span className="mr-2">Results</span>
             <span>
               <Search />
             </span>
           </div>
           <div className="pr-2 rounded-xl">
             {queryResult.data.map((paper: PaperData) => (
-              <PaperCard query={query} query_answer={queryResult.final_answer} paper={paper} />
+              <PaperCard
+                query={query}
+                query_answer={queryResult.final_answer}
+                paper={paper}
+              />
             ))}
           </div>
         </div>
