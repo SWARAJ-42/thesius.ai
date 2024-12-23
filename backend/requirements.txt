@@ -1,6 +1,7 @@
 fastapi==0.115.4
 fastapi-cli==0.0.5
 fastapi[standard]
+fastapi-mail==1.4.2
 fastapi-cache==0.1.0
 fastapi-cache2==0.2.2
 redis==4.6.0
@@ -18,7 +19,7 @@ scikit-learn==1.5.2
 ipython==8.29.0
 bs4==0.0.2
 openai==1.56.0
-email-validator==2.1.0
+email-validator==2.2.0
 uvicorn[standard]==0.32.1
 torch --index-url https://download.pytorch.org/whl/cu118
 torchvision --index-url https://download.pytorch.org/whl/cu118

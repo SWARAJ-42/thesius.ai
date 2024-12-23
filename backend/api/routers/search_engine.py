@@ -36,6 +36,8 @@ async def get_query_result_endpoint(query: QueryModel, user: user_dependency):
         # store the data in cache
         redis_operations.store_json(key=f"search-result:{user['id']}", json_data=result)
 
+        print("event after redis store operation")
+
         return result  # Returns the response in JSON format
 
     except Exception as e:
@@ -45,16 +47,24 @@ async def get_query_result_endpoint(query: QueryModel, user: user_dependency):
 @router.get("/get-results-cache")
 async def get_search_result_cache(user: user_dependency):
     try:
-        # store the data in cache
+        # Fetch the data from cache
         result = redis_operations.fetch_json(key=f"search-result:{user['id']}")
 
-        # print(result['data'])
+        if "error" in result:
+            # Handle cache error gracefully
+            print(f"Cache fetch error: {result['error']}")
+            raise HTTPException(status_code=404, detail=result["error"])
 
-        return result['data']  # Returns the response in JSON format
+        # Return cached data
+        return result["data"]
+
+    except HTTPException as http_exc:
+        # Raise HTTP exceptions directly
+        raise http_exc
 
     except Exception as e:
-        # Handle any errors that may occur during the process
-        raise HTTPException(status_code=500, detail=str(e))
+        # Handle any unexpected errors
+        raise HTTPException(status_code=500, detail=f"An unexpected error occurred: {str(e)}")
 
 @router.post("/send-rag-data")
 async def send_rag_data_endpoint(data: RagDataProps, user: user_dependency):

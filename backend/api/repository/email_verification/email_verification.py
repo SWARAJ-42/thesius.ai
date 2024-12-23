@@ -32,7 +32,7 @@ def generate_token(email: str):
     return serializer.dumps(email, salt="email-verification")
 
 async def send_verification_email(email: EmailStr, token: str):
-    if os.getenv("NODE_ENV") == "production":
+    if os.getenv("NEXTJS_ENV") == "production":
         verification_link = f"{os.getenv('BACKEND_SERVER')}/auth/verify-email?token={token}"
     else:
         verification_link = f"http://localhost:8000/auth/verify-email?token={token}"

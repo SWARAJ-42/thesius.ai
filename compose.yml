@@ -17,3 +17,7 @@ services:
     image: redis/redis-stack:latest
     ports:
       - "6379:6379"
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+    command: ["redis-stack-server", "--requirepass", "${REDIS_PASSWORD}"]
+    restart: always
