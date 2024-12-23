@@ -5,6 +5,8 @@ services:
       - .env
     ports:
       - "8000:8000"
+    depends_on:
+      - redis
 
   frontend:
     image: biswalswaraj88/thesius-app:frontend
