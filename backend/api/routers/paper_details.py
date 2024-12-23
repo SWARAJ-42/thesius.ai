@@ -18,22 +18,24 @@ router = APIRouter(
 async def get_paper_details(paper_id: str, user: user_dependency):
     url = f"{SEMANTIC_SCHOLAR_API_URL}/{paper_id}?fields=title,url"
 
-    # get cache
+    # Get cache
     result = redis_operations.fetch_json(key=f"paper_details:{user['id']}")
-
-    if result:
-        if paper_id == result["data"]["paperId"]:
-            print("cache is already present")
-            return result["data"]
     
+    if "error" not in result:
+        if paper_id == result["data"]["paperId"]:
+            print("Cache is already present")
+            return result["data"]
+    else:
+        print(f"Cache fetch error: {result['error']}")
+
     try:
-        print("cache is absent")
+        print("Cache is absent")
         async with httpx.AsyncClient() as client:
             response = await client.get(url)
             response.raise_for_status()
             paper_details = response.json()
 
-            # store in cache
+            # Store in cache
             redis_operations.store_json(key=f"paper_details:{user['id']}", json_data=paper_details)
 
             return paper_details

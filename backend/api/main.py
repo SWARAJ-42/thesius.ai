@@ -4,7 +4,7 @@ from api.routers import auth, search_engine, paper_details, contact
 from api.database import Base, engine
 from dotenv import load_dotenv
 import os
-from redis import Redis
+from redis import Redis, StrictRedis
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.redis import RedisBackend
 from contextlib import asynccontextmanager
@@ -12,7 +12,7 @@ from contextlib import asynccontextmanager
 load_dotenv()
 
 # Initialize Redis connection
-redis_instance = Redis(host="localhost", port=6379, password=os.getenv("REDIS_PASSWORD"), decode_responses=True)
+redis_instance = StrictRedis(host="redis", port=6379, password=os.getenv("REDIS_PASSWORD"), decode_responses=True)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):

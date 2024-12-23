@@ -72,7 +72,7 @@ from fastapi.responses import RedirectResponse
 @router.get("/verify-email")
 async def verify_email(token: str, db: db_dependency):
     frontend_domain = "http://localhost:3000"
-    if os.getenv("NODE_ENV") == "production":
+    if os.getenv("NEXTJS_ENV") == "production":
         frontend_domain = os.getenv("FRONTEND_SERVER")
 
     try:
