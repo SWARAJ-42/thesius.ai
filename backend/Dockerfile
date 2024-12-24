@@ -1,6 +1,7 @@
 # Use official Python image
 FROM python:3.11.8-slim
 
+
 # Set the working directory in the container
 WORKDIR /app
 
@@ -12,6 +13,9 @@ RUN pip install -r requirements.txt
 
 # Copy the rest of the backend code
 COPY . .
+
+# set arg
+ARG NEXTJS_ENV
 
 # Expose the backend port
 EXPOSE 8000

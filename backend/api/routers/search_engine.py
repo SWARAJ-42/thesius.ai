@@ -86,7 +86,7 @@ async def ask_question_about_selected_papers(query: QueryModel, user: user_depen
     try:
         print(query.query)
         retriever = CHAIN_MANAGER.user_chains[f"{user['id']}"]
-        answer = retriever.invoke({"input": "what is RAG ? and give relevant sources of your answers, just the paper title"})
+        answer = retriever.invoke({"input": query.query})
         return {"rag_response": answer['answer']}
     except Exception as e:
         # Handle any errors that may occur during the process
