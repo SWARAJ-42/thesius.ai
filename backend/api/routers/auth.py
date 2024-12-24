@@ -52,6 +52,20 @@ def create_access_token(email: str, user_id: int, expires_delta: timedelta):
 
 @router.post("/register", status_code=status.HTTP_201_CREATED)
 async def create_user(db: db_dependency, create_user_request: UserCreateRequest):
+    # Check if email already exists
+    existing_user = db.query(User).filter(User.email == create_user_request.email).first()
+    
+    if existing_user:
+        # Generate token and send email
+        token = generate_token(existing_user.email)
+        await send_verification_email(existing_user.email, token)
+
+        return {
+            "message": "Email already exists. A verification link has been resent to your email.",
+            "status_code": status.HTTP_200_OK
+        }
+
+    # Create new user if email doesn't exist
     create_user_model = User(
         username=create_user_request.username,
         fullname=create_user_request.fullname,
@@ -65,9 +79,10 @@ async def create_user(db: db_dependency, create_user_request: UserCreateRequest)
     token = generate_token(create_user_request.email)
     await send_verification_email(create_user_request.email, token)
 
-    return {"message": "Registration successfull, Before you login please check your mail for a verification link", "status_code": status.HTTP_201_CREATED}
-
-from fastapi.responses import RedirectResponse
+    return {
+        "message": "Registration successful. Please check your email for a verification link.",
+        "status_code": status.HTTP_201_CREATED
+    }
 
 @router.get("/verify-email")
 async def verify_email(token: str, db: db_dependency):

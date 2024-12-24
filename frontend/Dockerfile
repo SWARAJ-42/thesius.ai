@@ -1,6 +1,8 @@
 # Use Node.js for Next.js
 FROM node:18-alpine
 
+ARG NEXTJS_ENV
+
 # Set the working directory in the container
 WORKDIR /app
 
