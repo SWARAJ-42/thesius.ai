@@ -13,6 +13,7 @@ import streamlit as st
 import re
 from dotenv import load_dotenv
 import os
+from api.repository.search_engine import open_alex_lib
 
 load_dotenv()
 
@@ -35,12 +36,13 @@ def search(query, limit=20, fields=["title", "abstract", "tldr", "venue", "year"
 
 def get_papers(query):
     try:
-        search_results = search(preprocess_query(query))
-
-        if search_results['total']==0:
+        # search_results = search(preprocess_query(query))
+        search_results = open_alex_lib.fetch_openalex_data(query, 15)
+        search_results = open_alex_lib.convert_api_to_first_format(search_results)
+        if len(search_results)==0:
             print('No results found - Try another query')
         else:
-            df = pd.DataFrame(search_results['data']).dropna()
+            df = pd.DataFrame(search_results).dropna()
             return df
     except Exception as e:
         print(f"An error occurred while searching papers: {e}")

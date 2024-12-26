@@ -1,71 +1,60 @@
 // interfaces.ts
 
-export interface Author {
+export interface citationNormalizedPercentileSchema {
+    value: number;
+    is_in_top_1_percent: boolean;
+    is_in_top_10_percent: boolean;
+};
+
+export interface openAccessPdfSchema {
+    url: string | undefined;
+    status: string;
+};
+
+export interface authorSchema {
     authorId: string;
     name: string;
     url: string;
-}
+};
 
-export interface AuthorCitRef {
-    authorId: string;
-    name: string;
-}
-
-export interface Citation {
-    arxivId: string | null;
-    authors: AuthorCitRef[];
-    doi: string | null;
-    intent: string[];
-    isInfluential: boolean;
+export interface CitationorReference {
     paperId: string;
-    title: string;
     url: string;
+    title: string;
+    abstract: string | null;
     venue: string | null;
     year: number;
-}
-
-export interface Reference {
-    arxivId: string | null;
-    authors: AuthorCitRef[];
-    doi: string | null;
-    intent: string[];
-    isInfluential: boolean;
-    paperId: string;
-    title: string;
-    url: string;
-    venue: string | null;
-    year: number;
-}
+    referenceCount: number;
+    citationCount: number;
+    citation_normalized_percentile: citationNormalizedPercentileSchema;
+    isOpenAccess: boolean;
+    openAccessPdf: openAccessPdfSchema;
+    fieldsOfStudy: [string];
+    tldr: string | null;
+};
 
 export interface PaperResponse {
-    abstract: string;
-    arxivId: string | null;
-    authors: Author[];
-    citationVelocity: number;
-    citations: Citation[];
-    corpusId: number;
-    doi: string;
-    fieldsOfStudy: string[];
-    influentialCitationCount: number;
-    isOpenAccess: boolean;
-    is_open_access: boolean;
-    is_publisher_licensed: boolean;
-    isPublisherLicensed: boolean;
-    numCitedBy: number;
-    numCiting: number;
     paperId: string;
-    references: Reference[];
-    s2FieldsOfStudy: { category: string; source: string }[];
-    title: string;
-    topics: string[];
     url: string;
-    venue: string;
+    title: string;
+    abstract: string | null;
+    venue: string | null;
     year: number;
+    referenceCount: number;
+    citationCount: number;
+    citation_normalized_percentile: citationNormalizedPercentileSchema;
+    isOpenAccess: boolean;
+    openAccessPdf: openAccessPdfSchema;
+    fieldsOfStudy: [string];
+    tldr: string | null;
+    authors: authorSchema[];
+    citations: CitationorReference[];
+    references: CitationorReference[]
 }
 
 export interface RelatedPapersLink {
-    title: string,
-    description: string,
+    title: string;
+    description: string;
     url: string
 }
 

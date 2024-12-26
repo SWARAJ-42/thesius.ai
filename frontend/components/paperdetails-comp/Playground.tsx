@@ -38,7 +38,7 @@ import RelavantPapers from "./SubComponents/relevant-papers";
 import PaperRelevance from "./SubComponents/query-answer";
 import {
   AllRelatedPapersLinks,
-  Citation,
+  CitationorReference,
   PaperResponse,
 } from "@/lib/paperdetails/schema";
 // import { PaperData } from "@/lib/tools/searchengine/fetchresponse";
@@ -47,26 +47,26 @@ import {
   SearchRelatedPaperPdfLinks,
 } from "@/lib/paperdetails/fetchResponse";
 import Link from "next/link";
-import { PaperCardProps } from "../tool-comp/common-comp/paper-card";
+import { PaperCard, PaperCardProps, QueryProps } from "../tool-comp/common-comp/paper-card";
 import { Footer } from "../global-comp/Footer";
 import PaperDetailSkeleton from "../loading-skeletons/paper-detail-skeleton";
 
-interface CitationProps {
-  paper: Citation;
+interface CitationorReferenceProps {
+  paper: CitationorReference;
 }
 
-function PaperCardCiteRef({ paper }: CitationProps) {
+function PaperCardCiteRef({ paper }: CitationorReferenceProps) {
   return (
     <Card className="mb-4">
       <CardHeader>
         <CardTitle className="text-lg">{paper.title}</CardTitle>
-        <CardDescription className="overflow-y-scroll max-h-20">
+        {/* <CardDescription className="overflow-y-scroll max-h-20">
           {paper.authors.map((author, index) => (
             <Badge variant="secondary" className="m-1" key={author.authorId}>
               {author.name}
             </Badge>
           ))}
-        </CardDescription>
+        </CardDescription> */}
       </CardHeader>
       <CardContent>
         <p className="text-sm text-muted-foreground font-bold">{paper.year}</p>
@@ -75,7 +75,7 @@ function PaperCardCiteRef({ paper }: CitationProps) {
           href={`${paper.url}`}
           className="mt-2 text-blue-500 flex items-center"
         >
-          <span className="mx-1">View on Semantic scholar</span>
+          <span className="mx-1">View on Open Alex</span>
           <ExternalLink />
         </Link>
       </CardContent>
@@ -86,24 +86,24 @@ function PaperCardCiteRef({ paper }: CitationProps) {
 export default function Component() {
   const [activeTab, setActiveTab] = useState("references");
   const [isOpen, setIsOpen] = useState(false);
-  const [parsedPaperprops, setParsedPaperProps] =
-    useState<PaperCardProps | null>(null); // State to store parsedPaper
+  const [parsedQueryprops, setParsedQueryProps] =
+    useState<QueryProps | null>(null); // State to store mainPaperDetails
   const [mainPaperDetails, setMainPaper] = useState<PaperResponse | null>(null); // State to store fetched paper details
   const [relatedPapers, setRelatedPapers] =
     useState<AllRelatedPapersLinks | null>(null);
   const [paperDetailsLoading, setpaperDetailsLoading] = useState(true); // Loading state
   const searchParams = useSearchParams();
-  const paperData = searchParams.get("paperData");
+  const queryData = searchParams.get("queryData");
   const router = useRouter(); // initialize the router
 
   useEffect(() => {
     const getPaperDetails = async () => {
-      if (paperData) {
-        const parsed = JSON.parse(decodeURIComponent(paperData)); // Decode and parse
-        setParsedPaperProps(parsed); // Store parsedPaper in state
-        console.log("Parsed paper data:", parsed);
+      if (queryData) {
+        const parsed = JSON.parse(decodeURIComponent(queryData)); // Decode and parse
+        setParsedQueryProps(parsed); // Store parsedPaper in state
+        console.log("Parsed query data:", parsed);
 
-        const fetchedPaper = await fetchPaperDetails(parsed.paper.paperId); // Call fetch function
+        const fetchedPaper = await fetchPaperDetails(parsed.paperId); // Call fetch function
         const relatedPapers = await SearchRelatedPaperPdfLinks(parsed.query);
         if (fetchedPaper) {
           setMainPaper(fetchedPaper); // Store fetched data in state
@@ -120,7 +120,7 @@ export default function Component() {
       }
     };
     getPaperDetails();
-  }, [paperData]);
+  }, [queryData]);
 
   const handleButtonClick = (title: string, url: any) => {
     const parcel = {
@@ -131,8 +131,6 @@ export default function Component() {
     router.push(`/tool/paper-chat?paperData=${paperData}`); // Navigate with query parameter
   };
 
-  const parsedPaper = parsedPaperprops?.paper;
-
   if (paperDetailsLoading) {
     return (
       <div className="container mx-auto p-6">
@@ -141,12 +139,12 @@ export default function Component() {
     );
   }
 
-  if (mainPaperDetails && parsedPaper) {
+  if (mainPaperDetails && parsedQueryprops) {
     return (
       <div className="container mx-auto p-6">
         <PaperRelevance
-          query={parsedPaperprops.query}
-          answer={parsedPaperprops.query_answer}
+          query={parsedQueryprops.query}
+          answer={parsedQueryprops.query_answer}
         />
         <div className="flex">
           <div>
@@ -160,11 +158,11 @@ export default function Component() {
                     <div className="flex flex-wrap gap-6 text-sm text-muted-foreground">
                       <div className="flex items-center gap-2">
                         <MessageCircle className="w-4 h-4" />
-                        <span>{mainPaperDetails.numCitedBy} Citations</span>
+                        <span>{mainPaperDetails.citationCount} Citations</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <GitFork className="w-4 h-4" />
-                        <span>{mainPaperDetails.numCiting} References</span>
+                        <span>{mainPaperDetails.referenceCount} References</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <BookOpen className="w-4 h-4" />
@@ -185,17 +183,12 @@ export default function Component() {
                     <Badge variant="outline" className="text-sm">
                       {mainPaperDetails.venue}
                     </Badge>
-                    {mainPaperDetails.doi && (
-                      <Badge variant="outline" className="text-sm">
-                        DOI: {mainPaperDetails.doi}
-                      </Badge>
-                    )}
                   </div>
                 </CardContent>
                 <div className="flex justify-between items-center">
                   <Card
                     className={
-                      parsedPaper.isOpenAccess
+                      mainPaperDetails.isOpenAccess
                         ? "bg-green-100 m-4 flex-grow"
                         : "bg-red-100 m-4 flex-grow"
                     }
@@ -205,20 +198,20 @@ export default function Component() {
                         <BookOpen
                           size={16}
                           className={
-                            parsedPaper.isOpenAccess
+                            mainPaperDetails.isOpenAccess
                               ? "text-green-600"
                               : "text-red-600"
                           }
                         />
                         <span className="text-sm font-semibold">
-                          {parsedPaper.isOpenAccess
+                          {mainPaperDetails.isOpenAccess
                             ? "Research paper is accessible"
                             : "Research paper is not accessible"}
                         </span>
                       </div>
-                      {parsedPaper.isOpenAccess && (
+                      {mainPaperDetails.isOpenAccess && (
                         <a
-                          href={parsedPaper.openAccessPdf?.url}
+                          href={mainPaperDetails.openAccessPdf?.url}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="flex items-center gap-1 text-sm text-blue-600 hover:underline"
@@ -228,8 +221,8 @@ export default function Component() {
                       )}
                     </CardContent>
                   </Card>
-                  {parsedPaper.isOpenAccess ? (
-                    <Button onClick={()=>{handleButtonClick(mainPaperDetails.title, parsedPaper.openAccessPdf?.url)}} className="mx-4 w-1/3 font-bold rounded-xl p-5">Chat with this paper</Button>
+                  {mainPaperDetails.isOpenAccess ? (
+                    <Button onClick={()=>{handleButtonClick(mainPaperDetails.title, mainPaperDetails.openAccessPdf?.url)}} className="mx-4 w-1/3 font-bold rounded-xl p-5">Chat with this paper</Button>
                   ) : (
                     <></>
                   )}
@@ -278,19 +271,20 @@ export default function Component() {
               </Collapsible>
               <Tabs value={activeTab} onValueChange={setActiveTab}>
                 <TabsList className="grid w-full grid-cols-2">
-                  <TabsTrigger value="citations">
-                    Citations ({mainPaperDetails.citations.length})
-                  </TabsTrigger>
                   <TabsTrigger value="references">
                     References ({mainPaperDetails.references.length})
+                  </TabsTrigger>
+                  <TabsTrigger value="citations">
+                    Citations ( max 20 are displayed ) ({mainPaperDetails.citations.length})
                   </TabsTrigger>
                 </TabsList>
                 <TabsContent value="citations">
                   <ScrollArea className="h-[400px] rounded-md border p-4">
                     {mainPaperDetails.citations.map((citation) => (
-                      <PaperCardCiteRef
-                        key={citation.paperId}
+                      <PaperCard
                         paper={citation}
+                        query={parsedQueryprops.query}
+                        query_answer={parsedQueryprops.query_answer}
                       />
                     ))}
                   </ScrollArea>
@@ -298,10 +292,11 @@ export default function Component() {
                 <TabsContent value="references">
                   <ScrollArea className="h-[400px] rounded-md border p-4">
                     {mainPaperDetails.references.map((reference) => (
-                      <PaperCardCiteRef
-                        key={reference.paperId}
-                        paper={reference}
-                      />
+                      <PaperCard
+                      paper={reference}
+                      query={parsedQueryprops.query}
+                      query_answer={parsedQueryprops.query_answer}
+                    />
                     ))}
                   </ScrollArea>
                 </TabsContent>
