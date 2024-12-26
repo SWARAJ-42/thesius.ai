@@ -20,13 +20,13 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 from fastapi.encoders import jsonable_encoder
 
 def get_query_result(query):
-    df = pd.DataFrame(test_data.dummy_papers)
+    # df = pd.DataFrame(test_data.dummy_papers)
 
     '''temporarily commented for testing'''
-    # df = utils.get_papers(query)
+    df = utils.get_papers(query)
 
-    # if df is None:
-    #     return {'data': jsonable_encoder([{}]), 'final_answer': "Sorry, no result found"}
+    if df is None:
+        return {'data': jsonable_encoder([{}]), 'final_answer': "Sorry, no result found"}
     
     df, query = utils.rerank(df, query, column_name='title_abs')
     gpt_response = utils.answer_question(df=df, question=query, debug=False)

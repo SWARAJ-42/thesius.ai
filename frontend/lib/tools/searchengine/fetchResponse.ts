@@ -6,17 +6,29 @@ export interface OpenAccessPdf {
   status: string;
 }
 
-export const isOpenAccessPdf = (variable: any): variable is OpenAccessPdf =>
-  typeof variable?.url === "string" && typeof variable?.status === "string";
-
 export interface Tldr {
   model: string;
   text: string;
 }
 
+export interface CitationNormalizedPercentile {
+  value: number,
+  is_in_top_1_percent: boolean,
+  is_in_top_10_percent: boolean
+}
+
+
+export const isOpenAccessPdf = (variable: any): variable is OpenAccessPdf =>
+  typeof variable?.url === "string" && typeof variable?.status === "string";
+
 export const isTldr = (variable: any): variable is Tldr =>
   typeof variable?.model === "string" && typeof variable?.text === "string";
 
+export const isCitationNormalizedPercentile = (variable: any): variable is CitationNormalizedPercentile =>
+  typeof variable?.value === "number" &&
+  typeof variable?.is_in_top_1_percent === "boolean" &&
+  typeof variable?.is_in_top_10_percent === "boolean";
+  
 export interface PaperData {
   paperId: string;
   title: string;
@@ -24,7 +36,7 @@ export interface PaperData {
   venue: string;
   year: string;
   citationCount: number;
-  influentialCitationCount: number;
+  citation_normalized_percentile: CitationNormalizedPercentile | null;
   isOpenAccess: boolean | string;
   openAccessPdf: OpenAccessPdf | null;
   fieldsOfStudy: string[];
@@ -42,7 +54,7 @@ export interface QueryResult {
 export const fetchQueryResult = async (query: string): Promise<QueryResult | null> => {
   try {
     const response = await axios.post<QueryResult>(`${BACKEND_URL}/searchpapers/get-results`, { query }, {withCredentials: true});
-
+    console.log(response.data)
     if (response.data) {
       const queryData: QueryResult = {
         ...response.data,
@@ -53,7 +65,7 @@ export const fetchQueryResult = async (query: string): Promise<QueryResult | nul
           venue: paper.venue,
           year: paper.year,
           citationCount: Number(paper.citationCount),
-          influentialCitationCount: Number(paper.influentialCitationCount),
+          citation_normalized_percentile: typeof paper.citation_normalized_percentile === 'string' ? safeJsonParseAndCheck<CitationNormalizedPercentile>(paper.citation_normalized_percentile, isCitationNormalizedPercentile) : paper.citation_normalized_percentile,
           isOpenAccess: paper.isOpenAccess === 'True' || paper.isOpenAccess === true,
           openAccessPdf: typeof paper.openAccessPdf === 'string' ? safeJsonParseAndCheck<OpenAccessPdf>(paper.openAccessPdf, isOpenAccessPdf) : paper.openAccessPdf,
           fieldsOfStudy: Array.isArray(paper.fieldsOfStudy) ? paper.fieldsOfStudy : safeJsonParse(paper.fieldsOfStudy) ?? [],
@@ -87,7 +99,7 @@ export const fetchQueryResultCache = async (): Promise<QueryResult | null> => {
           venue: paper.venue,
           year: paper.year,
           citationCount: Number(paper.citationCount),
-          influentialCitationCount: Number(paper.influentialCitationCount),
+          citation_normalized_percentile: typeof paper.citation_normalized_percentile === 'string' ? safeJsonParseAndCheck<CitationNormalizedPercentile>(paper.citation_normalized_percentile, isCitationNormalizedPercentile) : paper.citation_normalized_percentile,
           isOpenAccess: paper.isOpenAccess === 'True' || paper.isOpenAccess === true,
           openAccessPdf: typeof paper.openAccessPdf === 'string' ? safeJsonParseAndCheck<OpenAccessPdf>(paper.openAccessPdf, isOpenAccessPdf) : paper.openAccessPdf,
           fieldsOfStudy: Array.isArray(paper.fieldsOfStudy) ? paper.fieldsOfStudy : safeJsonParse(paper.fieldsOfStudy) ?? [],

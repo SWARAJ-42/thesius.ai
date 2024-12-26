@@ -3,54 +3,43 @@
 from pydantic import BaseModel, HttpUrl
 from typing import List, Optional
 
+# FastAPI Schema
+from pydantic import BaseModel, HttpUrl
+from typing import List, Optional
+
+class CitationNormalizedPercentile(BaseModel):
+    value: float
+    is_in_top_1_percent: bool
+    is_in_top_10_percent: bool
+
+class OpenAccessPdf(BaseModel):
+    url: Optional[HttpUrl]
+    status: str
+
 class Author(BaseModel):
     authorId: str
     name: str
     url: HttpUrl
 
-class Citation(BaseModel):
-    arxivId: Optional[str]
-    authors: List[Author]
-    doi: Optional[str]
-    intent: List[str]
-    isInfluential: bool
+class FieldOfStudy(BaseModel):
+    name: str
+
+class Paper(BaseModel):
     paperId: str
-    title: str
     url: HttpUrl
+    title: str
+    abstract: Optional[str]
     venue: Optional[str]
     year: int
-
-class Reference(BaseModel):
-    arxivId: Optional[str]
-    authors: List[Author]
-    doi: Optional[str]
-    intent: List[str]
-    isInfluential: bool
-    paperId: str
-    title: str
-    url: HttpUrl
-    venue: Optional[str]
-    year: int
-
-class PaperResponse(BaseModel):
-    abstract: str
-    arxivId: Optional[str]
-    authors: List[Author]
-    citationVelocity: int
-    citations: List[Citation]
-    corpusId: int
-    doi: str
-    fieldsOfStudy: List[str]
-    influentialCitationCount: int
+    referenceCount: int
+    citationCount: int
+    citation_normalized_percentile: CitationNormalizedPercentile
     isOpenAccess: bool
-    isPublisherLicensed: bool
-    numCitedBy: int
-    numCiting: int
-    paperId: str
-    references: List[Reference]
-    s2FieldsOfStudy: List[dict]
-    title: str
-    topics: List[str]
-    url: HttpUrl
-    venue: str
-    year: int
+    openAccessPdf: OpenAccessPdf
+    fieldsOfStudy: List[str]
+    tldr: Optional[str]
+
+class PaperResponse(Paper):
+    authors: List[Author]
+    citations: List[Paper]
+    references: List[Paper]

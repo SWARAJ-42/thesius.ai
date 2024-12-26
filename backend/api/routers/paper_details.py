@@ -6,6 +6,7 @@ from api.routers.schemas.paper_details import PaperResponse
 from api.repository.scrapeRelated.scrape_related_pdfs import search_bing_for_pdf
 from api.deps import user_dependency
 from api.repository.redis_operations import redis_operations
+from api.repository.paper_details import fetch_paper_details
 
 SEMANTIC_SCHOLAR_API_URL = "https://api.semanticscholar.org/v1/paper"
 
@@ -16,8 +17,6 @@ router = APIRouter(
 
 @router.get("/{paper_id}", response_description="Paper details")
 async def get_paper_details(paper_id: str, user: user_dependency):
-    url = f"{SEMANTIC_SCHOLAR_API_URL}/{paper_id}?fields=title,url"
-
     # Get cache
     result = redis_operations.fetch_json(key=f"paper_details:{user['id']}")
     
@@ -30,15 +29,20 @@ async def get_paper_details(paper_id: str, user: user_dependency):
 
     try:
         print("Cache is absent")
-        async with httpx.AsyncClient() as client:
-            response = await client.get(url)
-            response.raise_for_status()
-            paper_details = response.json()
+        paper_details = fetch_paper_details.fetch_openalex_work_details(paper_id)
 
-            # Store in cache
-            redis_operations.store_json(key=f"paper_details:{user['id']}", json_data=paper_details)
+        citation_data = fetch_paper_details.fetch_cites_reference_cards(paper_id, "citation")
+        citation_data = fetch_paper_details.convert_cited_reference_data(citation_data[:20])
 
-            return paper_details
+        reference_data = fetch_paper_details.fetch_cites_reference_cards(paper_id, "reference")
+        reference_data = fetch_paper_details.convert_cited_reference_data(reference_data)
+
+        paper_details = fetch_paper_details.convert_api_to_first_format(paper_details, citation_data, reference_data)
+
+        # Store in cache
+        redis_operations.store_json(key=f"paper_details:{user['id']}", json_data=paper_details)
+
+        return paper_details
 
     except httpx.HTTPStatusError as e:
         raise HTTPException(status_code=e.response.status_code, detail="Paper not found")

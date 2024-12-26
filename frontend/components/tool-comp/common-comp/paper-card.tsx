@@ -13,9 +13,16 @@ import {
   BookOpen,
 } from "lucide-react";
 import { PaperData, isOpenAccessPdf } from "@/lib/tools/searchengine/fetchResponse";
+import { CitationorReference } from "@/lib/paperdetails/schema";
 
 export interface PaperCardProps {
-  paper: PaperData; 
+  paper: PaperData | CitationorReference; 
+  query: string;
+  query_answer: string;
+}
+
+export interface QueryProps {
+  paperId: string;
   query: string;
   query_answer: string;
 }
@@ -25,17 +32,17 @@ export function PaperCard({ paper, query, query_answer }: PaperCardProps) {
   const router = useRouter(); // initialize the router
 
   const handleCardClick = () => {
-    const parcel:PaperCardProps = {
-      paper: paper,
+    const parcel:QueryProps = {
+      paperId: paper.paperId,
       query: query,
       query_answer: query_answer
     }
-    const paperData = encodeURIComponent(JSON.stringify(parcel)); // Encode the paper data
-    router.push(`/paperdetails/${paper.paperId}?paperData=${paperData}`); // Navigate with query parameter
+    const queryData = encodeURIComponent(JSON.stringify(parcel)); // Encode the paper data
+    router.push(`/paperdetails/${paper.paperId}?queryData=${queryData}`); // Navigate with query parameter
   };
 
   return (
-    <Card className="max-w-3xl mt-2 cursor-pointer hover:bg-gray-100" onClick={handleCardClick}>
+    <Card className={`mt-2 cursor-pointer hover:bg-gray-100 ${paper.abstract && paper.abstract?.trim().length > 0 && "max-w-xl"}`} onClick={handleCardClick}>
       <CardHeader>
         <CardTitle className="text-lg font-bold">{paper.title}</CardTitle>
         <div className="flex flex-wrap gap-2 mt-2">
@@ -49,23 +56,27 @@ export function PaperCard({ paper, query, query_answer }: PaperCardProps) {
       </CardHeader>
       <CardContent className="grid gap-4">
         {/* Display paper abstract */}
-        <Card className="bg-secondary/10">
-          <CardContent className="p-3">
+        {paper.abstract && paper.abstract?.trim().length > 0 && <Card className="bg-secondary/10">
+          <CardContent className="p-3 overflow-y-scroll max-h-[100px]">
             <p className="text-sm text-muted-foreground">{paper.abstract}</p>
           </CardContent>
-        </Card>
+        </Card>}
         <div className="grid grid-cols-2 gap-4">
           <Card className="bg-primary/5">
             <CardContent className="p-3 flex flex-col items-center justify-between">
               <div className="flex items-center gap-2">
                 <TrendingUp size={16} className="text-primary" />
-                <span className="text-sm font-semibold">Citations:</span>
+                <span className="text-sm font-semibold">Citations :</span>
                 <span className="text-lg font-bold text-primary">
                   {paper.citationCount}
                 </span>
               </div>
-              <Badge variant="secondary" className="text-xs">
-                {paper.influentialCitationCount} influential
+              <span className="text-xs font-semibold">Citation Percentile: </span>
+              <Badge variant="secondary" className="text-xs text-black mb-1">
+                {paper.citation_normalized_percentile?.value}
+              </Badge>
+              <Badge variant="secondary" className="text-xs mt-1 bg-gray-200">
+                {paper.citation_normalized_percentile?.is_in_top_1_percent ? "is in top 1 percent" : (paper.citation_normalized_percentile?.is_in_top_10_percent && "is in top 10 percent")}
               </Badge>
             </CardContent>
           </Card>
