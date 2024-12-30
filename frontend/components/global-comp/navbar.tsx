@@ -45,7 +45,7 @@ export default function Navbar() {
             isScrolled ? "bg-white/30 shadow-xl" : "bg-white/10 shadow-md"
           }`}
         >
-          <Link href="/" className="w-[10%] flex items-center justify-center">
+          <Link href="/" className="w-[10%] flex items-center justify-center font-semibold text-gray-500">
             <Image
               src={CompanyLogo}
               alt="Logo"
@@ -53,6 +53,7 @@ export default function Navbar() {
               height={40}
               className="rounded-full"
             />
+            Beta
           </Link>
           <div className="w-[80%] mx-auto px-4">
             <ul className="flex justify-center items-center h-16 space-x-8">

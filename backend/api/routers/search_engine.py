@@ -78,6 +78,7 @@ async def send_rag_data_endpoint(data: RagDataProps, user: user_dependency):
         return {"message": "Data received successfully"}
 
     except Exception as e:
+        print(e)
         # Handle any errors that may occur during the process
         raise HTTPException(status_code=500, detail=str(e))
 

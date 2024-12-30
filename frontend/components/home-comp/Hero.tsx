@@ -45,8 +45,11 @@ const Hero = () => {
         <div className="my-4 text-4xl md:text-6xl text-center font-bold text-[#2b2b2b]">
           From Idea to Impact — Discover Research That Drives Innovation
         </div>
+        <div className="font-bold">
+          Powered by OpenAlex
+        </div>
         <div className="py-4 text-lg text-center font-bold text-[#4b4b4b]">
-          Research should drive your work forward, not slow it down. Our
+          Research should drive your work faster, not slow it down. Our
           platform brings you the papers you need — quickly and reliably. Spend
           less time searching and more time bringing your crazy ideas to life.
         </div>

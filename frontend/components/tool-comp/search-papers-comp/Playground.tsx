@@ -15,6 +15,11 @@ import FollowUpQuestionsCard from "../common-comp/follow-ups";
 import DiveDeeper from "./SubComponents/DiveDeeper";
 import { Sparkles, Search, Brain } from "lucide-react";
 import SearchResultSkeleton from "@/components/loading-skeletons/search-result-skeleton";
+import ReactMarkdown from "react-markdown";
+import rehypeKatex from "rehype-katex";
+import remarkMath from "remark-math";
+import "katex/dist/katex.min.css"; // Import Katex CSS
+import "./styles.css";
 
 function Playground() {
   const {
@@ -39,15 +44,15 @@ function Playground() {
             library: [],
           };
           setSearchPaperPage(newSearchPaperPage);
-          setPaperRetrievalQuery(data.query)
+          setPaperRetrievalQuery(data.query);
         }
       } catch (error) {
         console.error("Error fetching response:", error);
       }
     };
-  
+
     get_cache();
-  }, [paperRetrievalQuery, setSearchPaperPage]); // Remove `searchPaperPage` from the dependency array  
+  }, [paperRetrievalQuery, setSearchPaperPage]); // Remove `searchPaperPage` from the dependency array
 
   if (!searchPaperPage) {
     if (paperRetrievalLoading) {
@@ -75,7 +80,7 @@ function Playground() {
   }
 
   const query = searchPaperPage.query;
-  const queryResult = searchPaperPage.queryResult
+  const queryResult = searchPaperPage.queryResult;
 
   return (
     <div className="mx-auto max-w-7xl w-full">
@@ -88,8 +93,14 @@ function Playground() {
               <Sparkles />
             </span>
           </div>
-          <div className="text-gray-700 bg-gray-200 p-3 my-1 rounded-xl font-semibold">
-            {queryResult.final_answer}
+          <div className="bg-gray-200 p-3 my-1 rounded-xl font-semibold h-[300px] overflow-y-scroll">
+            <ReactMarkdown
+              className="markdown text-sm"
+              remarkPlugins={[remarkMath]}
+              rehypePlugins={[rehypeKatex]}
+            >
+              {queryResult.final_answer}
+            </ReactMarkdown>
           </div>
           <div className="text-gray-700 rounded-xl font-semibold">
             <FollowUpQuestionsCard questions={queryResult.followup_questions} />

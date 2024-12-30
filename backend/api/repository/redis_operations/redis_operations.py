@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Initialize Redis connection
-redis_instance = StrictRedis(host="redis", port=6379, password=os.getenv("REDIS_PASSWORD"), decode_responses=True)
+redis_instance = StrictRedis(host="localhost", port=6379, password=os.getenv("REDIS_PASSWORD"), decode_responses=True)
 
 TTL_SECONDS = 60*60
 

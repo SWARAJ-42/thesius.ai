@@ -47,72 +47,61 @@ import {
   SearchRelatedPaperPdfLinks,
 } from "@/lib/paperdetails/fetchResponse";
 import Link from "next/link";
-import { PaperCard, PaperCardProps, QueryProps } from "../tool-comp/common-comp/paper-card";
+import { PaperCard, PaperIdProps } from "../tool-comp/common-comp/paper-card";
 import { Footer } from "../global-comp/Footer";
 import PaperDetailSkeleton from "../loading-skeletons/paper-detail-skeleton";
+import { fetchQueryResultCache } from "@/lib/tools/searchengine/fetchResponse";
+import { SearchPaperPage, useSearchPaper } from "@/context/SearchPapersContext";
 
 interface CitationorReferenceProps {
   paper: CitationorReference;
 }
 
-function PaperCardCiteRef({ paper }: CitationorReferenceProps) {
-  return (
-    <Card className="mb-4">
-      <CardHeader>
-        <CardTitle className="text-lg">{paper.title}</CardTitle>
-        {/* <CardDescription className="overflow-y-scroll max-h-20">
-          {paper.authors.map((author, index) => (
-            <Badge variant="secondary" className="m-1" key={author.authorId}>
-              {author.name}
-            </Badge>
-          ))}
-        </CardDescription> */}
-      </CardHeader>
-      <CardContent>
-        <p className="text-sm text-muted-foreground font-bold">{paper.year}</p>
-        <p className="text-sm text-muted-foreground font-bold">{paper.venue}</p>
-        <Link
-          href={`${paper.url}`}
-          className="mt-2 text-blue-500 flex items-center"
-        >
-          <span className="mx-1">View on Open Alex</span>
-          <ExternalLink />
-        </Link>
-      </CardContent>
-    </Card>
-  );
-}
-
 export default function Component() {
   const [activeTab, setActiveTab] = useState("references");
   const [isOpen, setIsOpen] = useState(false);
-  const [parsedQueryprops, setParsedQueryProps] =
-    useState<QueryProps | null>(null); // State to store mainPaperDetails
+  const [parsedPaperIdProps, setParsedPaperIdProps] =
+    useState<PaperIdProps | null>(null); // State to store mainPaperDetails
   const [mainPaperDetails, setMainPaper] = useState<PaperResponse | null>(null); // State to store fetched paper details
   const [relatedPapers, setRelatedPapers] =
     useState<AllRelatedPapersLinks | null>(null);
   const [paperDetailsLoading, setpaperDetailsLoading] = useState(true); // Loading state
   const searchParams = useSearchParams();
-  const queryData = searchParams.get("queryData");
+  const paperIdParcel = searchParams.get("paperIdParcel");
   const router = useRouter(); // initialize the router
+  const {
+    searchPaperPage,
+    setSearchPaperPage,
+    setPaperRetrievalQuery
+  } = useSearchPaper(); // Use the hook
 
   useEffect(() => {
     const getPaperDetails = async () => {
-      if (queryData) {
-        const parsed = JSON.parse(decodeURIComponent(queryData)); // Decode and parse
-        setParsedQueryProps(parsed); // Store parsedPaper in state
-        console.log("Parsed query data:", parsed);
+      if (paperIdParcel) {
+        const parsed = JSON.parse(decodeURIComponent(paperIdParcel)); // Decode and parse
+        setParsedPaperIdProps(parsed); // Store parsedPaper in state
+        console.log("Parsed paperId data:", parsed);
 
-        const fetchedPaper = await fetchPaperDetails(parsed.paperId); // Call fetch function
-        const relatedPapers = await SearchRelatedPaperPdfLinks(parsed.query);
-        if (fetchedPaper) {
-          setMainPaper(fetchedPaper); // Store fetched data in state
-          console.log("Fetched paper details:", fetchedPaper);
-        }
-        if (relatedPapers) {
-          setRelatedPapers(relatedPapers);
-          console.log("Fetched related papers from links:", relatedPapers);
-          setpaperDetailsLoading(false);
+        const data = await fetchQueryResultCache();
+        if (data) {
+          const newSearchPaperPage: SearchPaperPage = {
+            query: data.query,
+            queryResult: data,
+            library: [],
+          };
+          setSearchPaperPage(newSearchPaperPage);
+          setPaperRetrievalQuery(data.query);
+          const fetchedPaper = await fetchPaperDetails(parsed.paperId); // Call fetch function
+          const relatedPapers = await SearchRelatedPaperPdfLinks(data?.query);
+          if (fetchedPaper) {
+            setMainPaper(fetchedPaper); // Store fetched data in state
+            console.log("Fetched paper details:", fetchedPaper);
+          }
+          if (relatedPapers) {
+            setRelatedPapers(relatedPapers);
+            console.log("Fetched related papers from links:", relatedPapers);
+            setpaperDetailsLoading(false);
+          }
         }
       } else {
         setpaperDetailsLoading(false);
@@ -120,7 +109,7 @@ export default function Component() {
       }
     };
     getPaperDetails();
-  }, [queryData]);
+  }, [paperIdParcel]);
 
   const handleButtonClick = (title: string, url: any) => {
     const parcel = {
@@ -139,13 +128,13 @@ export default function Component() {
     );
   }
 
-  if (mainPaperDetails && parsedQueryprops) {
+  if (mainPaperDetails && parsedPaperIdProps) {
     return (
       <div className="container mx-auto p-6">
-        <PaperRelevance
-          query={parsedQueryprops.query}
-          answer={parsedQueryprops.query_answer}
-        />
+        {searchPaperPage && <PaperRelevance
+          query={searchPaperPage?.query}
+          answer={searchPaperPage?.queryResult.final_answer}
+        />}
         <div className="flex">
           <div>
             <div className="container mx-auto p-4 bg-background rounded-xl">
@@ -279,26 +268,26 @@ export default function Component() {
                   </TabsTrigger>
                 </TabsList>
                 <TabsContent value="citations">
-                  <ScrollArea className="h-[400px] rounded-md border p-4">
+                  {searchPaperPage && <ScrollArea className="h-[400px] rounded-md border p-4">
                     {mainPaperDetails.citations.map((citation) => (
                       <PaperCard
                         paper={citation}
-                        query={parsedQueryprops.query}
-                        query_answer={parsedQueryprops.query_answer}
+                        query={searchPaperPage?.query}
+                        query_answer={searchPaperPage.queryResult.final_answer}
                       />
                     ))}
-                  </ScrollArea>
+                  </ScrollArea>}
                 </TabsContent>
                 <TabsContent value="references">
-                  <ScrollArea className="h-[400px] rounded-md border p-4">
+                  {searchPaperPage && <ScrollArea className="h-[400px] rounded-md border p-4">
                     {mainPaperDetails.references.map((reference) => (
                       <PaperCard
                       paper={reference}
-                      query={parsedQueryprops.query}
-                      query_answer={parsedQueryprops.query_answer}
+                      query={searchPaperPage?.query}
+                      query_answer={searchPaperPage?.queryResult.final_answer}
                     />
                     ))}
-                  </ScrollArea>
+                  </ScrollArea>}
                 </TabsContent>
               </Tabs>
               <div className="mt-8 text-center">

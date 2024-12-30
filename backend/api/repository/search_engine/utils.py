@@ -14,6 +14,7 @@ import re
 from dotenv import load_dotenv
 import os
 from api.repository.search_engine import open_alex_lib
+from api.repository.search_engine import utils_continued
 
 load_dotenv()
 
@@ -36,8 +37,16 @@ def search(query, limit=20, fields=["title", "abstract", "tldr", "venue", "year"
 
 def get_papers(query):
     try:
-        # search_results = search(preprocess_query(query))
-        search_results = open_alex_lib.fetch_openalex_data(query, 15)
+        extracted_topics = utils_continued.extract_topics(query)
+
+        search_results = []
+        for topic in extracted_topics:
+            search_results += open_alex_lib.fetch_openalex_data(topic, 10)
+
+        # Deduplicate by unique id
+        search_results = list({result["id"]: result for result in search_results}.values())
+
+
         search_results = open_alex_lib.convert_api_to_first_format(search_results)
         if len(search_results)==0:
             print('No results found - Try another query')
@@ -46,7 +55,6 @@ def get_papers(query):
             return df
     except Exception as e:
         print(f"An error occurred while searching papers: {e}")
-
 
 
 def get_doc_objects_from_df(df):
@@ -64,14 +72,12 @@ def get_doc_objects_from_df(df):
     return doc_objects
 
 
-def rerank(df, query, column_name="title_abs"):
+def rerank(df, query, column_name="fos_abs"):
     # merge columns title and abstract into a string separated by tokenizer.sep_token and store it in a list
-    df["title_abs"] = [
-        d["title"] + tokenizer.sep_token + (d.get("abstract") or "")
-        for d in df.to_dict("records")
-    ]
-
-    df["n_tokens"] = df.title_abs.apply(lambda x: len(tokenizer.encode(x)))
+    df["fos_abs"] = [
+    d["abstract"] + tokenizer.sep_token + "topics: " + tokenizer.sep_token.join(d.get("fieldsOfStudy", []))
+    for d in df.to_dict("records")]
+    df["n_tokens"] = df.fos_abs.apply(lambda x: len(tokenizer.encode(x)))
     doc_embeddings = get_specter_embeddings(list(df[column_name]))
     query_embeddings = get_specter_embeddings(advanced_preprocess_query(query))
     df["specter_embeddings"] = list(doc_embeddings)
@@ -80,7 +86,6 @@ def rerank(df, query, column_name="title_abs"):
     # sort the dataframe by similarity
     df.sort_values(by="similarity", ascending=False, inplace=True)
     return df, query
-
 
 # function to preprocess the query and remove the stopwords before passing it to the search function
 def preprocess_query(query):
@@ -151,74 +156,10 @@ def create_context(question, df, max_len=3800, size="davinci"):
             break
 
         # Else add it to the text that is being returned
-        returns.append(row["title_abs"])
+        returns.append(row["fos_abs"])
 
     # Return the context
     return "\n\n###\n\n".join(returns)
-
-
-def answer_question(
-    df,
-    model="gpt-3.5-turbo",
-    question="What is the impact of creatine on cognition?",
-    max_len=3800,
-    size="ada",
-    debug=False,
-    max_tokens=150,
-    stop_sequence=None,
-):
-    """
-    Answer a question based on the most similar context from the dataframe texts.
-    """
-    context = create_context(
-        question,
-        df,
-        max_len=max_len,
-        size=size,
-    )
-    # If debug, print the raw model response
-    if debug:
-        print("Context:\n" + context)
-        print("\n\n")
-
-    try:
-        prompt = f"Answer the question based on the context below:\n\nContext: {context}\n\n---\n\nQuestion: {question}\nAnswer:"
-
-        # Create a completion using the question and context
-        response = openai.chat.completions.create(
-            model=model,
-            messages=[
-                {"role": "system", "content": "You are a helpful research assistant who answers based on the provided context."},
-                {"role": "user", "content": prompt}
-            ],
-            max_tokens=max_tokens,
-            stop=stop_sequence,
-            temperature=0.7
-        )
-
-        # Follow-up questions
-        from openai import OpenAI
-        from pydantic import BaseModel
-        client = OpenAI(api_key=OPENAI_API_KEY)
-        class Followups(BaseModel):
-            followup_questions: list[str]
-        response_followup = client.beta.chat.completions.parse(
-            model="gpt-4o-mini",
-            messages=[
-                {"role": "system", "content": "You are a research expert. You will be given a research question, generate a list of 3 most suitable follow-up or related questions in the format provided."},
-                {"role": "user", "content": f"Research Question: {question}"}
-            ],
-            response_format=Followups,
-        )
-
-        gpt_response = response.choices[0].message.content
-        followup_response = response_followup.choices[0].message.parsed
-
-        return {"gpt_answer":gpt_response,  "followup_questions": followup_response.followup_questions}
-    
-    except Exception as e:
-        print(e)
-        return {"gpt_answer":"",  "followup_questions":[]}
 
 
 def get_langchain_response(docs, query, k=5):
@@ -290,36 +231,28 @@ def return_answer_markdown(chain_out, df, query):
     for source in output_text["sources"]:
         try:
             title = df[df["paperId"] == source]["title"].values[0]
-            link = f"https://www.semanticscholar.org/paper/{source}"
-            venue = df[df["paperId"] == source]["venue"].values[0]
+            link = f"https://www.openalex.org/{source}"
             year = df[df["paperId"] == source]["year"].values[0]
-            display(Markdown(f"* #### [{title}]({link}) - {venue}, {year}"))
+            display(Markdown(f"* #### [{title}]({link}) - {year}"))
         except:
             display(Markdown(f"Source not found: {source}"))
 
 
 def print_papers(df, k=8):
-    count = 1
+    if len(df) < k:  # Check if the DataFrame has fewer rows than k
+        k = len(df)
+    
+    content = ""  # Initialize an empty string to accumulate content
     for i in range(k):
-        # add index
+        count = i + 1  # Calculate count directly from the loop index
         title = df.iloc[i]["title"]
-        link = f"https://www.semanticscholar.org/paper/{df.iloc[i]['paperId']}"
-        venue = df.iloc[i]["venue"]
+        link = f"https://openalex.org/works/{df.iloc[i]['paperId']}"
         year = df.iloc[i]["year"]
-        display(Markdown(f"#### {[count]} [{title}]({link}) - {venue}, {year}"))
-        count += 1
+        markdown_content = f"#### [{count}] [{title}]({link}) - {year}\n"
+        display(Markdown(markdown_content))  # Display each paper in Markdown format
+        content += markdown_content  # Accumulate the Markdown content
 
-
-def print_papers_streamlit(df, k=8):
-    count = 1
-    for i in range(k):
-        # add index
-        title = df.iloc[i]["title"]
-        link = f"https://www.semanticscholar.org/paper/{df.iloc[i]['paperId']}"
-        venue = df.iloc[i]["venue"]
-        year = df.iloc[i]["year"]
-        st.markdown(f"{[count]} [{title}]({link}) - {venue}, {year}")
-        count += 1
+    return content  # Return the accumulated Markdown content
 
 
 def answer_question_chatgpt(
@@ -345,7 +278,7 @@ def answer_question_chatgpt(
         return ""
 
 
-def create_context_chatgpt(question, df, k=5):
+def create_context_chatgpt(question, df, k=8):
     """
     Create a context for a question by finding the most similar context from the dataframe
     """
@@ -360,11 +293,66 @@ def create_context_chatgpt(question, df, k=5):
             "["
             + str(count)
             + "] "
-            + row["tldr"]
+            + row["abstract"]
             + "\nURL: "
-            + "https://www.semanticscholar.org/paper/"
+            + "https://openalex.org/"
             + row["paperId"]
         )
         count += 1
     # Return the context
     return "\n\n".join(returns)
+
+
+def answer_question(
+    df,
+    prompt,
+    model="gpt-4o",
+    question="What is the impact of creatine on cognition?",
+    max_len=3800,
+    size="ada",
+    debug=False,
+    max_tokens=150,
+    stop_sequence=None,
+):
+    """
+    Answer a question based on the most similar context from the dataframe texts.
+    """
+
+    try:
+        # Create a completion using the question and context
+        response = openai.chat.completions.create(
+            model=model,
+            messages=[
+                {"role": "system", "content": "You are a helpful research assistant who answers based on the provided context."},
+                {"role": "user", "content": prompt}
+            ],
+            max_tokens=max_tokens,
+            stop=stop_sequence,
+            temperature=0.7
+        )
+
+        # Follow-up questions
+        from openai import OpenAI
+        from pydantic import BaseModel
+        client = OpenAI(api_key=OPENAI_API_KEY)
+        class Followups(BaseModel):
+            followup_questions: list[str]
+        response_followup = client.beta.chat.completions.parse(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": "You are a research expert. You will be given a research question, generate a list of 3 most suitable follow-up or related questions in the format provided."},
+                {"role": "user", "content": f"Research Question: {question}"}
+            ],
+            response_format=Followups,
+        )
+
+        gpt_response = response.choices[0].message.content
+        printed_papers = print_papers(df, k=8)
+        gpt_response += f"\n\n ### Sources: \n {printed_papers}"
+        followup_response = response_followup.choices[0].message.parsed
+
+        return {"gpt_answer":gpt_response,  "followup_questions": followup_response.followup_questions}
+    
+    except Exception as e:
+        print(e)
+        return {"gpt_answer":"",  "followup_questions":[]}

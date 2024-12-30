@@ -21,10 +21,8 @@ export interface PaperCardProps {
   query_answer: string;
 }
 
-export interface QueryProps {
+export interface PaperIdProps {
   paperId: string;
-  query: string;
-  query_answer: string;
 }
 
 export function PaperCard({ paper, query, query_answer }: PaperCardProps) {
@@ -32,13 +30,11 @@ export function PaperCard({ paper, query, query_answer }: PaperCardProps) {
   const router = useRouter(); // initialize the router
 
   const handleCardClick = () => {
-    const parcel:QueryProps = {
+    const parcel:PaperIdProps = {
       paperId: paper.paperId,
-      query: query,
-      query_answer: query_answer
     }
-    const queryData = encodeURIComponent(JSON.stringify(parcel)); // Encode the paper data
-    router.push(`/paperdetails/${paper.paperId}?queryData=${queryData}`); // Navigate with query parameter
+    const paperIdParcel = encodeURIComponent(JSON.stringify(parcel)); // Encode the paper data
+    router.push(`/paperdetails?paperIdParcel=${paperIdParcel}`); // Navigate with query parameter
   };
 
   return (

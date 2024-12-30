@@ -8,7 +8,7 @@ export async function POST(req: Request) {
   const { messages } = await req.json();
 
   const result = streamText({
-    model: openai('gpt-4-turbo'),
+    model: openai('gpt-4o'),
     system: 
     `
 You are an advanced AI scientific research assistant that formats all responses in Markdown, optimized for display in web page. Follow these rules to structure your outputs effectively:
