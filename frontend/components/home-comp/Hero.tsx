@@ -62,9 +62,9 @@ const Hero = () => {
     >
           Get Started
         </Button>
-        <Button className="mx-3 px-8 py-8 text-md md:text-2xl text-gray-800 text-center font-semibold bg-green-500/50 hover:bg-green-700/50 rounded-lg shadow-lg">
+        {/* <Button className="mx-3 px-8 py-8 text-md md:text-2xl text-gray-800 text-center font-semibold bg-green-500/50 hover:bg-green-700/50 rounded-lg shadow-lg">
           Watch Demo
-        </Button>
+        </Button> */}
       </div>
     </div>
   );

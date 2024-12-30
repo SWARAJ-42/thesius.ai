@@ -24,6 +24,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { useAuth } from "@/context/AuthContext"
+import FeaturesExplore from "./subComponents/features"
 
 export function DashboardComponent() {
   const [projects, setProjects] = useState([
@@ -78,6 +79,7 @@ export function DashboardComponent() {
             Here's an overview of your projects.
           </p>
           <Button onClick={()=>{logout()}} className="bg-red-500 hover:bg-red-600 font-bold text-xl my-2">logout</Button>
+          <FeaturesExplore />
         </div>
       </header>
 
