@@ -25,7 +25,7 @@ import { RenderedPapersProp } from "./DiveDeeper";
 import { useChat } from "ai/react";
 import { BsSend } from "react-icons/bs";
 import { useRouter } from "next/navigation";
-import { PaperCardProps } from "../../common-comp/paper-card";
+import { PaperIdProps} from "../../common-comp/paper-card";
 import { PaperData } from "@/lib/tools/searchengine/fetchResponse";
 import {
   askQuestionAboutSelectedPapers,
@@ -37,6 +37,7 @@ import rehypeKatex from "rehype-katex";
 import remarkMath from "remark-math";
 import "katex/dist/katex.min.css"; // Import Katex CSS
 import "./styles.css"
+import { CitationorReference } from "@/lib/paperdetails/schema";
 
 type Message = {
   role: "user" | "bot";
@@ -78,15 +79,13 @@ export default function MultiAbstractChatModal({
     setMessages([]);
   };
 
-  const handleCardClick = (paper: PaperData) => {
-    const parcel: PaperCardProps = {
-      paper: paper,
-      query: paper.title,
-      query_answer: "",
+  const handleCardClick = (paper: PaperData | CitationorReference) => {
+    const parcel: PaperIdProps = {
+      paperId: paper.paperId,
     };
     deleteChatSession();
-    const paperData = encodeURIComponent(JSON.stringify(parcel)); // Encode the paper data
-    router.push(`/paperdetails/${paper.paperId}?paperData=${paperData}`); // Navigate with query parameter
+    const paperIdParcel = encodeURIComponent(JSON.stringify(parcel)); // Encode the paper data
+    router.push(`/paperdetails?paperIdParcel=${paperIdParcel}`); // Navigate with query parameter
   };
 
   const handleSendRagData = async () => {

@@ -34,7 +34,7 @@ export function FeatureDescription() {
       design: "md:flex-row",
       heading: "Project-Ready Research",
       description:
-        "Working on a big idea? Share your vision, and our AI will find the most relevant research and guide you step-by-step — from essential studies to practical resources. See exactly how each paper supports your project, helping you bring your ideas to life with clarity and confidence",
+        "Working on a big idea? Share your vision, and we will find the most relevant research and guide you step-by-step — from essential studies to practical resources. See exactly how each paper supports your project, helping you bring your ideas to life with clarity and confidence",
       buttonText: "Get Started",
       animation: ["slide-in-right", "slide-out-left"],
     },
@@ -57,7 +57,7 @@ export function FeatureDescription() {
       },
       design: "md:flex-row",
       heading: "Dig Deeper",
-      description: "Select multiple research papers from your results and dive deeper into them with follow-up questions. Our AI guides you through further exploration, uncovering more insights from each paper to support your research",
+      description: "Select multiple research papers from your results and dive deeper into them with follow-up questions. We help you through further exploration, uncovering more insights from each paper to support your research",
       buttonText: "Get Started",
       animation: ["slide-in-right", "slide-out-left"],
     },

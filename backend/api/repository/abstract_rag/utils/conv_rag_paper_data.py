@@ -18,7 +18,9 @@ def convert_paper_data_to_dict(paper_data_list):
             'year': paper.year,
             'fieldsOfStudy': paper.fieldsOfStudy,
             'citationCount': paper.citationCount,
-            'influentialCitationCount': paper.influentialCitationCount,
+            # not correctly converted, need to be resolved later
+            'citation_normalized_percentile': paper.citation_normalized_percentile,
+            # ////////////////////////
             'isOpenAccess': paper.isOpenAccess,
             'openAccessPdf': paper.openAccessPdf.url if paper.isOpenAccess else None
         })

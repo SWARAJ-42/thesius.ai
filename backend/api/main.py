@@ -12,7 +12,7 @@ from contextlib import asynccontextmanager
 load_dotenv()
 
 # Initialize Redis connection
-redis_instance = StrictRedis(host="redis", port=6379, password=os.getenv("REDIS_PASSWORD"), decode_responses=True)
+redis_instance = StrictRedis(host="localhost", port=6379, password=os.getenv("REDIS_PASSWORD"), decode_responses=True)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):

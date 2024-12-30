@@ -10,6 +10,11 @@ class Tldr(BaseModel):
     model: str
     text: str
 
+class CitationNormalizedPercentile(BaseModel):
+    value: float
+    is_in_top_1_percent: bool
+    is_in_top_10_percent: bool
+
 # Updated PaperData model
 class PaperData(BaseModel):
     paperId: str
@@ -18,7 +23,7 @@ class PaperData(BaseModel):
     venue: str
     year: str
     citationCount: int
-    influentialCitationCount: int
+    citation_normalized_percentile: Optional[CitationNormalizedPercentile]
     isOpenAccess: bool
     openAccessPdf: Optional[OpenAccessPdf]  # Nullable field
     fieldsOfStudy: List[str]

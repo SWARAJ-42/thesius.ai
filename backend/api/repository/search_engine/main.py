@@ -28,13 +28,14 @@ def get_query_result(query):
     if df is None:
         return {'data': jsonable_encoder([{}]), 'final_answer': "Sorry, no result found"}
     
-    df, query = utils.rerank(df, query, column_name='title_abs')
-    gpt_response = utils.answer_question(df=df, question=query, debug=False)
+    df, query = utils.rerank(df, query, column_name='fos_abs')
+    prompt = utils.answer_question_chatgpt(df, query) # prompt designing can be design in declaration location itself cuz already some default have been set
+    gpt_response = utils.answer_question(df=df,prompt=prompt, question=query, debug=False)
 
     # alternate for testing
     # gpt_response = {"gpt_answer": "This is a sample output for testing", "followup_questions":["followup one", "followup two", "followup three"]}
 
-    df = df.drop(columns=['title_abs', 'n_tokens', 'specter_embeddings'])
+    df = df.drop(columns=['fos_abs', 'n_tokens', 'specter_embeddings'])
     
     # Ensure data is JSON serializable
     df_list = df.astype(str).to_dict(orient='records')
@@ -45,9 +46,6 @@ def get_query_result(query):
         'final_answer': str(gpt_response["gpt_answer"]),
         'followup_questions': jsonable_encoder(gpt_response["followup_questions"])
     }
-    
-    print(response["final_answer"])
-    print(response["followup_questions"])
 
     return response
 

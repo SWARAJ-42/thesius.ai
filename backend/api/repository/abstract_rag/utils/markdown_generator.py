@@ -13,14 +13,19 @@ def organize_papers_to_markdown(papers):
     for paper in papers:
         markdown_doc += f"## {paper['title']}\n\n"
         # markdown_doc += f"**URL:** [{paper['url']}]({paper['url']})\n\n"
-        markdown_doc += f"**Abstract:** {paper['abstract'][:300]}...\n\n"  # Limit abstract length
+        markdown_doc += f"**Abstract:** {paper['abstract'][:500]}...\n\n"  # Limit abstract length
         # markdown_doc += f"**TL;DR:** {paper['tldr']['text']}\n\n"
         markdown_doc += f"**Year:** {paper['year']}\n"
         # markdown_doc += f"**Venue:** {paper['venue']}\n"
         markdown_doc += f"**Fields of Study:** {', '.join(paper['fieldsOfStudy'])}\n\n"
         # markdown_doc += f"**Reference Count:** {paper['referenceCount']}\n"
         markdown_doc += f"**Citation Count:** {paper['citationCount']}\n"
-        markdown_doc += f"**Influential Citation Count:** {paper['influentialCitationCount']}\n\n"
+
+        markdown_doc += f"**Citation normalized percentitle:** {paper['citation_normalized_percentile'].value}\n\n"
+        markdown_doc += f"**is in top 1 percent:** {paper['citation_normalized_percentile'].is_in_top_1_percent}\n\n"
+        markdown_doc += f"**is in top 10 percent:** {paper['citation_normalized_percentile'].is_in_top_10_percent}\n\n"
+
+
         markdown_doc += f"**Open Access:** {'Yes' if paper['isOpenAccess'] else 'No'}\n"
         # if paper['isOpenAccess']:
         #     markdown_doc += f"**PDF:** [{paper['openAccessPdf']['url']}]({paper['openAccessPdf']['url']})\n\n"

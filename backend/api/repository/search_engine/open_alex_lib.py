@@ -76,8 +76,8 @@ def convert_api_to_first_format(openalex_api_response):
             "paperId": item["id"].split("/")[-1],  # Extract ID from URL
             "url": item["id"],
             "title": item.get("title", ""),
-            "abstract": " ".join(item.get("abstract_inverted_index", {}).keys()) if item.get("abstract_inverted_index") else "",
-            "venue": item.get("primary_topic", {}).get("field", {}).get("display_name", ""),
+            "abstract": " ".join(list(item.get("abstract_inverted_index", {}).keys())[:150]) if item.get("abstract_inverted_index") else "",
+            "venue": "",
             "year": item.get("publication_year", None),
             "referenceCount": len(item.get("referenced_works", [])),  # OpenAlex does not provide this directly
             "citationCount": item.get("cited_by_count", 0),
