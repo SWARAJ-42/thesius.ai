@@ -2,6 +2,7 @@ import requests
 import nltk
 from transformers import AutoTokenizer, AutoModel
 import openai
+from openai import AzureOpenAI
 from sklearn.metrics.pairwise import cosine_similarity
 import pandas as pd
 import langchain
@@ -20,12 +21,32 @@ load_dotenv()
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 S2_KEY = os.getenv("S2_KEY")
+AZURE_OPENAI_API_KEY = os.getenv("AZURE_OPENAI_API_KEY")
+DEPLOYMENT_NAME = os.getenv("DEPLOYMENT_NAME")
+ENDPOINT_URL = os.getenv("ENDPOINT_URL")
+DEPLOYMENT_NAME_MINI = os.getenv("DEPLOYMENT_NAME_MINI")
+ENDPOINT_URL_MINI = os.getenv("ENDPOINT_URL_MINI")
 
 tokenizer = AutoTokenizer.from_pretrained("allenai/specter2_base")
 model = AutoModel.from_pretrained("allenai/specter2_base")
 
 
-def search(query, limit=20, fields=["title", "abstract", "tldr", "venue", "year", "fieldsOfStudy", "citationCount", "influentialCitationCount", "isOpenAccess", "openAccessPdf"]):
+def search(
+    query,
+    limit=20,
+    fields=[
+        "title",
+        "abstract",
+        "tldr",
+        "venue",
+        "year",
+        "fieldsOfStudy",
+        "citationCount",
+        "influentialCitationCount",
+        "isOpenAccess",
+        "openAccessPdf",
+    ],
+):
     # space between the  query to be removed and replaced with +
     query = query.replace(" ", "+")
     url = f'https://api.semanticscholar.org/graph/v1/paper/search?query={query}&limit={limit}&fields={",".join(fields)}'
@@ -44,12 +65,13 @@ def get_papers(query):
             search_results += open_alex_lib.fetch_openalex_data(topic, 10)
 
         # Deduplicate by unique id
-        search_results = list({result["id"]: result for result in search_results}.values())
-
+        search_results = list(
+            {result["id"]: result for result in search_results}.values()
+        )
 
         search_results = open_alex_lib.convert_api_to_first_format(search_results)
-        if len(search_results)==0:
-            print('No results found - Try another query')
+        if len(search_results) == 0:
+            print("No results found - Try another query")
         else:
             df = pd.DataFrame(search_results).dropna()
             return df
@@ -75,8 +97,12 @@ def get_doc_objects_from_df(df):
 def rerank(df, query, column_name="fos_abs"):
     # merge columns title and abstract into a string separated by tokenizer.sep_token and store it in a list
     df["fos_abs"] = [
-    d["abstract"] + tokenizer.sep_token + "topics: " + tokenizer.sep_token.join(d.get("fieldsOfStudy", []))
-    for d in df.to_dict("records")]
+        d["abstract"]
+        + tokenizer.sep_token
+        + "topics: "
+        + tokenizer.sep_token.join(d.get("fieldsOfStudy", []))
+        for d in df.to_dict("records")
+    ]
     df["n_tokens"] = df.fos_abs.apply(lambda x: len(tokenizer.encode(x)))
     doc_embeddings = get_specter_embeddings(list(df[column_name]))
     query_embeddings = get_specter_embeddings(advanced_preprocess_query(query))
@@ -87,6 +113,7 @@ def rerank(df, query, column_name="fos_abs"):
     df.sort_values(by="similarity", ascending=False, inplace=True)
     return df, query
 
+
 # function to preprocess the query and remove the stopwords before passing it to the search function
 def preprocess_query(query):
     query = query.lower()
@@ -95,34 +122,35 @@ def preprocess_query(query):
     query = " ".join([word for word in query.split() if word not in stopwords])
     return query
 
+
 # function to preprocess the query and remove the stopwords before passing it to the search function
 def advanced_preprocess_query(query):
     query = query.lower()
-
+    client = AzureOpenAI(
+        azure_endpoint=ENDPOINT_URL,
+        api_key=AZURE_OPENAI_API_KEY,
+        api_version="2024-10-01-preview",
+    )
     # Improving the query to make it more detailed
-    response = openai.chat.completions.create(
-        model="gpt-4o-mini",
+    response = client.chat.completions.create(
+        model=DEPLOYMENT_NAME,
         messages=[
             {
-                "role": "system", 
-                "content": "You are a skilled assistant who can expand queries without changing the fundamental meaning to make them more descriptive. Your main focus is to look for abbreviations and try expanding them, also don't remove them and vice-versa in the context of the query."
+                "role": "system",
+                "content": "You are a skilled assistant who can expand queries without changing the fundamental meaning to make them more descriptive. Your main focus is to look for abbreviations and try expanding them, also don't remove them and vice-versa in the context of the query.",
             },
-            {
-                "role": "user", 
-                "content": f"Query to be expanded: {query}"
-            }
-        ]
+            {"role": "user", "content": f"Query to be expanded: {query}"},
+        ],
     )
 
     # Extract and return the descriptive response from the assistant
     expanded_query = response.choices[0].message.content
 
-
     # remove stopwords from the query
     stopwords = set(nltk.corpus.stopwords.words("english"))
     query = " ".join([word for word in expanded_query.split() if word not in stopwords])
-    query = re.sub(r'[^a-zA-Z0-9\s]', '', query)
-    print("[+] processed query: ",query)
+    query = re.sub(r"[^a-zA-Z0-9\s]", "", query)
+    print("[+] processed query: ", query)
     return query
 
 
@@ -241,7 +269,7 @@ def return_answer_markdown(chain_out, df, query):
 def print_papers(df, k=8):
     if len(df) < k:  # Check if the DataFrame has fewer rows than k
         k = len(df)
-    
+
     content = ""  # Initialize an empty string to accumulate content
     for i in range(k):
         count = i + 1  # Calculate count directly from the loop index
@@ -306,7 +334,7 @@ def create_context_chatgpt(question, df, k=8):
 def answer_question(
     df,
     prompt,
-    model="gpt-4o",
+    model=DEPLOYMENT_NAME,
     question="What is the impact of creatine on cognition?",
     max_len=3800,
     size="ada",
@@ -320,28 +348,45 @@ def answer_question(
 
     try:
         # Create a completion using the question and context
-        response = openai.chat.completions.create(
+        main_client = AzureOpenAI(
+            azure_endpoint=ENDPOINT_URL,
+            api_key=AZURE_OPENAI_API_KEY,
+            api_version="2024-10-01-preview",
+        )
+        response = main_client.chat.completions.create(
             model=model,
             messages=[
-                {"role": "system", "content": "You are a helpful research assistant who answers based on the provided context."},
-                {"role": "user", "content": prompt}
+                {
+                    "role": "system",
+                    "content": "You are a helpful research assistant who answers based on the provided context.",
+                },
+                {"role": "user", "content": prompt},
             ],
             max_tokens=max_tokens,
             stop=stop_sequence,
-            temperature=0.7
+            temperature=0.7,
         )
 
         # Follow-up questions
-        from openai import OpenAI
         from pydantic import BaseModel
-        client = OpenAI(api_key=OPENAI_API_KEY)
+
+        followup_client = AzureOpenAI(
+            azure_endpoint=ENDPOINT_URL_MINI,
+            api_key=AZURE_OPENAI_API_KEY,
+            api_version="2024-10-01-preview",
+        )
+
         class Followups(BaseModel):
             followup_questions: list[str]
-        response_followup = client.beta.chat.completions.parse(
-            model="gpt-4o-mini",
+
+        response_followup = followup_client.beta.chat.completions.parse(
+            model=DEPLOYMENT_NAME_MINI,
             messages=[
-                {"role": "system", "content": "You are a research expert. You will be given a research question, generate a list of 3 most suitable follow-up or related questions in the format provided."},
-                {"role": "user", "content": f"Research Question: {question}"}
+                {
+                    "role": "system",
+                    "content": "You are a research expert. You will be given a research question, generate a list of 3 most suitable follow-up or related questions in the format provided.",
+                },
+                {"role": "user", "content": f"Research Question: {question}"},
             ],
             response_format=Followups,
         )
@@ -351,8 +396,11 @@ def answer_question(
         gpt_response += f"\n\n ### Sources: \n {printed_papers}"
         followup_response = response_followup.choices[0].message.parsed
 
-        return {"gpt_answer":gpt_response,  "followup_questions": followup_response.followup_questions}
-    
+        return {
+            "gpt_answer": gpt_response,
+            "followup_questions": followup_response.followup_questions,
+        }
+
     except Exception as e:
         print(e)
-        return {"gpt_answer":"",  "followup_questions":[]}
+        return {"gpt_answer": "", "followup_questions": []}

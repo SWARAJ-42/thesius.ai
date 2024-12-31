@@ -1,5 +1,15 @@
 import { openai } from '@ai-sdk/openai';
 import { streamText } from 'ai';
+import { createAzure } from '@ai-sdk/azure';
+
+// console.log(process.env["ENDPOINT_URL"])
+const azure = createAzure({ 
+  resourceName: process.env["AZURE_RESOURCE_NAME"], 
+  apiKey: process.env["AZURE_OPENAI_API_KEY"], 
+  apiVersion: "2024-10-01-preview",
+});
+
+const model = azure('gpt-4o')
 
 // Allow streaming responses up to 30 seconds
 export const maxDuration = 30;
@@ -8,9 +18,9 @@ export async function POST(req: Request) {
   const { messages } = await req.json();
 
   const result = streamText({
-    model: openai('gpt-4o'),
-    system: 
-    `
+    model: model,
+    system:
+      `
 You are an advanced AI scientific research assistant that formats all responses in Markdown, optimized for display in web page. Follow these rules to structure your outputs effectively:
 
 ---

@@ -1,7 +1,7 @@
 import os
 # from fastapi import FastAPI, HTTPException, Depends
 from pydantic import BaseModel
-from langchain_openai import ChatOpenAI
+from langchain_openai import ChatOpenAI, AzureChatOpenAI
 from langchain.chains import create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain import hub
@@ -20,8 +20,10 @@ class MultiTenantRetrievalChainManager:
             model_name (str): The name of the language model to use.
             temperature (float): The temperature setting for the language model.
         """
-        self.shared_api_key = os.getenv("OPENAI_RAG")
-        self.model_name = 'gpt-4o-mini'
+        self.shared_api_key = os.getenv("AZURE_OPENAI_API_KEY")
+        self.model_name = os.getenv("DEPLOYMENT_NAME_MINI")
+        self.endpoint_url = os.getenv("ENDPOINT_URL_MINI")
+        self.api_version = os.getenv("API_VERSION_MINI")
         self.temperature = 0.0
         self.retrieval_qa_chat_prompt = hub.pull("langchain-ai/retrieval-qa-chat")
         self.user_chains = {}
@@ -46,11 +48,7 @@ class MultiTenantRetrievalChainManager:
             retriever = docsearch.as_retriever()
 
             # Initialize the language model with the shared API key
-            llm = ChatOpenAI(
-                openai_api_key=self.shared_api_key,
-                model_name=self.model_name,
-                temperature=self.temperature
-            )
+            llm = AzureChatOpenAI(azure_deployment=self.model_name, azure_endpoint=self.endpoint_url, api_version=self.api_version)
 
             # Create a chain to combine documents
             combine_docs_chain = create_stuff_documents_chain(llm, self.retrieval_qa_chat_prompt)
