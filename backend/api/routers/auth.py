@@ -37,7 +37,7 @@ class Token(BaseModel):
 
 # Utility functions
 async def authenticate_user(email: str, password: str, db):
-    user = await db.query(User).filter(User.email == email).first()
+    user = db.query(User).filter(User.email == email).first()
     if not user:
         return None
     if not bcrypt_context.verify(password, user.hashed_password):
@@ -55,7 +55,7 @@ async def create_access_token(email: str, user_id: int, expires_delta: timedelta
 # Routes
 @router.post("/register", status_code=status.HTTP_201_CREATED)
 async def create_user(db: db_dependency, create_user_request: UserCreateRequest):
-    existing_user = await db.query(User).filter(User.email == create_user_request.email).first()
+    existing_user = db.query(User).filter(User.email == create_user_request.email).first()
     
     if existing_user:
         token = generate_token(existing_user.email)
@@ -72,7 +72,7 @@ async def create_user(db: db_dependency, create_user_request: UserCreateRequest)
         hashed_password=bcrypt_context.hash(create_user_request.password),
     )
     db.add(new_user)
-    await db.commit()
+    db.commit()
 
     token = generate_token(create_user_request.email)
     await send_verification_email(create_user_request.email, token)
@@ -84,24 +84,31 @@ async def create_user(db: db_dependency, create_user_request: UserCreateRequest)
 
 @router.get("/verify-email")
 async def verify_email(token: str, db: db_dependency):
-    frontend_domain = os.getenv("FRONTEND_SERVER", "http://localhost:3000")
+    if os.getenv("NEXTJS_ENV") == 'production':
+        frontend_domain = os.getenv("FRONTEND_SERVER", "http://localhost")
+    else:
+        frontend_domain = "http://localhost"
 
     try:
         email = serializer.loads(token, salt="email-verification", max_age=3600)
-        user = await db.query(User).filter(User.email == email).first()
+        user = db.query(User).filter(User.email == email).first()
 
         if not user:
             return {"error": "User not found."}
         
         user.is_verified = True
-        await db.commit()
+        db.commit()
 
         return RedirectResponse(url=f"{frontend_domain}/auth/login", status_code=303)
     except Exception as e:
         return RedirectResponse(url=f"{frontend_domain}/auth/register", status_code=303)
 
 @router.post('/token', response_model=Token)
-async def login_for_access_token(response: Response, form_data: Annotated[OAuth2PasswordRequestForm, Depends()], db: db_dependency):
+async def login_for_access_token(
+    response: Response, 
+    form_data: Annotated[OAuth2PasswordRequestForm, Depends()], 
+    db: db_dependency
+):
     user = await authenticate_user(form_data.username, form_data.password, db)
     if not user:
         raise HTTPException(
@@ -109,15 +116,19 @@ async def login_for_access_token(response: Response, form_data: Annotated[OAuth2
             detail="Invalid email or password."
         )
     if not user.is_verified:
+        # Resend verification link
+        token = generate_token(user.email)
+        await send_verification_email(user.email, token)
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Please verify your email to login."
+            detail="Your email is not verified. A verification link has been resent to your email."
         )
 
     token = await create_access_token(user.email, user.id, timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES))
     response.set_cookie(key="auth_token", value=token, httponly=True, max_age=ACCESS_TOKEN_EXPIRE_MINUTES * 60)
 
     return {"auth_token": token, "token_type": "bearer"}
+
 
 @router.post("/logout")
 async def logout(response: Response):
@@ -126,5 +137,5 @@ async def logout(response: Response):
 
 @router.get("/protected")
 async def protected_route(db: db_dependency, current_user: user_dependency):
-    user = await db.query(User).filter(User.id == current_user["id"]).first()
+    user = db.query(User).filter(User.id == current_user["id"]).first()
     return {"userData": user, "message": "Successfully authenticated"}

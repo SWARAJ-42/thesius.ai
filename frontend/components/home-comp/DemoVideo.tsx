@@ -36,9 +36,9 @@ export default function ThumbnailCard() {
   }, [isInView, buttonControls])
 
   return (
-    <div className="flex items-center justify-center p-4 rounded-lg my-32" ref={cardRef}>
+    <div className="flex items-center justify-center p-4 rounded-lg my-20 md:my-32" ref={cardRef}>
       <motion.div
-        className="bg-white rounded-xl shadow-lg overflow-hidden w-[60%] relative"
+        className="bg-white rounded-xl shadow-lg overflow-hidden md:w-[60%] relative"
         style={{
           rotateX,
           rotateY,

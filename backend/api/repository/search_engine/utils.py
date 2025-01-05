@@ -339,7 +339,7 @@ def answer_question(
     max_len=3800,
     size="ada",
     debug=False,
-    max_tokens=150,
+    max_tokens=1000,
     stop_sequence=None,
 ):
     """
