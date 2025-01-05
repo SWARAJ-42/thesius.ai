@@ -15,9 +15,9 @@ from api.repository.redis_operations import redis_operations
 # Do all the RAG setup
 from api.repository.abstract_rag import rag_setup
 from api.repository.abstract_rag.utils.Chatbot import MultiTenantRetrievalChainManager
+import asyncio
 
 CHAIN_MANAGER = MultiTenantRetrievalChainManager()
-
 
 router = APIRouter(
     prefix='/searchpapers',
@@ -30,40 +30,35 @@ class QueryModel(BaseModel):
 @router.post("/get-results")
 async def get_query_result_endpoint(query: QueryModel, user: user_dependency):
     try:
-        # Call the function and pass the query from the request body
-        result = get_query_result(query.query)
+        # Wrap synchronous function in asyncio.to_thread
+        result = await asyncio.to_thread(get_query_result, query.query)
 
-        # store the data in cache
-        redis_operations.store_json(key=f"search-result:{user['id']}", json_data=result)
+        # Store the data in cache (ensure this is also async-compatible)
+        await asyncio.to_thread(redis_operations.store_json, f"search-result:{user['id']}", result)
 
-        print("event after redis store operation")
+        print("Event after redis store operation")
 
-        return result  # Returns the response in JSON format
+        return result
 
     except Exception as e:
-        # Handle any errors that may occur during the process
         raise HTTPException(status_code=500, detail=str(e))
-    
+
 @router.get("/get-results-cache")
 async def get_search_result_cache(user: user_dependency):
     try:
         # Fetch the data from cache
-        result = redis_operations.fetch_json(key=f"search-result:{user['id']}")
+        result = await asyncio.to_thread(redis_operations.fetch_json, f"search-result:{user['id']}")
 
         if "error" in result:
-            # Handle cache error gracefully
             print(f"Cache fetch error: {result['error']}")
             raise HTTPException(status_code=404, detail=result["error"])
 
-        # Return cached data
         return result["data"]
 
     except HTTPException as http_exc:
-        # Raise HTTP exceptions directly
         raise http_exc
 
     except Exception as e:
-        # Handle any unexpected errors
         raise HTTPException(status_code=500, detail=f"An unexpected error occurred: {str(e)}")
 
 @router.post("/send-rag-data")
@@ -72,33 +67,51 @@ async def send_rag_data_endpoint(data: RagDataProps, user: user_dependency):
         converted_papers = convert_paper_data_to_dict(data.renderedPapers)
         markdown_document = organize_papers_to_markdown(converted_papers)
         md_header_splits = split_markdown_by_headers(markdown_document)
-        docsearch = upload_to_pinecone_vectorstore(documents=md_header_splits, index_name=rag_setup.index_name, embeddings=rag_setup.embeddings, namespace=f"{user['id']}")
-        CHAIN_MANAGER.get_or_create_chain(user_id=f"{user['id']}", docsearch=docsearch, create_new_chain=True)
+
+        # Ensure upload_to_pinecone_vectorstore is non-blocking
+        docsearch = await asyncio.to_thread(
+            upload_to_pinecone_vectorstore,
+            md_header_splits,
+            rag_setup.index_name,
+            rag_setup.embeddings,
+            f"{user['id']}"
+        )
+
+        # CHAIN_MANAGER methods should be async-safe
+        await asyncio.to_thread(
+            CHAIN_MANAGER.get_or_create_chain,
+            user_id=f"{user['id']}",
+            docsearch=docsearch,
+            create_new_chain=True
+        )
 
         return {"message": "Data received successfully"}
 
     except Exception as e:
         print(e)
-        # Handle any errors that may occur during the process
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/multiabstract-chat/query")
 async def ask_question_about_selected_papers(query: QueryModel, user: user_dependency):
     try:
         print(query.query)
-        retriever = CHAIN_MANAGER.user_chains[f"{user['id']}"]
-        answer = retriever.invoke({"input": query.query})
+        retriever = CHAIN_MANAGER.user_chains.get(f"{user['id']}")
+        if not retriever:
+            raise HTTPException(status_code=404, detail="Chat session not found")
+        
+        # Ensure retriever.invoke is non-blocking
+        answer = await asyncio.to_thread(retriever.invoke, {"input": query.query})
         return {"rag_response": answer['answer']}
     except Exception as e:
-        # Handle any errors that may occur during the process
         raise HTTPException(status_code=500, detail=str(e))
-    
+
 @router.get("/multiabstract-chat/delete-session")
 async def delete_chat_session(user: user_dependency):
     try:
-        CHAIN_MANAGER.delete_user_chain(f"{user['id']}")
-        delete_namespace_from_index(index_name=rag_setup.index_name, namespace=f"{user['id']}")
+        # Ensure delete_user_chain and delete_namespace_from_index are non-blocking
+        await asyncio.to_thread(CHAIN_MANAGER.delete_user_chain, f"{user['id']}")
+        await asyncio.to_thread(delete_namespace_from_index, rag_setup.index_name, f"{user['id']}")
+
         return {"message": "Chat session closed"}
     except Exception as e:
-        # Handle any errors that may occur during the process
         raise HTTPException(status_code=500, detail=str(e))
