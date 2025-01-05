@@ -39,7 +39,7 @@ app.add_middleware(
 
 
 @app.get("/")
-def health_check():
+async def health_check():
     return 'Health check complete'
 
 app.include_router(auth.router)
