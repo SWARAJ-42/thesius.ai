@@ -35,7 +35,7 @@ async def send_verification_email(email: EmailStr, token: str):
     if os.getenv("NEXTJS_ENV") == "production":
         verification_link = f"{os.getenv('BACKEND_SERVER')}/auth/verify-email?token={token}"
     else:
-        verification_link = f"http://localhost:8000/auth/verify-email?token={token}"
+        verification_link = f"http://localhost/server/auth/verify-email?token={token}"
     message = MessageSchema(
         subject="Verify your email",
         recipients=[email],

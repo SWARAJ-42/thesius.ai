@@ -42,13 +42,13 @@ const Hero = () => {
       ))}
 
       <div className="scale-in-center w-[80%] md:w-[40%] flex flex-col justify-center items-center z-10">
-        <div className="my-4 text-4xl md:text-6xl text-center font-bold text-[#2b2b2b]">
+        <div className="my-4 text-2xl md:text-4xl lg:text-6xl text-center font-bold text-[#2b2b2b]">
           From Idea to Impact — Discover Research That Drives Innovation
         </div>
         <div className="font-bold">
           Powered by OpenAlex
         </div>
-        <div className="py-4 text-lg text-center font-bold text-[#4b4b4b]">
+        <div className="py-4 text-md sm:text-lg text-center font-bold text-[#4b4b4b]">
           Research should drive your work faster, not slow it down. Our
           platform brings you the papers you need — quickly and reliably. Spend
           less time searching and more time bringing your crazy ideas to life.

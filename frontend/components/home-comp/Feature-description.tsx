@@ -87,7 +87,7 @@ export function FeatureDescription() {
 
   return (
     <section className="w-[90%] mx-auto my-32 rounded-2xl px-4 sm:px-6 lg:px-8 py-12 md:py-24">
-      <div className="mb-24 text-6xl font-bold text-center">What's on the table!</div>
+      <div className="mb-24 text-4xl md:text-6xl font-bold text-center">What's on the table!</div>
       <div className="space-y-12 overflow-hidden">
         {featuresData.map((feature, index) => {
           const ref = useRef<HTMLDivElement | null>(null);
@@ -108,13 +108,13 @@ export function FeatureDescription() {
                 />
               </div>
               <div className="flex-1 p-8 md:p-12 lg:p-16 w-full md:w-1/2 flex flex-col items-center md:items-start text-center md:text-left">
-                <h2 className="text-2xl md:text-4xl font-bold text-[#3b3b3b] mb-4">
+                <h2 className="text-xl sm:text-2xl md:text-4xl font-bold text-[#3b3b3b] mb-4">
                   {feature.heading}
                 </h2>
-                <p className="text-md md:text-xl text-[#3b3b3b]/90 mb-6">
+                <p className="text-sm sm:text-md md:text-xl text-[#3b3b3b]/90 mb-6">
                   {feature.description}
                 </p>
-                <button onClick={() => {router.push("/auth/login")}} className="bg-white text-xl text-green-600 px-8 py-4 rounded-xl font-semibold hover:bg-opacity-60 transition-colors duration-300">
+                <button onClick={() => {router.push("/auth/login")}} className="bg-white text-md sm:text-xl text-green-600 px-8 py-4 rounded-xl font-semibold hover:bg-opacity-60 transition-colors duration-300">
                   {feature.buttonText}
                 </button>
               </div>
