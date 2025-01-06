@@ -95,6 +95,7 @@ export function FeatureDescription() {
 
           return (
             <div
+              id="FeatureDescription"
               ref={ref}
               key={index}
               // feature-animation ${isVisible ? feature.animation[0] : feature.animation[1]} 

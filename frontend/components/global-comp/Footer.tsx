@@ -2,8 +2,11 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
+import { InstagramLogoIcon } from "@radix-ui/react-icons";
+import { Linkedin } from "lucide-react";
 import Link from "next/link";
+import { FaFacebook } from "react-icons/fa";
+import { FaXTwitter } from "react-icons/fa6";
 
 export function Footer() {
   return (
@@ -13,32 +16,36 @@ export function Footer() {
           <h2 className="text-2xl font-bold mb-4">Connect With Us</h2>
           <div className="flex space-x-6">
             <Link
-              href="#"
-              className="text-gray-400 hover:text-primary transition-colors"
-            >
-              <Facebook className="h-6 w-6" />
-              <span className="sr-only">Facebook</span>
-            </Link>
-            <Link
-              href="#"
-              className="text-gray-400 hover:text-primary transition-colors"
-            >
-              <Twitter className="h-6 w-6" />
-              <span className="sr-only">Twitter</span>
-            </Link>
-            <Link
-              href="#"
-              className="text-gray-400 hover:text-primary transition-colors"
-            >
-              <Instagram className="h-6 w-6" />
-              <span className="sr-only">Instagram</span>
-            </Link>
-            <Link
-              href="#"
+              href="https://www.linkedin.com/company/thesius-ai/"
+              target="blank"
               className="text-gray-400 hover:text-primary transition-colors"
             >
               <Linkedin className="h-6 w-6" />
               <span className="sr-only">LinkedIn</span>
+            </Link>
+            <Link
+              href="https://x.com/thesiusai"
+              target="blank"
+              className="text-gray-400 hover:text-primary transition-colors"
+            >
+              <FaXTwitter className="h-6 w-6" />
+              <span className="sr-only">X</span>
+            </Link>
+            <Link
+              href="https://www.instagram.com/thesius_ai/profilecard/?igsh=MWpjZGZ6aDhjMmV0aQ=="
+              target="blank"
+              className="text-gray-400 hover:text-primary transition-colors"
+            >
+              <InstagramLogoIcon className="h-6 w-6" />
+              <span className="sr-only">Instagram</span>
+            </Link>
+            <Link
+              href="https://www.instagram.com/thesius_ai/profilecard/?igsh=MWpjZGZ6aDhjMmV0aQ=="
+              target="blank"
+              className="text-gray-400 hover:text-primary transition-colors"
+            >
+              <FaFacebook className="h-6 w-6" />
+              <span className="sr-only">Facebook</span>
             </Link>
           </div>
         </div>
@@ -64,7 +71,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="/products"
+                  href="/#FeatureDescription"
                   className="text-sm hover:text-primary transition-colors"
                 >
                   Features
@@ -80,7 +87,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="/contact"
+                  href="/#contact"
                   className="text-sm hover:text-primary transition-colors"
                 >
                   Contact
@@ -105,7 +112,10 @@ export function Footer() {
                 placeholder="Enter your email"
                 className="w-full"
               />
-              <Button type="submit" className="w-full bg-green-500/50 hover:bg-green-700/50 text-gray-800 font-semibold">
+              <Button
+                type="submit"
+                className="w-full bg-green-500/50 hover:bg-green-700/50 text-gray-800 font-semibold"
+              >
                 Subscribe
               </Button>
             </form>
@@ -114,8 +124,7 @@ export function Footer() {
         <div className="mt-8 pt-8 border-t border-gray-200">
           <div className="text-center">
             <p className="text-sm">
-              &copy; {new Date().getFullYear()} Thesius.ai all rights
-              reserved.
+              &copy; {new Date().getFullYear()} Thesius.ai all rights reserved.
             </p>
           </div>
         </div>

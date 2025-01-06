@@ -1,11 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Search, ChevronRight } from "lucide-react";
+import { Search } from "lucide-react";
 import { PaperData } from "@/lib/tools/searchengine/fetchResponse";
 import MultiAbstractChatModal from "./multi-abstract-modal";
 
@@ -24,21 +23,24 @@ export default function DiveDeeper({ renderedPapers }: RenderedPapersProp) {
   const [papers, setPapers] = useState<PaperCheckBox[]>([]);
   const [selectedPapers, setSelectedPapers] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedPapersData, setSelectedPapersData] = useState<PaperData[]>([])
-  const router = useRouter();
+  const [selectedPapersData, setSelectedPapersData] = useState<PaperData[]>([]);
 
   const filteredPapers = papers.filter((paper) =>
     paper.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const handleSelectPaper = (paperId: string) => {
-    setSelectedPapers((prev) =>
-      prev.includes(paperId)
-        ? prev.filter((id) => id !== paperId)
-        : [...prev, paperId]
-    );
+    if (
+      selectedPapers.includes(paperId) ||
+      selectedPapers.length < 5
+    ) {
+      setSelectedPapers((prev) =>
+        prev.includes(paperId)
+          ? prev.filter((id) => id !== paperId)
+          : [...prev, paperId]
+      );
+    }
   };
-
 
   useEffect(() => {
     const papersCheckBox = renderedPapers.map((paper) => ({
@@ -49,18 +51,16 @@ export default function DiveDeeper({ renderedPapers }: RenderedPapersProp) {
     }));
     setPapers(papersCheckBox);
 
-    const handleProceed = () => {
-      const selectedPaperDetails = renderedPapers.filter(paper => selectedPapers.includes(paper.paperId))
-      setSelectedPapersData(selectedPaperDetails)
-    };
-    handleProceed()
-
+    const selectedPaperDetails = renderedPapers.filter((paper) =>
+      selectedPapers.includes(paper.paperId)
+    );
+    setSelectedPapersData(selectedPaperDetails);
   }, [renderedPapers, selectedPapers]);
 
   return (
     <div className="max-w-4xl mx-auto p-4 bg-white shadow-xl min-h-full space-y-6 rounded-xl">
       <h1 className="text-lg font-bold">
-        Select the papers from the results for further to chat with them
+        Select up to 5 paper results to chat with (Beta feature).
       </h1>
       <div className="relative">
         <Input
@@ -76,16 +76,6 @@ export default function DiveDeeper({ renderedPapers }: RenderedPapersProp) {
         />
       </div>
       <MultiAbstractChatModal renderedPapers={selectedPapersData} />
-      {/* <div className="flex justify-end">
-        <Button
-          onClick={handleProceed}
-          disabled={selectedPapers.length === 0}
-          className="flex items-center space-x-2"
-        >
-          <span>Chat with selected papers</span>
-          <ChevronRight size={20} />
-        </Button>
-      </div> */}
       <ul className="space-y-4">
         {filteredPapers.map((paper) => (
           <li
