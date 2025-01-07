@@ -20,6 +20,7 @@ import rehypeKatex from "rehype-katex";
 import remarkMath from "remark-math";
 import "katex/dist/katex.min.css"; // Import Katex CSS
 import "./styles.css";
+import AnimatedProgressBar from "./SubComponents/progress-bar";
 
 function Playground() {
   const {
@@ -59,6 +60,7 @@ function Playground() {
       return (
         <div className="mx-auto max-w-7xl w-full">
           <InputBox />
+          <AnimatedProgressBar />
           <SearchResultSkeleton />
         </div>
       );
