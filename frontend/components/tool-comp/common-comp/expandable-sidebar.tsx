@@ -51,7 +51,7 @@ export function ExpandableSidebar() {
         variant="ghost"
         size="icon"
         onClick={toggleFullSidebar}
-        className={`sm:hidden z-10 fixed top-1/2 -translate-y-1/2 transition-all duration-300 ease-in-out p-2 m-4 bg-green-300 hover:bg-green-600 rounded-full ${
+        className={`z-10 fixed top-1/2 -translate-y-1/2 transition-all duration-300 ease-in-out p-2 m-4 bg-green-300 hover:bg-green-600 rounded-full ${
           isCompletelyHidden ? 'left-0' : isExpanded ? 'left-64' : 'left-16'
         }`}
       >

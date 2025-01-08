@@ -58,10 +58,8 @@ async def create_user(db: db_dependency, create_user_request: UserCreateRequest)
     existing_user = db.query(User).filter(User.email == create_user_request.email).first()
     
     if existing_user:
-        token = generate_token(existing_user.email)
-        await send_verification_email(existing_user.email, token)
         return {
-            "message": "Email already exists. A verification link has been resent to your email.",
+            "message": "An account with this email already exists !",
             "status_code": status.HTTP_200_OK
         }
 
@@ -78,7 +76,7 @@ async def create_user(db: db_dependency, create_user_request: UserCreateRequest)
     await send_verification_email(create_user_request.email, token)
 
     return {
-        "message": "Registration successful. Please check your email for a verification link.",
+        "message": "Registration successful. Please check your email for a verification link.\n Do not forget to check your SPAM folder !",
         "status_code": status.HTTP_201_CREATED,
     }
 
@@ -121,7 +119,7 @@ async def login_for_access_token(
         await send_verification_email(user.email, token)
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Your email is not verified. A verification link has been resent to your email."
+            detail="Your email is not verified. A verification link has been resent to your email.\n Do not forget to check your SPAM folder !"
         )
 
     token = await create_access_token(user.email, user.id, timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES))

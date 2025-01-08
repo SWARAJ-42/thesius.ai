@@ -16,7 +16,7 @@ const DeviceBlocker: React.FC<DeviceBlockerProps> = ({ children }) => {
       const userAgent = navigator.userAgent.toLowerCase();
       const isMobile = /iphone|ipad|android|mobile/i.test(userAgent);
       const isTablet = /tablet/i.test(userAgent);
-      const isSmallScreen = window.innerWidth < 1500; // Adjust breakpoint as needed
+      const isSmallScreen = window.innerWidth < 1000; // Adjust breakpoint as needed
       return isMobile || isTablet || isSmallScreen;
     };
 

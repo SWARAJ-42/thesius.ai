@@ -11,9 +11,17 @@ import { BACKEND_URL } from "@/lib/constants";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 
+interface ResponseObject {
+  message: string,
+  status_code: string
+}
+
 const RegisterForm = () => {
   const [loading, setLoading] = useState(false); // Add loading state
-  const router = useRouter()
+  const [showModal, setShowModal] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
+
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -24,19 +32,21 @@ const RegisterForm = () => {
     const username = formData.get("username") as string;
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
-    const cpassword = formData.get("cpassword") as string;
 
     try {
-      const response = await axios.post(`${BACKEND_URL}/auth/register`, {
+      const response = await axios.post<ResponseObject>(`${BACKEND_URL}/auth/register`, {
         fullname: fullname,
         username: username,
         email: email,
         password: password,
       });
-      router.push("/auth/login")
-      alert("Registration successfull, Before you login please check your mail for a verification link")
-    } catch(error) {
-      console.error('Failed to register user:', error);
+      setModalMessage(response.data.message)
+      setShowModal(true); // Show modal on success
+      // alert(
+      //   "Registration successfull, Before you login please check your mail for a verification link"
+      // );
+    } catch (error) {
+      console.error("Failed to register user:", error);
     }
   };
 
@@ -85,15 +95,6 @@ const RegisterForm = () => {
             name="password"
           />
 
-          <Label className="my-2">Confirm Password</Label>
-          <Input
-            className="my-2 bg-white/50"
-            id="cpassword"
-            placeholder="*********"
-            type="password"
-            name="cpassword"
-          />
-
           <Button type="submit" className="my-4 min-w-20" disabled={loading}>
             {loading ? (
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -111,6 +112,23 @@ const RegisterForm = () => {
             </Link>
           </div>
         </form>
+
+        {/* Modal */}
+        {showModal && (
+          <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center">
+            <div className="bg-white rounded-lg shadow-lg p-6 w-80 space-y-4 text-center">
+              <p className="text-gray-600">
+                {modalMessage}
+              </p>
+              <button
+                onClick={() => {setShowModal(false);router.push("/auth/login");}}
+                className="w-full bg-green-500 text-gray-700 py-2 rounded-md font-bold hover:bg-green-700 transition"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

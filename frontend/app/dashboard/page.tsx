@@ -6,7 +6,7 @@ import React from 'react'
 const Dashboard = async () => {
   return (
     <ProtectedRoute route={true}>
-      <div className='h-[100vh] bg-gray-100 flex justify-between'>
+      <div className='min-h-[100vh] h-fit bg-gray-100 flex justify-between'>
           <div className='flex-grow'>
             <ExpandableSidebar /> 
           </div>
