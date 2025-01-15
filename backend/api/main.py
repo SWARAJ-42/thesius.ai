@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from api.routers import auth, search_engine, paper_details, contact
+from api.routers import auth, search_engine, paper_details, contact, advanced_search_engine
 from api.database import Base, engine
 from dotenv import load_dotenv
 import os
@@ -44,5 +44,6 @@ async def health_check():
 
 app.include_router(auth.router)
 app.include_router(search_engine.router)
+app.include_router(advanced_search_engine.router)
 app.include_router(paper_details.router)
 app.include_router(contact.router)

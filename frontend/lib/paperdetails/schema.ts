@@ -31,6 +31,7 @@ export interface CitationorReference {
     openAccessPdf: openAccessPdfSchema;
     fieldsOfStudy: [string];
     tldr: string | null;
+    type: string
 };
 
 export interface PaperResponse {
@@ -49,7 +50,7 @@ export interface PaperResponse {
     tldr: string | null;
     authors: authorSchema[];
     citations: CitationorReference[];
-    references: CitationorReference[]
+    references: CitationorReference[];
 }
 
 export interface RelatedPapersLink {

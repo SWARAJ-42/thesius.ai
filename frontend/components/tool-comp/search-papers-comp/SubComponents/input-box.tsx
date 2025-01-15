@@ -5,8 +5,15 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Send } from "lucide-react";
 import { fetchQueryResult } from "@/lib/tools/searchengine/fetchResponse";
-import SearchPaperContext, { SearchPaperPage, useSearchPaper } from "@/context/SearchPapersContext";
+import SearchPaperContext, {
+  SearchPaperPage,
+  useSearchPaper,
+} from "@/context/SearchPapersContext";
+import CompelexitySwitch from "./ComplexitySwitch";
 import React from "react";
+import FilterBox from "./Filtering/FilterBox";
+import { fetchTopics, fetchTopicsCache, Topic } from "@/lib/tools/advancedsearchengine/fetchTopics";
+import CommonLoader from "@/components/global-comp/loader";
 
 // Define the type for each research question item
 interface ResearchQuestion {
@@ -16,32 +23,40 @@ interface ResearchQuestion {
 
 const researchQuestions: ResearchQuestion[] = [
   {
-    question: "How can machine learning algorithms improve the accuracy of software bug detection?",
+    question:
+      "How can machine learning algorithms improve the accuracy of software bug detection?",
     emoji: "🤖",
   },
   {
-    question: "What is the effect of varying material composition on the thermal conductivity of composite materials?",
+    question:
+      "What is the effect of varying material composition on the thermal conductivity of composite materials?",
     emoji: "🔧",
   },
   {
-    question: "How does the presence of specific gut microbiota influence the immune response in mammals?",
+    question:
+      "How does the presence of specific gut microbiota influence the immune response in mammals?",
     emoji: "🦠",
   },
   {
-    question: "What are the impacts of temperature and pH on the rate of reaction in enzyme catalysis?",
+    question:
+      "What are the impacts of temperature and pH on the rate of reaction in enzyme catalysis?",
     emoji: "⚗️",
   },
   {
-    question: "How do urban green spaces contribute to reducing air pollution levels in metropolitan cities?",
+    question:
+      "How do urban green spaces contribute to reducing air pollution levels in metropolitan cities?",
     emoji: "🌳",
   },
   {
-    question: "How can satellite constellations be optimized for global communication?",
+    question:
+      "How can satellite constellations be optimized for global communication?",
     emoji: "🚀",
   },
 ];
 
-const ExampleQuestion: React.FC<{ onQuestionClick: (question: string) => void }> = ({ onQuestionClick }) => {
+const ExampleQuestion: React.FC<{
+  onQuestionClick: (question: string) => void;
+}> = ({ onQuestionClick }) => {
   return (
     <div className="flex justify-between flex-wrap gap-5 p-5 w-fit">
       {researchQuestions.map((item, index) => (
@@ -61,12 +76,24 @@ const ExampleQuestion: React.FC<{ onQuestionClick: (question: string) => void }>
 export function InputBox() {
   const [isExpanded, setIsExpanded] = useState(false);
   const [shouldSubmit, setShouldSubmit] = useState(false); // New state to trigger submit after query update
+  const [Complexity, setComplexity] = useState(false);
+  const [selectedTopics, setSelectedTopics] = useState<Topic[]>([])
+  const [TopicsLoading, setTopicsLoading] = useState(false)
 
   const searchPaperContext = useContext(SearchPaperContext);
   if (!SearchPaperContext) {
     return <div>Some problem occurred, sorry for the inconvenience!</div>;
   }
-  const { searchPaperPage, setSearchPaperPage, paperRetrievalLoading, setPaperRetrievalLoading, paperRetrievalQuery, setPaperRetrievalQuery } = useSearchPaper();
+  const {
+    searchPaperPage,
+    setSearchPaperPage,
+    paperRetrievalLoading,
+    setPaperRetrievalLoading,
+    paperRetrievalQuery,
+    setPaperRetrievalQuery,
+    isAtComplexMode,
+    setIsAtComplexMode
+  } = useSearchPaper();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setPaperRetrievalQuery(e.target.value);
@@ -78,7 +105,7 @@ export function InputBox() {
   };
 
   const handleSubmit = async () => {
-    if (paperRetrievalQuery.trim().length > 0) {
+    if (paperRetrievalQuery.trim().length > 0 && Complexity === false) {
       setPaperRetrievalLoading(true);
       try {
         const data = await fetchQueryResult(paperRetrievalQuery);
@@ -96,11 +123,27 @@ export function InputBox() {
         console.error("Error fetching response:", error);
       }
       setPaperRetrievalLoading(false);
+    } else if (paperRetrievalQuery.trim().length > 0 && Complexity === true) {
+      setIsAtComplexMode(true);
+      setTopicsLoading(true)
+      await fetchTopics(paperRetrievalQuery.trim())
+      .then((topics) => {
+        setSelectedTopics(topics)
+        console.log('Fetched Topics:', topics);
+      })
+      .catch((error) => {
+        console.error('Failed to fetch topics:', error);
+      });
+      setTopicsLoading(false)
     }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === "Enter" && !e.shiftKey && paperRetrievalQuery.trim().length > 0) {
+    if (
+      e.key === "Enter" &&
+      !e.shiftKey &&
+      paperRetrievalQuery.trim().length > 0
+    ) {
       e.preventDefault();
       handleSubmit();
     }
@@ -119,9 +162,30 @@ export function InputBox() {
     }
   }, [paperRetrievalQuery, shouldSubmit]);
 
+  // useEffect(() => {
+  //   const get_cache = async () => {
+  //     if (selectedTopics.length > 0) return; // Prevent fetching if data already exists
+  //     try {
+  //       const data = await fetchTopicsCache();
+  //       console.log("Cached topics data:", data);
+  //       if (data) {
+  //         setSelectedTopics(data)
+  //       }
+  //     } catch (error) {
+  //       console.error("Error fetching response:", error);
+  //     }
+  //   };
+  //   get_cache();
+    
+  // }, [paperRetrievalQuery]); // Remove `searchPaperPage` from the dependency array
+
   return (
     <div className="w-full p-4">
-      {!paperRetrievalLoading && !searchPaperPage && <div className="text-gray-600 text-center text-6xl font-bold mb-2">Thesius search</div>}
+      {!paperRetrievalLoading && !searchPaperPage && !isAtComplexMode && (
+        <div className="text-gray-600 text-center text-6xl font-bold mb-2">
+          Thesius search
+        </div>
+      )}
       <div className="mx-auto p-2 relative bg-green-300/50 rounded-full overflow-hidden flex flex-row justify-center items-center">
         <Textarea
           value={paperRetrievalQuery}
@@ -135,7 +199,9 @@ export function InputBox() {
           <Button
             size="icon"
             onClick={handleSubmit}
-            disabled={paperRetrievalQuery.trim().length === 0 || paperRetrievalLoading}
+            disabled={
+              paperRetrievalQuery.trim().length === 0 || paperRetrievalLoading
+            }
             className="bg-gray-800 text-white rounded-full w-12 h-12 flex items-center justify-center transition-colors duration-300"
           >
             <Send className="h-6 w-6" />
@@ -143,8 +209,15 @@ export function InputBox() {
           </Button>
         </div>
       </div>
-
-      {!paperRetrievalLoading && !searchPaperPage && <ExampleQuestion onQuestionClick={handleQuestionClick} />}
+      <div className="my-3 mx-8">
+        <span className="text-lg font-semibold mr-2">Complex mode: </span>
+        <CompelexitySwitch enabled={Complexity} setEnabled={setComplexity} />
+      </div>
+      {isAtComplexMode && TopicsLoading && <CommonLoader/>}
+      {isAtComplexMode && selectedTopics && !TopicsLoading && <FilterBox selectedTopicsData={selectedTopics} />} 
+      {!paperRetrievalLoading && !searchPaperPage && !isAtComplexMode && !TopicsLoading && (
+        <ExampleQuestion onQuestionClick={handleQuestionClick} />
+      )}
     </div>
   );
 }

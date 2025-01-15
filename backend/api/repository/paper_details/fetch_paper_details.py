@@ -29,6 +29,7 @@ def fetch_openalex_work_details(work_id):
         "primary_location",
         "cited_by_api_url",
         "referenced_works",
+        "type",
     ]
 
     # Construct the query parameters

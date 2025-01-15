@@ -42,6 +42,7 @@ export interface PaperData {
   fieldsOfStudy: string[];
   tldr: Tldr | null;
   similarity: number;
+  type: string;
 }
 
 export interface QueryResult {
@@ -71,6 +72,7 @@ export const fetchQueryResult = async (query: string): Promise<QueryResult | nul
           fieldsOfStudy: Array.isArray(paper.fieldsOfStudy) ? paper.fieldsOfStudy : safeJsonParse(paper.fieldsOfStudy) ?? [],
           tldr: typeof paper.tldr === 'string' ? safeJsonParseAndCheck<Tldr>(paper.tldr, isTldr) : paper.tldr,
           similarity: Number(paper.similarity),
+          type: paper.type
         })),
       };
 
@@ -105,6 +107,7 @@ export const fetchQueryResultCache = async (): Promise<QueryResult | null> => {
           fieldsOfStudy: Array.isArray(paper.fieldsOfStudy) ? paper.fieldsOfStudy : safeJsonParse(paper.fieldsOfStudy) ?? [],
           tldr: typeof paper.tldr === 'string' ? safeJsonParseAndCheck<Tldr>(paper.tldr, isTldr) : paper.tldr,
           similarity: Number(paper.similarity),
+          type: paper.type
         })),
       };
 
@@ -120,7 +123,7 @@ export const fetchQueryResultCache = async (): Promise<QueryResult | null> => {
 };
 
 // Enhanced helper function to safely parse Python-like JSON strings
-function safeJsonParse(value: string) {
+export function safeJsonParse(value: string) {
   try {
     // Replace single quotes with double quotes and handle common Python-style notations
     const jsonCompatible = value
@@ -136,7 +139,7 @@ function safeJsonParse(value: string) {
 }
 
 // Generic helper function for parsing and validating with type guards
-function safeJsonParseAndCheck<T>(value: string, typeGuard: (variable: any) => variable is T): T | null {
+export function safeJsonParseAndCheck<T>(value: string, typeGuard: (variable: any) => variable is T): T | null {
   const parsedValue = safeJsonParse(value);
   return parsedValue && typeGuard(parsedValue) ? parsedValue : null;
 }

@@ -30,6 +30,8 @@ function Playground() {
     setPaperRetrievalLoading,
     paperRetrievalQuery,
     setPaperRetrievalQuery,
+    isAtComplexMode,
+    setIsAtComplexMode
   } = useSearchPaper(); // Use the hook
 
   useEffect(() => {
@@ -62,6 +64,12 @@ function Playground() {
           <InputBox />
           <AnimatedProgressBar />
           <SearchResultSkeleton />
+        </div>
+      );
+    } else if (isAtComplexMode) {
+      return (
+        <div className="mx-auto max-w-7xl w-full">
+          <InputBox />
         </div>
       );
     } else {

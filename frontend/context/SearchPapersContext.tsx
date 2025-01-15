@@ -16,6 +16,8 @@ interface SearchPaperContextType {
   setPaperRetrievalLoading: (paperRetrievalLoading:boolean) => void;
   paperRetrievalQuery: string;
   setPaperRetrievalQuery: (paperRetrievalQuery:string) => void;
+  isAtComplexMode: boolean;
+  setIsAtComplexMode: (isAtComplexMode:boolean) => void;
 }
 
 const SearchPaperContext = createContext<SearchPaperContextType | undefined>(undefined);
@@ -27,10 +29,11 @@ interface SearchPaperProviderProps {
 export const SearchPaperProvider: React.FC<SearchPaperProviderProps> = ({ children }) => {
   const [searchPaperPage, setSearchPaperPage] = useState<SearchPaperPage | null>(null);
   const [paperRetrievalLoading, setPaperRetrievalLoading] = useState(false)
+  const [isAtComplexMode, setIsAtComplexMode] = useState(false)
   const [paperRetrievalQuery, setPaperRetrievalQuery] = useState("")
 
   return (
-    <SearchPaperContext.Provider value={{ searchPaperPage, setSearchPaperPage, paperRetrievalLoading, setPaperRetrievalLoading, paperRetrievalQuery, setPaperRetrievalQuery }}>
+    <SearchPaperContext.Provider value={{ searchPaperPage, setSearchPaperPage, paperRetrievalLoading, setPaperRetrievalLoading, paperRetrievalQuery, setPaperRetrievalQuery, isAtComplexMode, setIsAtComplexMode }}>
       {children}
     </SearchPaperContext.Provider>
   );

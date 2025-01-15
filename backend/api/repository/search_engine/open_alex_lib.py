@@ -34,7 +34,8 @@ def fetch_openalex_data(search_query, per_page=10, page=1):
         "referenced_works",
         "cited_by_count",
         "citation_normalized_percentile",
-        "open_access"
+        "open_access",
+        "type"
     ]
 
     # Construct the query parameters
@@ -95,6 +96,7 @@ def convert_api_to_first_format(openalex_api_response):
                 "model": "tldr@v2.0.0",
                 "text": "Generated summary is not available.",  # Placeholder
             },
+            "type": item.get("type", "not known")
         }
 
         results.append(converted_item)

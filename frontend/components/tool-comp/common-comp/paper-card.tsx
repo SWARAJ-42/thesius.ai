@@ -103,6 +103,9 @@ export function PaperCard({ paper, query, query_answer }: PaperCardProps) {
                   View PDF <ExternalLink size={14} />
                 </a>
               )}
+              <Badge variant="secondary" className="text-xs mt-1 bg-gray-200">
+                {paper.type}
+              </Badge>
             </CardContent>
           </Card>
         </div>
