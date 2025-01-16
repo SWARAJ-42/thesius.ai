@@ -65,17 +65,21 @@ async def get_query_result_endpoint(data: advanced_search_engine_schema.FilterDa
         data.citations = 0
     data.citations = int(data.citations)
 
-    if data.publishedSince == "all":
+    if data.publishedSince == "All":
         data.publishedSince = "1000"
 
+    try: 
+        result = await asyncio.to_thread(get_result.get_query_result, data.query, data)
 
-    result = await asyncio.to_thread(get_result.get_query_result, data.query, data)
+        # Store the data in cache (ensure this is also async-compatible)
+        await asyncio.to_thread(redis_operations.store_json, f"search-result:{user['id']}", result)
 
-    # Store the data in cache (ensure this is also async-compatible)
-    await asyncio.to_thread(redis_operations.store_json, f"search-result:{user['id']}", result)
+        print("Event after redis store operation")
 
-    print("Event after redis store operation")
+        return result
 
-    return result
+    except HTTPException as http_exc:
+        raise http_exc
 
-    
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"An unexpected error occurred: {str(e)}")

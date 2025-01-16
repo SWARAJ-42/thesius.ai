@@ -6,11 +6,11 @@ import { PaperData, QueryResult, isCitationNormalizedPercentile, isOpenAccessPdf
 
 export interface FilterData {
   query: string;
-  selectedTopics: Topic[];
+  // selectedTopics: Topic[];
   publishedSince: string;
   openAccess: boolean;
   citations: string;
-  selectedSourceTypes: ResourceType[];
+  // selectedSourceTypes: ResourceType[];
 }
 
 export const fetchAnswerAdvanced = async (data: FilterData): Promise<QueryResult | null> => {

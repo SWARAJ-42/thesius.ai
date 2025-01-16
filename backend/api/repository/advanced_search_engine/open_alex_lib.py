@@ -4,12 +4,13 @@ from dotenv import load_dotenv
 import json
 import pandas as pd
 from api.routers.schemas import advanced_search_engine_schema
+import time
 
 load_dotenv()
 
 import requests
 
-def fetch_openalex_data_advanced(search_query, filterData:advanced_search_engine_schema.FilterData, per_page=10, page=1):
+def fetch_openalex_data_advanced(search_query, filterData:advanced_search_engine_schema.FilterData, per_page=15, page=1):
     """
     Fetch data from the OpenAlex API.
 
@@ -39,55 +40,65 @@ def fetch_openalex_data_advanced(search_query, filterData:advanced_search_engine
     ]
 
     filtered_results = []
-    filterObjects = []
+    # filterObjects = []
 
-    for topic in filterData.selectedTopics:
-        print(topic)
-        for sourceType in filterData.selectedSourceTypes:
-            print(sourceType.display_name)
-            # Define the filter parameters
-            filterObjects.append([
-                f"primary_topic.id:{topic.only_id}",
-                f"type:{sourceType.display_name}",
+    # for topic in filterData.selectedTopics:
+    #     print(topic)
+    #     for sourceType in filterData.selectedSourceTypes:
+    #         print(sourceType.display_name)
+    #         # Define the filter parameters
+    #         filterObjects.append([
+    #             f"primary_topic.id:{topic.only_id}",
+    #             f"type:{sourceType.display_name}",
+    #             f"from_publication_date:{filterData.publishedSince}-01-01",
+    #             f"cited_by_count:>{filterData.citations}"
+    #         ])
+    #     if len(filterObjects) == 0:
+    #         filterObjects.append([
+    #             f"open_access.is_oa:{filterData.openAccess}",
+    #             f"primary_topic.id:{topic.only_id}",
+    #             f"from_publication_date:{filterData.publishedSince}-01-01",
+    #             f"cited_by_count:>{filterData.citations}"
+    #         ])
+    # if len(filterObjects) == 0:
+    #     filterObjects.append([
+    #             f"open_access.is_oa:{filterData.openAccess}",
+    #             f"from_publication_date:{filterData.publishedSince}-01-01",
+    #             f"cited_by_count:>{filterData.citations}"
+    #     ])
+
+    # for filters in filterObjects:
+    #     print("Current filter:  ", filters)
+
+    filters = [
+                f"open_access.is_oa:{filterData.openAccess}",
                 f"from_publication_date:{filterData.publishedSince}-01-01",
                 f"cited_by_count:>{filterData.citations}"
-            ])
-        if len(filterObjects) == 0:
-            filterObjects.append([
-                f"primary_topic.id:{topic.only_id}",
-                f"from_publication_date:{filterData.publishedSince}-01-01",
-                f"cited_by_count:>{filterData.citations}"
-            ])
-    if len(filterObjects) == 0:
-        filterObjects.append([
-                f"from_publication_date:{filterData.publishedSince}-01-01",
-                f"cited_by_count:>{filterData.citations}"
-        ])
-
-    for filters in filterObjects:
-        print("Current filter:  ",filters)
-        params = {
-            "search": search_query,
-            "filter": ",".join(filters),
-            "per-page": per_page,
-            "page": page,
-            "select": ",".join(select_fields)
-        }
-
-        # Make the API request
-        response = requests.get(base_url, params=params)
-        
-        if response.status_code == 200:
-            results = response.json().get("results", [])
-            # Filter results to include only those with significant values for all fields
-            filtered_results += [
-                result for result in results
-                if all(field in result and result[field] not in [None, "", [], {}] for field in select_fields)
             ]
-        else:
-            response.raise_for_status()
+
+    params = {
+        "search": search_query,
+        "filter": ",".join(filters),
+        "per-page": per_page,
+        "page": page,
+        "select": ",".join(select_fields)
+    }
+
+    # Make the API request
+    response = requests.get(base_url, params=params)
+    
+    if response.status_code == 200:
+        results = response.json().get("results", [])
+        # Filter results to include only those with significant values for all fields
+        filtered_results = [
+            result for result in results
+            if all(field in result and result[field] not in [None, "", [], {}] for field in select_fields)
+        ]
+    else:
+        print("Error occured while fetching")
+        response.raise_for_status()
         
-    print(filtered_results[:5])
+    print("filtered results num: ",len(filtered_results))
     
     return filtered_results
 

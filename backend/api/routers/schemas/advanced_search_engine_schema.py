@@ -13,8 +13,8 @@ class Topic(BaseModel):
 
 class FilterData(BaseModel):
     query: str
-    selectedTopics: List[Topic]
+    # selectedTopics: List[Topic]
     publishedSince: str
     openAccess: bool
     citations: str
-    selectedSourceTypes: List[ResourceType]
+    # selectedSourceTypes: List[ResourceType]

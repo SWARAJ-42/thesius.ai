@@ -18,6 +18,8 @@ interface SearchPaperContextType {
   setPaperRetrievalQuery: (paperRetrievalQuery:string) => void;
   isAtComplexMode: boolean;
   setIsAtComplexMode: (isAtComplexMode:boolean) => void;
+  currentPage: number;
+  setCurrentPage: (currentPage:number) => void;
 }
 
 const SearchPaperContext = createContext<SearchPaperContextType | undefined>(undefined);
@@ -31,9 +33,10 @@ export const SearchPaperProvider: React.FC<SearchPaperProviderProps> = ({ childr
   const [paperRetrievalLoading, setPaperRetrievalLoading] = useState(false)
   const [isAtComplexMode, setIsAtComplexMode] = useState(false)
   const [paperRetrievalQuery, setPaperRetrievalQuery] = useState("")
+  const [currentPage, setCurrentPage] = useState(1);
 
   return (
-    <SearchPaperContext.Provider value={{ searchPaperPage, setSearchPaperPage, paperRetrievalLoading, setPaperRetrievalLoading, paperRetrievalQuery, setPaperRetrievalQuery, isAtComplexMode, setIsAtComplexMode }}>
+    <SearchPaperContext.Provider value={{ searchPaperPage, setSearchPaperPage, paperRetrievalLoading, setPaperRetrievalLoading, paperRetrievalQuery, setPaperRetrievalQuery, isAtComplexMode, setIsAtComplexMode, setCurrentPage, currentPage }}>
       {children}
     </SearchPaperContext.Provider>
   );

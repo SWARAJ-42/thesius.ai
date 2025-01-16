@@ -46,7 +46,7 @@ export interface PaperData {
 }
 
 export interface QueryResult {
-  data: PaperData[];
+  data: PaperData[][];
   query: string
   final_answer: string;
   followup_questions: string[]
@@ -54,29 +54,37 @@ export interface QueryResult {
 
 export const fetchQueryResult = async (query: string): Promise<QueryResult | null> => {
   try {
-    const response = await axios.post<QueryResult>(`${BACKEND_URL}/searchpapers/get-results`, { query }, {withCredentials: true});
-    console.log(response.data)
+    const response = await axios.post<QueryResult>(`${BACKEND_URL}/searchpapers/get-results`, { query }, { withCredentials: true });
+    console.log(response.data);
+
     if (response.data) {
       const queryData: QueryResult = {
         ...response.data,
-        data: response.data.data.map((paper) => ({
-          paperId: paper.paperId,
-          title: paper.title,
-          abstract: paper.abstract,
-          venue: paper.venue,
-          year: paper.year,
-          citationCount: Number(paper.citationCount),
-          citation_normalized_percentile: typeof paper.citation_normalized_percentile === 'string' ? safeJsonParseAndCheck<CitationNormalizedPercentile>(paper.citation_normalized_percentile, isCitationNormalizedPercentile) : paper.citation_normalized_percentile,
-          isOpenAccess: paper.isOpenAccess === 'True' || paper.isOpenAccess === true,
-          openAccessPdf: typeof paper.openAccessPdf === 'string' ? safeJsonParseAndCheck<OpenAccessPdf>(paper.openAccessPdf, isOpenAccessPdf) : paper.openAccessPdf,
-          fieldsOfStudy: Array.isArray(paper.fieldsOfStudy) ? paper.fieldsOfStudy : safeJsonParse(paper.fieldsOfStudy) ?? [],
-          tldr: typeof paper.tldr === 'string' ? safeJsonParseAndCheck<Tldr>(paper.tldr, isTldr) : paper.tldr,
-          similarity: Number(paper.similarity),
-          type: paper.type
-        })),
+        data: response.data.data.map((paperDataList) =>
+          paperDataList.map((paper) => ({
+            paperId: paper.paperId,
+            title: paper.title,
+            abstract: paper.abstract,
+            venue: paper.venue,
+            year: paper.year,
+            citationCount: Number(paper.citationCount),
+            citation_normalized_percentile: typeof paper.citation_normalized_percentile === 'string'
+              ? safeJsonParseAndCheck<CitationNormalizedPercentile>(paper.citation_normalized_percentile, isCitationNormalizedPercentile)
+              : paper.citation_normalized_percentile,
+            isOpenAccess: paper.isOpenAccess === 'True' || paper.isOpenAccess === true,
+            openAccessPdf: typeof paper.openAccessPdf === 'string'
+              ? safeJsonParseAndCheck<OpenAccessPdf>(paper.openAccessPdf, isOpenAccessPdf)
+              : paper.openAccessPdf,
+            fieldsOfStudy: Array.isArray(paper.fieldsOfStudy) ? paper.fieldsOfStudy : safeJsonParse(paper.fieldsOfStudy) ?? [],
+            tldr: typeof paper.tldr === 'string'
+              ? safeJsonParseAndCheck<Tldr>(paper.tldr, isTldr)
+              : paper.tldr,
+            similarity: Number(paper.similarity),
+            type: paper.type,
+          }))
+        ),
       };
 
-      // console.log("Parsed Query Data:", queryData);
       return queryData;
     } else {
       return null;
@@ -87,6 +95,7 @@ export const fetchQueryResult = async (query: string): Promise<QueryResult | nul
   }
 };
 
+
 export const fetchQueryResultCache = async (): Promise<QueryResult | null> => {
   try {
     const response = await axios.get<QueryResult>(`${BACKEND_URL}/searchpapers/get-results-cache`, {withCredentials: true});
@@ -94,24 +103,31 @@ export const fetchQueryResultCache = async (): Promise<QueryResult | null> => {
     if (response.data) {
       const queryData: QueryResult = {
         ...response.data,
-        data: response.data.data.map((paper) => ({
-          paperId: paper.paperId,
-          title: paper.title,
-          abstract: paper.abstract,
-          venue: paper.venue,
-          year: paper.year,
-          citationCount: Number(paper.citationCount),
-          citation_normalized_percentile: typeof paper.citation_normalized_percentile === 'string' ? safeJsonParseAndCheck<CitationNormalizedPercentile>(paper.citation_normalized_percentile, isCitationNormalizedPercentile) : paper.citation_normalized_percentile,
-          isOpenAccess: paper.isOpenAccess === 'True' || paper.isOpenAccess === true,
-          openAccessPdf: typeof paper.openAccessPdf === 'string' ? safeJsonParseAndCheck<OpenAccessPdf>(paper.openAccessPdf, isOpenAccessPdf) : paper.openAccessPdf,
-          fieldsOfStudy: Array.isArray(paper.fieldsOfStudy) ? paper.fieldsOfStudy : safeJsonParse(paper.fieldsOfStudy) ?? [],
-          tldr: typeof paper.tldr === 'string' ? safeJsonParseAndCheck<Tldr>(paper.tldr, isTldr) : paper.tldr,
-          similarity: Number(paper.similarity),
-          type: paper.type
-        })),
+        data: response.data.data.map((paperDataList) =>
+          paperDataList.map((paper) => ({
+            paperId: paper.paperId,
+            title: paper.title,
+            abstract: paper.abstract,
+            venue: paper.venue,
+            year: paper.year,
+            citationCount: Number(paper.citationCount),
+            citation_normalized_percentile: typeof paper.citation_normalized_percentile === 'string'
+              ? safeJsonParseAndCheck<CitationNormalizedPercentile>(paper.citation_normalized_percentile, isCitationNormalizedPercentile)
+              : paper.citation_normalized_percentile,
+            isOpenAccess: paper.isOpenAccess === 'True' || paper.isOpenAccess === true,
+            openAccessPdf: typeof paper.openAccessPdf === 'string'
+              ? safeJsonParseAndCheck<OpenAccessPdf>(paper.openAccessPdf, isOpenAccessPdf)
+              : paper.openAccessPdf,
+            fieldsOfStudy: Array.isArray(paper.fieldsOfStudy) ? paper.fieldsOfStudy : safeJsonParse(paper.fieldsOfStudy) ?? [],
+            tldr: typeof paper.tldr === 'string'
+              ? safeJsonParseAndCheck<Tldr>(paper.tldr, isTldr)
+              : paper.tldr,
+            similarity: Number(paper.similarity),
+            type: paper.type,
+          }))
+        ),
       };
 
-      console.log("Parsed Query Data:", queryData);
       return queryData;
     } else {
       return null;

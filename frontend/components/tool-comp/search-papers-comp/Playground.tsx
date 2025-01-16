@@ -21,6 +21,7 @@ import remarkMath from "remark-math";
 import "katex/dist/katex.min.css"; // Import Katex CSS
 import "./styles.css";
 import AnimatedProgressBar from "./SubComponents/progress-bar";
+import { PaginatedPaperResults } from "./SubComponents/paginated-paper-results";
 
 function Playground() {
   const {
@@ -31,7 +32,8 @@ function Playground() {
     paperRetrievalQuery,
     setPaperRetrievalQuery,
     isAtComplexMode,
-    setIsAtComplexMode
+    setIsAtComplexMode,
+    currentPage,
   } = useSearchPaper(); // Use the hook
 
   useEffect(() => {
@@ -123,7 +125,7 @@ function Playground() {
               </span>
             </div>
             <div className="pr-2 rounded-xl">
-              <DiveDeeper renderedPapers={queryResult.data} />
+              <DiveDeeper renderedPapers={queryResult.data[currentPage-1]} />
             </div>
           </div>
         </div>
@@ -134,15 +136,20 @@ function Playground() {
               <Search />
             </span>
           </div>
-          <div className="pr-2 rounded-xl">
-            {queryResult.data.map((paper: PaperData) => (
-              <PaperCard
-                query={query}
-                query_answer={queryResult.final_answer}
-                paper={paper}
-              />
-            ))}
-          </div>
+          {/* <div className="pr-2 rounded-xl">
+            {queryResult.data.map((paperList: PaperData[]) =>
+                <div className="my-2 p-2 border-4 rounded-xl">
+                  {paperList.map((paper) => (
+                      <PaperCard
+                        query={query}
+                        query_answer={queryResult.final_answer}
+                        paper={paper}
+                      />
+                  ))}
+                </div>
+            )}
+          </div> */}
+          <PaginatedPaperResults query={query} queryResult={queryResult} />
         </div>
       </div>
     </div>

@@ -125,16 +125,16 @@ export function InputBox() {
       setPaperRetrievalLoading(false);
     } else if (paperRetrievalQuery.trim().length > 0 && Complexity === true) {
       setIsAtComplexMode(true);
-      setTopicsLoading(true)
-      await fetchTopics(paperRetrievalQuery.trim())
-      .then((topics) => {
-        setSelectedTopics(topics)
-        console.log('Fetched Topics:', topics);
-      })
-      .catch((error) => {
-        console.error('Failed to fetch topics:', error);
-      });
-      setTopicsLoading(false)
+      // setTopicsLoading(true)
+      // await fetchTopics(paperRetrievalQuery.trim())
+      // .then((topics) => {
+      //   setSelectedTopics(topics)
+      //   console.log('Fetched Topics:', topics);
+      // })
+      // .catch((error) => {
+      //   console.error('Failed to fetch topics:', error);
+      // });
+      // setTopicsLoading(false)
     }
   };
 
@@ -200,7 +200,7 @@ export function InputBox() {
             size="icon"
             onClick={handleSubmit}
             disabled={
-              paperRetrievalQuery.trim().length === 0 || paperRetrievalLoading
+              paperRetrievalQuery?.trim().length === 0 || paperRetrievalLoading
             }
             className="bg-gray-800 text-white rounded-full w-12 h-12 flex items-center justify-center transition-colors duration-300"
           >
