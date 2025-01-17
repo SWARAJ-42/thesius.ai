@@ -209,10 +209,10 @@ export function InputBox() {
           </Button>
         </div>
       </div>
-      <div className="my-3 mx-8">
+      {/* <div className="my-3 mx-8">
         <span className="text-lg font-semibold mr-2">Complex mode: </span>
         <CompelexitySwitch enabled={Complexity} setEnabled={setComplexity} />
-      </div>
+      </div> */}
       {isAtComplexMode && TopicsLoading && <CommonLoader/>}
       {isAtComplexMode && selectedTopics && !TopicsLoading && <FilterBox selectedTopicsData={selectedTopics} />} 
       {!paperRetrievalLoading && !searchPaperPage && !isAtComplexMode && !TopicsLoading && (

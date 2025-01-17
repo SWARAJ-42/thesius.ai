@@ -22,6 +22,7 @@ import "katex/dist/katex.min.css"; // Import Katex CSS
 import "./styles.css";
 import AnimatedProgressBar from "./SubComponents/progress-bar";
 import { PaginatedPaperResults } from "./SubComponents/paginated-paper-results";
+import { Skeleton } from "@/components/ui/skeleton";
 
 function Playground() {
   const {
@@ -34,6 +35,8 @@ function Playground() {
     isAtComplexMode,
     setIsAtComplexMode,
     currentPage,
+    fetchOnlyAnswerLoading,
+    setFetchOnlyAnswerLoading,
   } = useSearchPaper(); // Use the hook
 
   useEffect(() => {
@@ -86,6 +89,7 @@ function Playground() {
     return (
       <div className="mx-auto max-w-7xl w-full h-[100vh]">
         <InputBox />
+        <AnimatedProgressBar />
         <SearchResultSkeleton />
       </div>
     );
@@ -105,17 +109,31 @@ function Playground() {
               <Sparkles />
             </span>
           </div>
-          <div className="bg-gray-200 p-3 my-1 rounded-xl font-semibold h-[300px] overflow-y-scroll">
-            <ReactMarkdown
-              className="markdown text-sm"
-              remarkPlugins={[remarkMath]}
-              rehypePlugins={[rehypeKatex]}
-            >
-              {queryResult.final_answer}
-            </ReactMarkdown>
+          <div className="bg-gray-200 p-3 my-1 mb-3 rounded-xl font-semibold h-[300px] overflow-y-scroll">
+            {!fetchOnlyAnswerLoading ? (
+              <ReactMarkdown
+                className="markdown text-sm"
+                remarkPlugins={[remarkMath]}
+                rehypePlugins={[rehypeKatex]}
+              >
+                {queryResult.final_answer}
+              </ReactMarkdown>
+            ) : (
+              <Skeleton className="h-full w-full mb-4" />
+            )}
           </div>
           <div className="text-gray-700 rounded-xl font-semibold">
-            <FollowUpQuestionsCard questions={queryResult.followup_questions} />
+            {!fetchOnlyAnswerLoading ? (
+              <FollowUpQuestionsCard
+                questions={queryResult.followup_questions}
+              />
+            ) : (
+              <div className="space-y-2 mb-4 flex flex-col justify-center items-center">
+                {[1, 2, 3].map((i) => (
+                  <Skeleton key={i} className="h-16 w-full" />
+                ))}
+              </div>
+            )}
           </div>
           <div className="rounded-xl">
             <div className="text-3xl my-2 font-bold text-gray-900 flex items-center">
@@ -125,7 +143,7 @@ function Playground() {
               </span>
             </div>
             <div className="pr-2 rounded-xl">
-              <DiveDeeper renderedPapers={queryResult.data[currentPage-1]} />
+              <DiveDeeper renderedPapers={queryResult.data[currentPage - 1]} />
             </div>
           </div>
         </div>

@@ -60,10 +60,10 @@ async def get_topics_from_query_cache(user: user_dependency):
         raise HTTPException(status_code=500, detail=f"An unexpected error occurred: {str(e)}")
 
 @router.post("/get-results")
-async def get_query_result_endpoint(data: advanced_search_engine_schema.FilterData, user: user_dependency):
+async def get_advanced_query_result_endpoint(data: advanced_search_engine_schema.FilterData, user: user_dependency):
+    print("Get advanced results endpoint called")
     if data.citations == "":
-        data.citations = 0
-    data.citations = int(data.citations)
+        data.citations = "0"
 
     if data.publishedSince == "All":
         data.publishedSince = "1000"

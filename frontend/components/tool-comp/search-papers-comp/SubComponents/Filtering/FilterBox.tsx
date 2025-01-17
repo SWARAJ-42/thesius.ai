@@ -96,9 +96,9 @@ export default function FilterBox({ selectedTopicsData }: TopicsProps) {
     const ParcelData: FilterData = {
       query: paperRetrievalQuery,
       // selectedTopics,
-      publishedSince,
-      openAccess,
-      citations,
+      publishedSince: publishedSince,
+      openAccess: openAccess,
+      citations: citations,
       // selectedSourceTypes,
     };
 

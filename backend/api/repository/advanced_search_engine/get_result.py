@@ -21,7 +21,7 @@ from fastapi.encoders import jsonable_encoder
 
 def get_query_result(query, filterData):
     # df = pd.DataFrame(test_data.dummy_papers)
-
+    print("Entered get papers function")
     '''temporarily commented for testing'''
     df = utils_advanced.get_papers(query, filterData=filterData)
 
@@ -43,8 +43,6 @@ def get_query_result(query, filterData):
 
     # Chunk the list into groups of 10
     chunked_data = [df_list[i:i + 7] for i in range(0, len(df_list), 7)]
-
-    print(chunked_data)
 
     response = {
         'data': jsonable_encoder(chunked_data),

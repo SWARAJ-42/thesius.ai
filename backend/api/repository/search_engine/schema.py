@@ -29,6 +29,7 @@ class PaperData(BaseModel):
     fieldsOfStudy: List[str]
     tldr: Optional[Tldr]  # Nullable field
     similarity: float
+    type: str
 
 # Updated RagDataProps model
 class RagDataProps(BaseModel):

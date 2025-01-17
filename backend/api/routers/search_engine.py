@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException, Response, status
 from pydantic import BaseModel
 from api.repository.search_engine.main import get_query_result
 from api.repository.search_engine.schema import *
+from api.routers.schemas import search_engine as sr_schema_router
 from api.deps import user_dependency
 
 from api.repository.abstract_rag.utils.markdown_generator import organize_papers_to_markdown
@@ -60,6 +61,21 @@ async def get_search_result_cache(user: user_dependency):
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"An unexpected error occurred: {str(e)}")
+
+@router.post("/get-only-answer")
+async def get_only_answer_endpoint(parcel: sr_schema_router.PaperList , user: user_dependency):
+    try:
+        # Wrap synchronous function in asyncio.to_thread
+        result = await asyncio.to_thread(get_query_result, parcel.query, parcel.paper_data)
+
+        return {
+            "query": result["query"], # string
+            "final_answer": result["final_answer"], # string
+            "followup_questions": result["followup_questions"] # List
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/send-rag-data")
 async def send_rag_data_endpoint(data: RagDataProps, user: user_dependency):

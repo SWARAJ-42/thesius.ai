@@ -19,11 +19,15 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 
 from fastapi.encoders import jsonable_encoder
 
-def get_query_result(query):
+def get_query_result(query, paper_data=None):
     # df = pd.DataFrame(test_data.dummy_papers)
 
     '''temporarily commented for testing'''
-    df = utils.get_papers(query)
+    if paper_data == None:
+        df = utils.get_papers(query)
+    else:
+        paper_data = [paper.dict() for paper in paper_data]
+        df = pd.DataFrame(paper_data).dropna()
 
     if df is None:
         return {'data': jsonable_encoder([{}]), 'final_answer': "Sorry, no result found"}
@@ -41,10 +45,8 @@ def get_query_result(query):
     # Ensure data is JSON serializable
     df_list = df.astype(str).to_dict(orient='records')
 
-    # Chunk the list into groups of 10
+    # Chunk the list into groups of 7
     chunked_data = [df_list[i:i + 7] for i in range(0, len(df_list), 7)]
-
-    print(chunked_data)
 
     response = {
         'data': jsonable_encoder(chunked_data),

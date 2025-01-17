@@ -10,10 +10,10 @@ export default function LoadingSkeleton() {
               <span className="mr-2">AI Summary</span>
               <Sparkles className="h-6 w-6" />
             </div>
-            <Skeleton className="h-32 w-full mb-4" />
-            <div className="space-y-2 mb-4">
+            <Skeleton className="w-full mb-4 h-[300px]" />
+            <div className="space-y-2 mb-4 flex flex-col justify-center items-center">
               {[1, 2, 3].map((i) => (
-                <Skeleton key={i} className="h-8 w-full" />
+                <Skeleton key={i} className="h-16 w-full" />
               ))}
             </div>
           </div>

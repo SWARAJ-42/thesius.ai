@@ -10,7 +10,7 @@ load_dotenv()
 
 import requests
 
-def fetch_openalex_data_advanced(search_query, filterData:advanced_search_engine_schema.FilterData, per_page=15, page=1):
+def fetch_openalex_data_advanced(search_query, filterData:advanced_search_engine_schema.FilterData, per_page=10, page=1):
     """
     Fetch data from the OpenAlex API.
 

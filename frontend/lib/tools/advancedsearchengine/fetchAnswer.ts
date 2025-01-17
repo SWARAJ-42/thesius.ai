@@ -23,24 +23,31 @@ export const fetchAnswerAdvanced = async (data: FilterData): Promise<QueryResult
     if (response.data) {
       const queryData: QueryResult = {
         ...response.data,
-        data: response.data.data.map((paper) => ({
-          paperId: paper.paperId,
-          title: paper.title,
-          abstract: paper.abstract,
-          venue: paper.venue,
-          year: paper.year,
-          citationCount: Number(paper.citationCount),
-          citation_normalized_percentile: typeof paper.citation_normalized_percentile === 'string' ? safeJsonParseAndCheck<CitationNormalizedPercentile>(paper.citation_normalized_percentile, isCitationNormalizedPercentile) : paper.citation_normalized_percentile,
-          isOpenAccess: paper.isOpenAccess === 'True' || paper.isOpenAccess === true,
-          openAccessPdf: typeof paper.openAccessPdf === 'string' ? safeJsonParseAndCheck<OpenAccessPdf>(paper.openAccessPdf, isOpenAccessPdf) : paper.openAccessPdf,
-          fieldsOfStudy: Array.isArray(paper.fieldsOfStudy) ? paper.fieldsOfStudy : safeJsonParse(paper.fieldsOfStudy) ?? [],
-          tldr: typeof paper.tldr === 'string' ? safeJsonParseAndCheck<Tldr>(paper.tldr, isTldr) : paper.tldr,
-          similarity: Number(paper.similarity),
-          type: paper.type
-        })),
+        data: response.data.data.map((paperDataList) =>
+          paperDataList.map((paper) => ({
+            paperId: paper.paperId,
+            title: paper.title,
+            abstract: paper.abstract,
+            venue: paper.venue,
+            year: paper.year,
+            citationCount: Number(paper.citationCount),
+            citation_normalized_percentile: typeof paper.citation_normalized_percentile === 'string'
+              ? safeJsonParseAndCheck<CitationNormalizedPercentile>(paper.citation_normalized_percentile, isCitationNormalizedPercentile)
+              : paper.citation_normalized_percentile,
+            isOpenAccess: paper.isOpenAccess === 'True' || paper.isOpenAccess === true,
+            openAccessPdf: typeof paper.openAccessPdf === 'string'
+              ? safeJsonParseAndCheck<OpenAccessPdf>(paper.openAccessPdf, isOpenAccessPdf)
+              : paper.openAccessPdf,
+            fieldsOfStudy: Array.isArray(paper.fieldsOfStudy) ? paper.fieldsOfStudy : safeJsonParse(paper.fieldsOfStudy) ?? [],
+            tldr: typeof paper.tldr === 'string'
+              ? safeJsonParseAndCheck<Tldr>(paper.tldr, isTldr)
+              : paper.tldr,
+            similarity: Number(paper.similarity),
+            type: paper.type,
+          }))
+        ),
       };
 
-      // console.log("Parsed Query Data:", queryData);
       return queryData;
     } else {
       return null;
