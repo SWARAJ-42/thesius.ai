@@ -50,7 +50,7 @@ export default function ThumbnailCard() {
         transition={{ duration: 0.5 }}
       >
         <div className="absolute top-4 left-0 right-0 flex justify-center z-10">
-          <Link href={"https://youtu.be/oqU9svnMfOY"} target='blank' className=''>
+          <Link href={"https://youtu.be/QMNjI8mBBXI?feature=shared"} target='blank' className=''>
             <motion.button
               className="bg-green-500 hover:bg-green-600 text-white font-bold px-4 py-2 rounded-full text-md shadow-xl"
               animate={buttonControls}
