@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import SearchPaperContext, { SearchPaperPage, useSearchPaper } from "@/context/SearchPapersContext"
 import { Search } from "lucide-react"
-import { useContext } from "react"
+import { useContext, useState } from "react"
 import { fetchQueryResult } from "@/lib/tools/searchengine/fetchResponse";
 
 
@@ -18,6 +18,7 @@ export default function FollowUpQuestionsCard({ questions = [
 
   const searchpapercontext = useContext(SearchPaperContext);
   const { searchPaperPage, setSearchPaperPage, paperRetrievalLoading, setPaperRetrievalLoading, paperRetrievalQuery, setPaperRetrievalQuery } = useSearchPaper();
+  const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth);
 
   const handleClick = async (question: string) => {
     setPaperRetrievalQuery(question)
@@ -42,7 +43,7 @@ export default function FollowUpQuestionsCard({ questions = [
   }
 
   return (
-    <Card className="w-full max-w-3xl mx-auto">
+    <Card className="w-full md:max-w-3xl mx-auto">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-2xl font-bold">Related questions:</CardTitle>
       </CardHeader>
@@ -54,7 +55,7 @@ export default function FollowUpQuestionsCard({ questions = [
               onClick={() => handleClick(question)}
               value={question}
               variant="outline" 
-              className="w-full h-auto py-2 px-4 text-left justify-start items-center text-sm font-normal whitespace-normal"
+              className={`${windowWidth < 500 ? "text-xs": "text-sm"} w-full h-auto py-2 px-4 text-left justify-start items-center font-normal whitespace-normal`}
             >
               <Search className="w-4 h-4 mr-2 flex-shrink-0" />
               <span>{question}</span>

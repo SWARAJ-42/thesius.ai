@@ -2,7 +2,7 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { ChevronRight, ChevronLeft, Home, Settings, Users, HelpCircle, Menu, User } from "lucide-react"
+import { ChevronRight, ChevronLeft, Home, Settings, Users, HelpCircle, Menu, User, Library, Book, File } from "lucide-react"
 import Link from "next/link"
 import { CollapsibleMenu } from "./collapsible-menu"
 
@@ -37,6 +37,7 @@ export function ExpandableSidebar() {
             <nav className="flex flex-col space-y-2 p-2">
               <div>
                 <SidebarItem route="/" icon={<Home className="h-4 w-4" />} text="Home" isExpanded={isExpanded} />
+                <SidebarItem route="/tool/search-papers" icon={<File className="h-4 w-4" />} text="Library (comming soon)" isExpanded={isExpanded} />
                 {isExpanded && <CollapsibleMenu />}
               </div>
             </nav>

@@ -28,6 +28,7 @@ export interface PaperIdProps {
 export function PaperCard({ paper, query, query_answer }: PaperCardProps) {
   const [isOpen, setIsOpen] = useState(true);
   const router = useRouter(); // initialize the router
+  const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth);
 
   const handleCardClick = () => {
     const parcel:PaperIdProps = {
@@ -38,9 +39,9 @@ export function PaperCard({ paper, query, query_answer }: PaperCardProps) {
   };
 
   return (
-    <Card className={`mt-2 cursor-pointer hover:bg-gray-100 ${paper.abstract && paper.abstract?.trim().length > 0 && "max-w-xl"}`} onClick={handleCardClick}>
+    <Card className={`mt-2 cursor-pointer hover:bg-gray-100 ${paper.abstract && paper.abstract?.trim().length > 0 && "max-w-xl"} ${windowWidth < 900 && "max-w-full"}`} onClick={handleCardClick}>
       <CardHeader>
-        <CardTitle className="text-lg font-bold">{paper.title}</CardTitle>
+        <CardTitle className="text-sm sm:text-lg font-bold">{paper.title}</CardTitle>
         <div className="flex flex-wrap gap-2 mt-2">
           {Array.isArray(paper.fieldsOfStudy) &&
             paper.fieldsOfStudy.map((label, index) => (
@@ -53,31 +54,31 @@ export function PaperCard({ paper, query, query_answer }: PaperCardProps) {
       <CardContent className="grid gap-4">
         {/* Display paper abstract */}
         {paper.abstract && paper.abstract?.trim().length > 0 && <Card className="bg-secondary/10">
-          <CardContent className="p-3 overflow-y-scroll max-h-[100px]">
-            <p className="text-sm text-muted-foreground">{paper.abstract}</p>
+          <CardContent className={`p-3 overflow-y-scroll ${windowWidth < 500 && "max-h-[60px]"} sm:max-h-[100px]`}>
+            <p className="text-[10px] sm:text-sm text-muted-foreground">{paper.abstract}</p>
           </CardContent>
         </Card>}
-        <div className="grid grid-cols-2 gap-4">
-          <Card className="bg-primary/5">
-            <CardContent className="p-3 flex flex-col items-center justify-between">
+        <div className="flex flex-col gap-4">
+          <Card className="w-full bg-primary/5">
+            <CardContent className="p-3 flex flex-wrap items-center justify-between">
               <div className="flex items-center gap-2">
                 <TrendingUp size={16} className="text-primary" />
                 <span className="text-sm font-semibold">Citations :</span>
-                <span className="text-lg font-bold text-primary">
+                <span className="text-sm sm:text-lg font-bold text-primary">
                   {paper.citationCount}
                 </span>
               </div>
-              <span className="text-xs font-semibold">Citation Percentile: </span>
+              {/* <span className="text-xs font-semibold">Citation Percentile: </span>
               <Badge variant="secondary" className="text-xs text-black mb-1">
                 {paper.citation_normalized_percentile?.value}
-              </Badge>
+              </Badge> */}
               <Badge variant="secondary" className="text-xs mt-1 bg-gray-200">
                 {paper.citation_normalized_percentile?.is_in_top_1_percent ? "is in top 1 percent" : (paper.citation_normalized_percentile?.is_in_top_10_percent && "is in top 10 percent")}
               </Badge>
             </CardContent>
           </Card>
-          <Card className={paper.isOpenAccess ? "bg-green-100" : "bg-red-100"}>
-            <CardContent className="p-3 flex flex-col items-center justify-between">
+          <Card className={`w-full ${paper.isOpenAccess ? "bg-green-100" : "bg-red-100"}`}>
+            <CardContent className="p-3 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <BookOpen
                   size={16}

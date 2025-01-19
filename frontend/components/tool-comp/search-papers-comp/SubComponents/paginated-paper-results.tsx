@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Pagination,
@@ -66,7 +66,7 @@ export function PaginatedPaperResults({
   };
 
   return (
-    <div className="pr-2 rounded-xl">
+    <div className="pr-2 rounded-xl mx-auto">
       <div className="my-2 py-1 flex justify-center bg-gray-200 rounded-xl">
         <Pagination>
           <PaginationContent>

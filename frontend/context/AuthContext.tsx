@@ -54,7 +54,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       // localStorage.setItem('token', response.data.auth_token);
       console.log(response)
       router.push('/dashboard');
-      return {message: "Login successfull"}
+      return {message: "Login successful"}
     } catch (error:any) {
       console.log('Login Failed:', error.response.data.detail);
       return {message: error.response.data.detail}

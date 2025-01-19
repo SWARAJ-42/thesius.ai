@@ -24,6 +24,7 @@ export default function DiveDeeper({ renderedPapers }: RenderedPapersProp) {
   const [selectedPapers, setSelectedPapers] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedPapersData, setSelectedPapersData] = useState<PaperData[]>([]);
+  const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth);
 
   const filteredPapers = papers.filter((paper) =>
     paper.title.toLowerCase().includes(searchTerm.toLowerCase())
@@ -58,8 +59,8 @@ export default function DiveDeeper({ renderedPapers }: RenderedPapersProp) {
   }, [renderedPapers, selectedPapers]);
 
   return (
-    <div className="max-w-4xl mx-auto p-4 bg-white shadow-xl min-h-full space-y-6 rounded-xl">
-      <h1 className="text-lg font-bold">
+    <div className="max-w-3xl mx-auto p-4 bg-white shadow-xl min-h-full space-y-6 rounded-xl">
+      <h1 className="text-md sm:text-lg font-bold">
         Select up to 5 paper results to chat with (Beta feature).
       </h1>
       <div className="relative">
@@ -68,7 +69,7 @@ export default function DiveDeeper({ renderedPapers }: RenderedPapersProp) {
           placeholder="Search papers..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="pl-10"
+          className="pl-10 text-xs sm:text-sm"
         />
         <Search
           className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
@@ -91,8 +92,8 @@ export default function DiveDeeper({ renderedPapers }: RenderedPapersProp) {
               htmlFor={`paper-${paper.paperId}`}
               className="flex-grow cursor-pointer"
             >
-              <h2 className="text-sm font-semibold">{paper.title}</h2>
-              <p className="text-sm text-gray-600">
+              <h2 className={`${windowWidth < 500 ? "text-xs": "text-sm"} font-semibold`}>{paper.title}</h2>
+              <p className={`${windowWidth < 500 ? "text-xs": "text-sm"} text-gray-600`}>
                 citations: {paper.citationCount}, year: {paper.year}
               </p>
             </label>

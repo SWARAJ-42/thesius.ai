@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { InputBox } from "./SubComponents/input-box";
 import SearchPaperContext, {
   SearchPaperPage,
@@ -23,6 +23,7 @@ import "./styles.css";
 import AnimatedProgressBar from "./SubComponents/progress-bar";
 import { PaginatedPaperResults } from "./SubComponents/paginated-paper-results";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 function Playground() {
   const {
@@ -38,6 +39,9 @@ function Playground() {
     fetchOnlyAnswerLoading,
     setFetchOnlyAnswerLoading,
   } = useSearchPaper(); // Use the hook
+
+  const [activeTab, setActiveTab] = useState("results");
+  const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth);
 
   useEffect(() => {
     const get_cache = async () => {
@@ -98,21 +102,32 @@ function Playground() {
   const query = searchPaperPage.query;
   const queryResult = searchPaperPage.queryResult;
 
-  return (
-    <div className="mx-auto max-w-7xl w-full">
-      <InputBox />
-      <div className="mx-auto max-w-7xl w-fit flex flex-row-reverse">
-        <div className="max-w-3xl ml-2 p-3 h-fit rounded-xl">
+  const resultsComponent = () => {
+    return (
+      <div className={`${windowWidth < 1200 && windowWidth > 900 && "ml-4 w-1/2"} ${windowWidth < 900 && "w-full mx-auto"} my-1 rounded-xl`}>
+          <div className="text-3xl my-2 font-bold text-gray-900 flex items-center">
+            <span className="mr-2">Results</span>
+            <span>
+              <Search />
+            </span>
+          </div>
+          <PaginatedPaperResults query={query} queryResult={queryResult} />
+      </div>
+    )
+  }
+  const AnalysisComponent = () => {
+    return (
+      <div className={`${windowWidth < 1200 && windowWidth > 900 && "w-1/2"} ${windowWidth < 900 && "w-full mx-auto"} ${windowWidth > 900 && "max-w-3xl"} p-3 h-fit rounded-xl`}>
           <div className="text-3xl my-2 font-bold text-gray-900 flex items-center">
             <span className="mr-2">AI Summary</span>
             <span>
               <Sparkles />
             </span>
           </div>
-          <div className="bg-gray-200 p-3 my-1 mb-3 rounded-xl font-semibold h-[300px] overflow-y-scroll">
+          <div className="bg-gray-200 p-3 my-1 mb-3 rounded-xl font-semibold h-[300px] overflow-y-scroll max-w-3xl mx-auto">
             {!fetchOnlyAnswerLoading ? (
               <ReactMarkdown
-                className="markdown text-sm"
+                className={`${windowWidth < 500 && "text-xs"} markdown text-sm`}
                 remarkPlugins={[remarkMath]}
                 rehypePlugins={[rehypeKatex]}
               >
@@ -135,7 +150,7 @@ function Playground() {
               </div>
             )}
           </div>
-          <div className="rounded-xl">
+          <div className="rounded-xl mt-5">
             <div className="text-3xl my-2 font-bold text-gray-900 flex items-center">
               <span className="mr-2">Dive Deeper</span>
               <span>
@@ -146,30 +161,29 @@ function Playground() {
               <DiveDeeper renderedPapers={queryResult.data[currentPage - 1]} />
             </div>
           </div>
-        </div>
-        <div className="my-1 rounded-xl">
-          <div className="text-3xl my-2 font-bold text-gray-900 flex items-center">
-            <span className="mr-2">Results</span>
-            <span>
-              <Search />
-            </span>
-          </div>
-          {/* <div className="pr-2 rounded-xl">
-            {queryResult.data.map((paperList: PaperData[]) =>
-                <div className="my-2 p-2 border-4 rounded-xl">
-                  {paperList.map((paper) => (
-                      <PaperCard
-                        query={query}
-                        query_answer={queryResult.final_answer}
-                        paper={paper}
-                      />
-                  ))}
-                </div>
-            )}
-          </div> */}
-          <PaginatedPaperResults query={query} queryResult={queryResult} />
-        </div>
       </div>
+    )
+  }
+
+  return (
+    <div className="mx-auto max-w-7xl w-full">
+      <InputBox />
+      {windowWidth < 900 && <Tabs className="mx-auto w-[90%]" value={activeTab} onValueChange={setActiveTab}>
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger className="font-bold" value="results">Result section</TabsTrigger>
+          <TabsTrigger className="font-bold" value="analysis-section">Analysis section</TabsTrigger>
+        </TabsList>
+        <TabsContent value="results">
+        {resultsComponent()}
+        </TabsContent>
+        <TabsContent value="analysis-section">
+        {AnalysisComponent()}
+        </TabsContent>
+      </Tabs>}
+      {windowWidth > 900 && <div className="mx-auto max-w-7xl w-fit flex flex-row-reverse">
+        {AnalysisComponent()}
+        {resultsComponent()}
+      </div>}
     </div>
   );
 }

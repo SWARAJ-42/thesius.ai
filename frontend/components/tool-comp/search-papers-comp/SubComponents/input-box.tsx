@@ -58,15 +58,15 @@ const ExampleQuestion: React.FC<{
   onQuestionClick: (question: string) => void;
 }> = ({ onQuestionClick }) => {
   return (
-    <div className="flex justify-between flex-wrap gap-5 p-5 w-fit">
+    <div className="w-full md:flex md:justify-between md:flex-wrap md:gap-5 p-5 md:w-fit">
       {researchQuestions.map((item, index) => (
         <div
           key={index}
-          className="w-[47%] flex items-center p-2 rounded-lg bg-gray-50/20 shadow-md hover:bg-gray-300 hover:shadow-lg transition-all cursor-pointer"
+          className="md:w-[47%] flex items-center p-2 rounded-lg bg-gray-50/20 shadow-md hover:bg-gray-300 hover:shadow-lg transition-all cursor-pointer"
           onClick={() => onQuestionClick(item.question)}
         >
-          <span className="text-3xl mr-4">{item.emoji}</span>
-          <p className="text-md m-0 text-gray-800">{item.question}</p>
+          <span className="text-lg md:text-3xl mr-4">{item.emoji}</span>
+          <p className="text-sm md:text-md m-0 text-gray-800">{item.question}</p>
         </div>
       ))}
     </div>
@@ -182,27 +182,27 @@ export function InputBox() {
   return (
     <div className="w-full p-4">
       {!paperRetrievalLoading && !searchPaperPage && !isAtComplexMode && (
-        <div className="text-gray-600 text-center text-6xl font-bold mb-2">
+        <div className="text-gray-600 text-center text-4xl md:text-6xl font-bold mb-2">
           Thesius search
         </div>
       )}
-      <div className="mx-auto p-2 relative bg-green-300/50 rounded-full overflow-hidden flex flex-row justify-center items-center">
+      <div className="mx-auto p-1 md:p-2 relative bg-green-300/50 rounded-xl md:rounded-full overflow-hidden flex flex-row justify-center items-center">
         <Textarea
           value={paperRetrievalQuery}
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
           placeholder="Enter your query..."
-          className="w-full pr-16 py-4 px-6 text-gray-700 font-semibold text-md leading-tight focus:outline-none resize-none overflow-hidden rounded-full"
+          className="w-full pr-16 py-2 md:py-4 px-3 md:px-6 text-gray-700 font-semibold text-sm md:text-md leading-tight focus:outline-none resize-none overflow-hidden rounded-xl md:rounded-full"
           style={{ minHeight: "20px", maxHeight: "60px" }}
         />
-        <div className="px-2">
+        <div className="px-1 md:px-2">
           <Button
             size="icon"
             onClick={handleSubmit}
             disabled={
               paperRetrievalQuery?.trim().length === 0 || paperRetrievalLoading
             }
-            className="bg-gray-800 text-white rounded-full w-12 h-12 flex items-center justify-center transition-colors duration-300"
+            className="bg-gray-800 text-white rounded-xl md:rounded-full w-12 h-12 flex items-center justify-center transition-colors duration-300"
           >
             <Send className="h-6 w-6" />
             <span className="sr-only">Send</span>

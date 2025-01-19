@@ -2,7 +2,7 @@ import DeviceBlocker from "@/components/global-comp/device-block";
 import { SearchPaperProvider } from "@/context/SearchPapersContext";
 
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <DeviceBlocker>
+  // <DeviceBlocker>
     <div>
       <main className="h-[100vh]">
         <SearchPaperProvider>
@@ -10,7 +10,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => (
         </SearchPaperProvider>
       </main>
     </div>
-  </DeviceBlocker>
+  // {/* </DeviceBlocker> */}
 );
 
 export default Layout;
