@@ -27,6 +27,8 @@ export default function PaperRelevance({
   const [feedback, setFeedback] = useState<"like" | "dislike" | null>(null);
   const router = useRouter(); // initialize the router
   const onBack = () => router.push(`/tool/search-papers`);
+  const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth);
+  
   if (answer.length > 0) {
     return (
       <Card className="w-full mx-auto shadow-lg rounded-xl my-2 p-2">
@@ -42,7 +44,7 @@ export default function PaperRelevance({
           </Button>
           <div className="ml-12">
             <h2 className="text-xl font-semibold mb-2">Query</h2>
-            <p className="text-lg">{query}</p>
+            <p className="text-sm sm:text-lg">{query}</p>
           </div>
         </CardHeader>
         <CardContent className="p-6 rounded-xl">
@@ -51,7 +53,7 @@ export default function PaperRelevance({
             Answer
           </h2>
           <ReactMarkdown
-            className="markdown text-sm h-[200px] overflow-y-scroll px-4"
+            className={`markdown ${windowWidth < 500 ? "h-[200px] text-xs": "h-[200px] text-sm"} overflow-y-scroll px-4`}
             remarkPlugins={[remarkMath]}
             rehypePlugins={[rehypeKatex]}
           >
@@ -59,7 +61,7 @@ export default function PaperRelevance({
           </ReactMarkdown>
         </CardContent>
         <CardFooter className="bg-muted p-6 flex justify-between items-center">
-          <div className="text-sm text-muted-foreground">
+          <div className="text-xs sm:text-sm text-muted-foreground">
             Was this answer helpful?
           </div>
           <div className="space-x-2">

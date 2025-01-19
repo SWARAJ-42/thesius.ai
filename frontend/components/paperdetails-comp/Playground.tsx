@@ -74,6 +74,7 @@ export default function Component() {
     setSearchPaperPage,
     setPaperRetrievalQuery
   } = useSearchPaper(); // Use the hook
+  const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth);
 
   useEffect(() => {
     const getPaperDetails = async () => {
@@ -135,16 +136,16 @@ export default function Component() {
           query={searchPaperPage?.query}
           answer={searchPaperPage?.queryResult.final_answer}
         />}
-        <div className="flex">
+        <div className="flex flex-col lg:flex-row">
           <div>
             <div className="container mx-auto p-4 bg-background rounded-xl">
               <Card className="mb-8">
                 <CardHeader>
-                  <CardTitle className="text-4xl font-bold">
+                  <CardTitle className="text-2xl sm:text-4xl font-bold">
                     {mainPaperDetails.title}
                   </CardTitle>
                   <CardDescription className="flex flex-wrap gap-2 mt-2">
-                    <div className="flex flex-wrap gap-6 text-sm text-muted-foreground">
+                    <div className="flex flex-wrap gap-6 text-xs sm:text-sm text-muted-foreground">
                       <div className="flex items-center gap-2">
                         <MessageCircle className="w-4 h-4" />
                         <span>{mainPaperDetails.citationCount} Citations</span>
@@ -161,15 +162,15 @@ export default function Component() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-muted-foreground mb-4 rounded-xl border p-3">
-                    <p className="text-3xl font-bold mb-2">Abstract</p>
-                    {mainPaperDetails.abstract}
-                  </p>
+                  <div className="text-muted-foreground mb-4 rounded-xl border p-3">
+                    <p className="text-xl sm:text-3xl font-bold mb-2">Abstract</p>
+                    <div className="text-xs sm:text-lg overflow-y-auto h-[300px] sm:h-full pr-1">{mainPaperDetails.abstract}</div>
+                  </div>
                   <div className="flex flex-wrap gap-4 mb-4">
-                    <Badge variant="outline" className="text-sm">
+                    <Badge variant="outline" className="text-xs sm:text-sm">
                       {mainPaperDetails.year}
                     </Badge>
-                    <Badge variant="outline" className="text-sm">
+                    <Badge variant="outline" className="text-xs sm:text-sm">
                       {mainPaperDetails.venue}
                     </Badge>
                   </div>
@@ -192,7 +193,7 @@ export default function Component() {
                               : "text-red-600"
                           }
                         />
-                        <span className="text-sm font-semibold">
+                        <span className="text-xs sm:text-sm font-semibold">
                           {mainPaperDetails.isOpenAccess
                             ? "Research paper is accessible"
                             : "Research paper is not accessible"}
@@ -203,7 +204,7 @@ export default function Component() {
                           href={mainPaperDetails.openAccessPdf?.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center gap-1 text-sm text-blue-600 hover:underline"
+                          className="flex items-center gap-1 text-xs sm:text-sm text-blue-600 hover:underline"
                         >
                           View PDF <ExternalLink size={14} />
                         </a>
@@ -249,7 +250,7 @@ export default function Component() {
                       >
                         <CardContent className="flex items-center space-x-4 p-0">
                           <User className="h-6 w-6 " />
-                          <span className="text-sm text-gray-700 hover:text-gray-800">
+                          <span className="text-xs sm:text-sm text-gray-700 hover:text-gray-800">
                             {author.name}
                           </span>
                         </CardContent>
@@ -264,7 +265,8 @@ export default function Component() {
                     References ({mainPaperDetails.references.length})
                   </TabsTrigger>
                   <TabsTrigger value="citations">
-                    Citations ( max 20 are displayed ) ({mainPaperDetails.citations.length})
+                   {windowWidth > 700 && ` Citations ( max 20 are displayed ) (${mainPaperDetails.citations.length})`}
+                   {windowWidth < 700 && ` Citations( max 20 )`}
                   </TabsTrigger>
                 </TabsList>
                 <TabsContent value="citations">
@@ -297,13 +299,13 @@ export default function Component() {
                   rel="noopener noreferrer"
                   className="inline-flex items-center space-x-2 text-primary hover:underline text-blue-500"
                 >
-                  <span>View on Semantic Scholar</span>
+                  <span>View on OpenAlex</span>
                   <ExternalLink className="w-4 h-4" />
                 </a>
               </div>
             </div>
           </div>
-          <div className="bg-background rounded-xl ml-2">
+          <div className="bg-background rounded-xl mt-4 lg:mt-0 lg:ml-2">
             {relatedPapers?.results && (
               <RelavantPapers results={relatedPapers?.results} />
             )}
@@ -312,94 +314,4 @@ export default function Component() {
       </div>
     );
   }
-  // const mainPaperDetails: PaperResponse = {
-  //   abstract:
-  //     "We introduce S2ORC, a large corpus of 81.1M English-language academic papers spanning many academic disciplines. The corpus consists of rich metadata, paper abstracts, resolved bibliographic references, as well as structured full text for 8.1M open access papers. Full text is annotated with automatically-detected inline mentions of citations, figures, and tables, each linked to their corresponding paper objects. In S2ORC, we aggregate papers from hundreds of academic publishers and digital archives into a unified source, and create the largest publicly-available collection of machine-readable academic text to date. We hope this resource will facilitate research and development of tools and tasks for text mining over academic text.",
-  //   arxivId: null,
-  //   authors: [
-  //     {
-  //       authorId: "46258841",
-  //       name: "Kyle Lo",
-  //       url: "https://www.semanticscholar.org/author/46258841",
-  //     },
-  //     {
-  //       authorId: "31860505",
-  //       name: "Lucy Lu Wang",
-  //       url: "https://www.semanticscholar.org/author/31860505",
-  //     },
-  //     {
-  //       authorId: "2060376981",
-  //       name: "Mark Neumann",
-  //       url: "https://www.semanticscholar.org/author/2060376981",
-  //     },
-  //     {
-  //       authorId: "143967880",
-  //       name: "Rodney Michael Kinney",
-  //       url: "https://www.semanticscholar.org/author/143967880",
-  //     },
-  //     {
-  //       authorId: "1780531",
-  //       name: "Daniel S. Weld",
-  //       url: "https://www.semanticscholar.org/author/1780531",
-  //     },
-  //   ],
-  //   citationVelocity: 130,
-  //   citations: [
-  //     {
-  //       arxivId: "2411.04403",
-  //       authors: [
-  //         { authorId: "2329559831", name: "Zhichao Geng" },
-  //         { authorId: "2329559417", name: "Dongyu Ru" },
-  //         { authorId: "2329855848", name: "Yang Yang" },
-  //       ],
-  //       doi: null,
-  //       intent: [],
-  //       isInfluential: false,
-  //       paperId: "dbd5190d984af38a016cf0747bcb16db7ed7e933",
-  //       title:
-  //         "Towards Competitive Search Relevance For Inference-Free Learned Sparse Retrievers",
-  //       url: "https://www.semanticscholar.org/paper/dbd5190d984af38a016cf0747bcb16db7ed7e933",
-  //       venue: "",
-  //       year: 2024,
-  //     },
-  //   ],
-  //   corpusId: 215416146,
-  //   doi: "10.18653/V1/2020.ACL-MAIN.447",
-  //   fieldsOfStudy: ["Computer Science"],
-  //   influentialCitationCount: 89,
-  //   isOpenAccess: true,
-  //   isPublisherLicensed: true,
-  //   is_open_access: true,
-  //   is_publisher_licensed: true,
-  //   numCitedBy: 513,
-  //   numCiting: 59,
-  //   paperId: "5c5751d45e298cea054f32b392c12c61027d2fe7",
-  //   references: [
-  //     {
-  //       arxivId: "2004.10706",
-  //       authors: [
-  //         { authorId: "31860505", name: "Lucy Lu Wang" },
-  //         { authorId: "46258841", name: "Kyle Lo" },
-  //         { authorId: "1648642525", name: "Yoganand Chandrasekhar" },
-  //       ],
-  //       doi: null,
-  //       intent: [],
-  //       isInfluential: false,
-  //       paperId: "bc411487f305e451d7485e53202ec241fcc97d3b",
-  //       title: "CORD-19: The Covid-19 Open Research Dataset",
-  //       url: "https://www.semanticscholar.org/paper/bc411487f305e451d7485e53202ec241fcc97d3b",
-  //       venue: "NLPCOVID19",
-  //       year: 2020,
-  //     },
-  //   ],
-  //   s2FieldsOfStudy: [
-  //     { category: "Computer Science", source: "external" },
-  //     { category: "Computer Science", source: "s2-fos-model" },
-  //   ],
-  //   title: "S2ORC: The Semantic Scholar Open Research Corpus",
-  //   topics: [],
-  //   url: "https://www.semanticscholar.org/paper/5c5751d45e298cea054f32b392c12c61027d2fe7",
-  //   venue: "Annual Meeting of the Association for Computational Linguistics",
-  //   year: 2020,
-  // };
 }

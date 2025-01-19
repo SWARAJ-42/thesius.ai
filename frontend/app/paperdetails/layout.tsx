@@ -3,7 +3,7 @@ import ProtectedRoute from "@/components/global-comp/protected-route";
 import { SearchPaperProvider } from "@/context/SearchPapersContext";
 
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <DeviceBlocker>
+  // <DeviceBlocker>
     <div>
       <ProtectedRoute route={true}>
         <SearchPaperProvider>
@@ -13,7 +13,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => (
         </SearchPaperProvider>
       </ProtectedRoute>
     </div>
-  </DeviceBlocker>
+  // {/* </DeviceBlocker> */}
 );
 
 export default Layout;
