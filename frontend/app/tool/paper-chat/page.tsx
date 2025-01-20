@@ -5,7 +5,7 @@ import DeviceBlocker from '@/components/global-comp/device-block';
 
 export default function Page() {
   return (
-    <DeviceBlocker>
+    // <DeviceBlocker>
       <ProtectedRoute route={true}>
         <SinglePaperChatStateProvider>
           <div className='bg-gray-200'>
@@ -13,7 +13,7 @@ export default function Page() {
           </div>
         </SinglePaperChatStateProvider>
       </ProtectedRoute>
-    </DeviceBlocker>
+    // </DeviceBlocker>
   )
 
 }

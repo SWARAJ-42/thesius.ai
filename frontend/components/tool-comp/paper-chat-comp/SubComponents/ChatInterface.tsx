@@ -63,8 +63,8 @@ export default function ChatPage() {
   if (!isMounted) return null;
 
   return (
-    <div className="w-1/2 flex flex-col bg-gray-100 text-black h-screen">
-      <div className="flex-1 overflow-auto p-4">
+    <div className="flex flex-col bg-gray-100 text-black h-screen">
+      <div className="flex-1 overflow-auto p-1 md:p-4">
         {messages.map((m) => (
           <div
             key={m.id}
@@ -73,7 +73,7 @@ export default function ChatPage() {
             } mb-4`}
           >
             <div
-              className={`flex items-start max-w-[80%] ${
+              className={`flex items-start max-w-[95%] md:max-w-[80%] ${
                 m.role === "user" ? "flex-row-reverse" : "flex-row"
               }`}
             >
@@ -89,7 +89,7 @@ export default function ChatPage() {
                 )}
               </div>
               <div
-                className={`p-3 rounded-lg ${
+                className={`md:p-3 px-1 rounded-lg ${
                   m.role === "user" ? "bg-green-200" : "bg-gray-200"
                 }`}
               >
@@ -101,15 +101,15 @@ export default function ChatPage() {
                     <Image
                       key={`${m.id}-${index}`}
                       src={attachment.url}
-                      width={500}
-                      height={500}
+                      width={400}
+                      height={400}
                       alt={attachment.name ?? `attachment-${index}`}
                       className="rounded-md mb-2"
                     />
                   ))}
                 {/* <p className="text-sm">{m.content}</p> */}
                 <ReactMarkdown
-                  className="markdown text-sm"
+                  className="markdown text-xs sm:text-sm"
                   remarkPlugins={[remarkMath]}
                   rehypePlugins={[rehypeKatex]}
                 >
@@ -177,7 +177,7 @@ export default function ChatPage() {
             <MdAttachFile className="w-5 h-5" />
           </button>
           <textarea
-            className="flex-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+            className="flex-1 p-2 text-xs sm:text-md border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
             value={input}
             placeholder="Ask anything..."
             onChange={handleInputChange}

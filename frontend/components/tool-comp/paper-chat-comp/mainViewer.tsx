@@ -21,6 +21,7 @@ import "./Sample.css";
 import ChatInterface from "./SubComponents/ChatInterface";
 import { useSearchParams } from "next/navigation";
 import BackButton from "@/components/global-comp/back-button";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
   "pdfjs-dist/build/pdf.worker.min.mjs",
@@ -190,6 +191,13 @@ export default function MainViewer() {
   const paperData = searchParams.get("paperData");
   const [responseUrl, setResponseUrl] = useState<string | null>(null)
 
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth);
+  
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
+
   useResizeObserver(containerRef, resizeObserverOptions, onResize);
 
   function onDocumentLoadSuccess({ numPages: nextNumPages }: PDFDocumentProxy) {
@@ -269,9 +277,9 @@ export default function MainViewer() {
       extractTextFromPage(fileURL || file, currentPage, setExtractedText);
     }
   
-    if (typeof window !== "undefined") {
-      window.localStorage.setItem(LOCAL_STORAGE_KEY, currentPage.toString());
-    }
+    // if (typeof window !== "undefined") {
+    //   window.localStorage.setItem(LOCAL_STORAGE_KEY, currentPage.toString());
+    // }
   
     setIsClient(true); // Set client-side flag
   }, [currentPage, file, fileURL]); // Only depends on these values
@@ -285,49 +293,132 @@ export default function MainViewer() {
     return null;
   }
 
+  // return (
+  //   <div className="flex">
+  //     <BackButton />
+  //     {error && (
+  //       <div className="z-50 absolute left-[10px] font-bold text-red-500">
+  //         {error}
+  //       </div>
+  //     )}
+  //     <div
+  //       className="Example bg-[#525659] h-screen overflow-y-scroll"
+  //       onMouseUp={handleTextSelection}
+  //     >
+  //       <PageControls
+  //         currentPage={currentPage}
+  //         numPages={numPages}
+  //         onFileChange={handleFileChange}
+  //         setCurrentPage={setCurrentPage}
+  //         handleURLChange={handleURLChange}
+  //       />
+  //       <div className="Example__container">
+  //         <div className="Example__container__document" ref={setContainerRef}>
+  //           <Document
+  //             file={fileURL || file}
+  //             onLoadSuccess={onDocumentLoadSuccess} // Success handler
+  //             onLoadError={onDocumentLoadError} // Error handler
+  //             options={options}
+  //           >
+  //             <Page
+  //               key={`page_${currentPage}`}
+  //               pageNumber={currentPage}
+  //               width={
+  //                 containerWidth ? Math.min(containerWidth, maxWidth) : maxWidth
+  //               }
+  //             />
+  //           </Document>
+  //         </div>
+  //       </div>
+  //     </div>
+  //     <ChatInterface />
+  //     <TextSelectionPopup
+  //       selectedText={selectedText}
+  //       popUpPosition={popUpPosition}
+  //     />
+  //   </div>
+  // );
   return (
-    <div className="flex">
-      <BackButton />
-      {error && (
-        <div className="z-50 absolute left-[10px] font-bold text-red-500">
-          {error}
-        </div>
-      )}
-      <div
-        className="Example bg-[#525659] h-screen overflow-y-scroll"
-        onMouseUp={handleTextSelection}
-      >
-        <PageControls
-          currentPage={currentPage}
-          numPages={numPages}
-          onFileChange={handleFileChange}
-          setCurrentPage={setCurrentPage}
-          handleURLChange={handleURLChange}
-        />
-        <div className="Example__container">
-          <div className="Example__container__document" ref={setContainerRef}>
-            <Document
-              file={fileURL || file}
-              onLoadSuccess={onDocumentLoadSuccess} // Success handler
-              onLoadError={onDocumentLoadError} // Error handler
-              options={options}
-            >
-              <Page
-                key={`page_${currentPage}`}
-                pageNumber={currentPage}
-                width={
-                  containerWidth ? Math.min(containerWidth, maxWidth) : maxWidth
-                }
-              />
-            </Document>
+    <div className="flex relative">
+      {/* Main Content */}
+      <div className="flex-1 w-1/2">
+        <BackButton />
+        {error && (
+          <div className="z-50 absolute left-[10px] font-bold text-red-500">
+            {error}
+          </div>
+        )}
+        <div
+          className="bg-[#525659] h-screen overflow-y-scroll"
+          onMouseUp={handleTextSelection}
+        >
+          <PageControls
+            currentPage={currentPage}
+            numPages={numPages}
+            onFileChange={handleFileChange}
+            setCurrentPage={setCurrentPage}
+            handleURLChange={handleURLChange}
+          />
+          <div className="Example__container">
+            <div className="Example__container__document" ref={setContainerRef}>
+              <Document
+                file={fileURL || file}
+                onLoadSuccess={onDocumentLoadSuccess}
+                onLoadError={onDocumentLoadError}
+                options={options}
+              >
+                {windowWidth > 768 ? <Page
+                  key={`page_${currentPage}`}
+                  pageNumber={currentPage}
+                  width={
+                    containerWidth ? Math.min(containerWidth, maxWidth) : maxWidth
+                  }
+                /> : (Array.from(new Array(numPages), (_el, index) => (
+                  <Page
+                    key={`page_${index + 1}`}
+                    pageNumber={index + 1}
+                    width={containerWidth ? Math.min(containerWidth, maxWidth) : maxWidth}
+                  />
+                )))}
+              </Document>
+            </div>
           </div>
         </div>
+        <TextSelectionPopup
+          selectedText={selectedText}
+          popUpPosition={popUpPosition}
+        />
       </div>
-      <ChatInterface />
-      <TextSelectionPopup
-        selectedText={selectedText}
-        popUpPosition={popUpPosition}
-      />
+
+      {/* Chat Sidebar */}
+      <div className="hidden w-1/2 md:block border-l">
+        <ChatInterface />
+      </div>
+
+      {/* Mobile Sliding Overlay Sidebar */}
+      <div 
+        className={`md:hidden fixed right-0 top-0 h-screen w-80 bg-white shadow-lg 
+          transition-transform duration-300 ease-in-out transform z-50
+          ${isSidebarOpen ? 'translate-x-0' : 'translate-x-full'}`}
+      >
+        <div className="relative h-full">
+          <button
+            onClick={toggleSidebar}
+            className="absolute -left-10 top-1/2 transform -translate-y-1/2 bg-white p-2 rounded-l shadow-md md:hidden"
+          >
+            {isSidebarOpen ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
+          </button>
+          <ChatInterface />
+        </div>
+      </div>
+
+      {/* Overlay Background */}
+      {isSidebarOpen && (
+        <div 
+          className="md:hidden fixed inset-0 bg-black bg-opacity-50 z-40"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
     </div>
   );
 }

@@ -20,6 +20,7 @@ export default function PageControls({
   handleURLChange,
 }: PageControlsProps) {
   const [pdfUrl, setPdfUrl] = useState(""); // Local state to store the entered URL
+  const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth);
 
   function goToPreviousPage() {
     setCurrentPage((prevPage) => Math.max(prevPage - 1, 1));
@@ -38,8 +39,8 @@ export default function PageControls({
   }
 
   return (
-    <div className="absolute bottom-4 w-fit left-1/4 transform -translate-x-1/2 z-50">
-      <div className="flex items-center space-x-2 bg-green-600 rounded-full px-2 shadow-lg text-[12px]">
+    <div className="absolute bottom-4 left-1/2 md:left-1/4 transform -translate-x-1/2 z-50">
+      <div className="flex items-center space-x-2 md:bg-green-600 rounded-lg md:rounded-full px-2 shadow-lg text-[12px] w-[95vw] md:w-fit">
         <label htmlFor="file-upload" className="cursor-pointer">
           <input
             id="file-upload"
@@ -69,31 +70,31 @@ export default function PageControls({
           </button>
         </div> */}
 
-        <div className="flex justify-center items-center">
+        {windowWidth > 768 && <div className="flex justify-center items-center">
           <button
             className="bg-green-700 text-white p-2 rounded-full hover:bg-green-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             onClick={goToPreviousPage}
             disabled={currentPage === 1}
           >
-            <ChevronLeft />
+            <ChevronLeft className="w-4 h-4" />
           </button>
-          <span className="text-white font-medium rounded-full mx-2">
+          <p className="text-white font-medium rounded-full mx-2">
             {currentPage} / {numPages || "-"}
-          </span>
+          </p>
           <button
             className="bg-green-700 text-white p-2 rounded-full hover:bg-green-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             onClick={goToNextPage}
             disabled={currentPage === numPages}
           >
-            <ChevronRight />
+            <ChevronRight className="w-4 h-4" />
           </button>
-        </div>
+        </div>}
 
-        <PageNumberInput
+        {windowWidth > 768 && <PageNumberInput
           currentPage={currentPage}
           numPages={numPages}
           setCurrentPage={setCurrentPage}
-        />
+        />}
       </div>
     </div>
   );

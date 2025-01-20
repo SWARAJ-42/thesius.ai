@@ -180,7 +180,7 @@ export default function Component() {
                     </Badge>
                   </div>
                 </CardContent>
-                <div className="flex justify-between items-center">
+                <div className="flex flex-col md:flex-row justify-between items-center">
                   <Card
                     className={
                       mainPaperDetails.isOpenAccess
@@ -232,7 +232,7 @@ export default function Component() {
                           modifiedUrl || ""
                         );
                       }}
-                      className="mx-4 w-1/3 font-bold rounded-xl p-5"
+                      className="mx-4 my-2 w-[80%] md:w-1/3 font-bold rounded-xl p-5"
                     >
                       Chat with this paper
                     </Button>

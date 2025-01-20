@@ -21,8 +21,8 @@ const BackButton: FC<BackButtonProps> = () => {
   };
 
   return (
-    <button onClick={handleBack} className="z-50 fixed top-10 left-10 p-2 bg-green-500 rounded-full text-white">
-      <ChevronLeft className="h-10 w-10" />
+    <button onClick={handleBack} className="z-50 fixed top-6 left-6 md:top-10 md:left-10 p-2 bg-green-500 rounded-full text-white">
+      <ChevronLeft className="h-6 w-6 md:h-10 md:w-10" />
     </button>
   );
 };
