@@ -192,7 +192,7 @@ export function InputBox() {
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
           placeholder="Enter your query..."
-          className="w-full pr-16 py-2 md:py-4 px-3 md:px-6 text-gray-700 font-semibold text-sm md:text-md leading-tight focus:outline-none resize-none overflow-hidden rounded-xl md:rounded-full"
+          className="w-full pr-16 py-2 md:py-4 px-3 md:px-6 text-gray-700 font-semibold text-sm md:text-lg leading-tight focus:outline-none resize-none overflow-hidden rounded-xl md:rounded-full"
           style={{ minHeight: "20px", maxHeight: "60px" }}
         />
         <div className="px-1 md:px-2">

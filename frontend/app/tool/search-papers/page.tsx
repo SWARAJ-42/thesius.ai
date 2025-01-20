@@ -21,7 +21,7 @@ const Page = () => {
       <div className="h-[100vh] bg-gray-100 overflow-y-scroll">
           <ExpandableSidebar />
           <Playground />
-          {searchPaperPage && <Footer/>}
+          {searchPaperPage && !paperRetrievalLoading && <Footer/>}
       </div>
     </ProtectedRoute>
   );

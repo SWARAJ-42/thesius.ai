@@ -69,11 +69,8 @@ export default function Component() {
   const searchParams = useSearchParams();
   const paperIdParcel = searchParams.get("paperIdParcel");
   const router = useRouter(); // initialize the router
-  const {
-    searchPaperPage,
-    setSearchPaperPage,
-    setPaperRetrievalQuery
-  } = useSearchPaper(); // Use the hook
+  const { searchPaperPage, setSearchPaperPage, setPaperRetrievalQuery } =
+    useSearchPaper(); // Use the hook
   const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth);
 
   useEffect(() => {
@@ -115,8 +112,8 @@ export default function Component() {
   const handleButtonClick = (title: string, url: any) => {
     const parcel = {
       title: title,
-      url: url
-    }
+      url: url,
+    };
     const paperData = encodeURIComponent(JSON.stringify(parcel)); // Encode the paper data
     router.push(`/tool/paper-chat?paperData=${paperData}`); // Navigate with query parameter
   };
@@ -132,10 +129,12 @@ export default function Component() {
   if (mainPaperDetails && parsedPaperIdProps) {
     return (
       <div className="container mx-auto p-6">
-        {searchPaperPage && <PaperRelevance
-          query={searchPaperPage?.query}
-          answer={searchPaperPage?.queryResult.final_answer}
-        />}
+        {searchPaperPage && (
+          <PaperRelevance
+            query={searchPaperPage?.query}
+            answer={searchPaperPage?.queryResult.final_answer}
+          />
+        )}
         <div className="flex flex-col lg:flex-row">
           <div>
             <div className="container mx-auto p-4 bg-background rounded-xl">
@@ -152,7 +151,9 @@ export default function Component() {
                       </div>
                       <div className="flex items-center gap-2">
                         <GitFork className="w-4 h-4" />
-                        <span>{mainPaperDetails.referenceCount} References</span>
+                        <span>
+                          {mainPaperDetails.referenceCount} References
+                        </span>
                       </div>
                       <div className="flex items-center gap-2">
                         <BookOpen className="w-4 h-4" />
@@ -163,8 +164,12 @@ export default function Component() {
                 </CardHeader>
                 <CardContent>
                   <div className="text-muted-foreground mb-4 rounded-xl border p-3">
-                    <p className="text-xl sm:text-3xl font-bold mb-2">Abstract</p>
-                    <div className="text-xs sm:text-lg overflow-y-auto h-[300px] sm:h-full pr-1">{mainPaperDetails.abstract}</div>
+                    <p className="text-xl sm:text-3xl font-bold mb-2">
+                      Abstract
+                    </p>
+                    <div className="text-xs sm:text-lg overflow-y-auto h-[300px] sm:h-full pr-1">
+                      {mainPaperDetails.abstract}
+                    </div>
                   </div>
                   <div className="flex flex-wrap gap-4 mb-4">
                     <Badge variant="outline" className="text-xs sm:text-sm">
@@ -212,7 +217,25 @@ export default function Component() {
                     </CardContent>
                   </Card>
                   {mainPaperDetails.isOpenAccess ? (
-                    <Button onClick={()=>{handleButtonClick(mainPaperDetails.title, mainPaperDetails.openAccessPdf?.url)}} className="mx-4 w-1/3 font-bold rounded-xl p-5">Chat with this paper</Button>
+                    <Button
+                      onClick={() => {
+                        // Handle arxiv.org URL transformation
+                        const pdfUrl: string | undefined =
+                          mainPaperDetails.openAccessPdf?.url;
+                        const modifiedUrl: string | undefined =
+                          pdfUrl && pdfUrl.includes("arxiv.org")
+                            ? pdfUrl.replace("/abs/", "/pdf/")
+                            : pdfUrl;
+                        console.log(modifiedUrl)
+                        handleButtonClick(
+                          mainPaperDetails.title,
+                          modifiedUrl || ""
+                        );
+                      }}
+                      className="mx-4 w-1/3 font-bold rounded-xl p-5"
+                    >
+                      Chat with this paper
+                    </Button>
                   ) : (
                     <></>
                   )}
@@ -265,31 +288,40 @@ export default function Component() {
                     References ({mainPaperDetails.references.length})
                   </TabsTrigger>
                   <TabsTrigger value="citations">
-                   {windowWidth > 700 && ` Citations ( max 20 are displayed ) (${mainPaperDetails.citations.length})`}
-                   {windowWidth < 700 && ` Citations( max 20 )`}
+                    {windowWidth > 700 &&
+                      ` Citations ( max 20 are displayed ) (${mainPaperDetails.citations.length})`}
+                    {windowWidth < 700 && ` Citations( max 20 )`}
                   </TabsTrigger>
                 </TabsList>
                 <TabsContent value="citations">
-                  {searchPaperPage && <ScrollArea className="h-[400px] rounded-md border p-4">
-                    {mainPaperDetails.citations.map((citation) => (
-                      <PaperCard
-                        paper={citation}
-                        query={searchPaperPage?.query}
-                        query_answer={searchPaperPage.queryResult.final_answer}
-                      />
-                    ))}
-                  </ScrollArea>}
+                  {searchPaperPage && (
+                    <ScrollArea className="h-[400px] rounded-md border p-4">
+                      {mainPaperDetails.citations.map((citation) => (
+                        <PaperCard
+                          paper={citation}
+                          query={searchPaperPage?.query}
+                          query_answer={
+                            searchPaperPage.queryResult.final_answer
+                          }
+                        />
+                      ))}
+                    </ScrollArea>
+                  )}
                 </TabsContent>
                 <TabsContent value="references">
-                  {searchPaperPage && <ScrollArea className="h-[400px] rounded-md border p-4">
-                    {mainPaperDetails.references.map((reference) => (
-                      <PaperCard
-                      paper={reference}
-                      query={searchPaperPage?.query}
-                      query_answer={searchPaperPage?.queryResult.final_answer}
-                    />
-                    ))}
-                  </ScrollArea>}
+                  {searchPaperPage && (
+                    <ScrollArea className="h-[400px] rounded-md border p-4">
+                      {mainPaperDetails.references.map((reference) => (
+                        <PaperCard
+                          paper={reference}
+                          query={searchPaperPage?.query}
+                          query_answer={
+                            searchPaperPage?.queryResult.final_answer
+                          }
+                        />
+                      ))}
+                    </ScrollArea>
+                  )}
                 </TabsContent>
               </Tabs>
               <div className="mt-8 text-center">

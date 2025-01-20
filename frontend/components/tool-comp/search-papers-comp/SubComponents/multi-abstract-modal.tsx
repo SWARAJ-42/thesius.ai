@@ -49,12 +49,13 @@ export default function MultiAbstractChatModal({
 }: RenderedPapersProp) {
   const { stop, isLoading } = useChat();
   const [messages, setMessages] = useState<Message[]>([
-    { role: "bot", content: "Hi there! How can I assist you?" },
+    { role: "bot", content: "Hey there, ask me anything regarding the papers you selected!" },
   ]);
   const [input, setInput] = useState("");
   const router = useRouter();
   const [chatSetupLoading, setchatsetupLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth);
 
   const openDialog = () => setIsOpen(true);
   const closeDialog = () => setIsOpen(false);
@@ -142,13 +143,13 @@ export default function MultiAbstractChatModal({
           <Loader2 className="h-4 w-4 animate-spin" />
         )}
       </Button>
-      <DialogContent className="max-w-5xl w-[80vw] h-[80vh] max-h-[900px] overflow-hidden p-0">
-        <DialogHeader className="p-6 pb-0">
+      <DialogContent className="max-w-5xl w-[90vw] md:w-[80vw] h-[80vh] max-h-[900px] overflow-hidden p-0 rounded-xl">
+        <DialogHeader className="p-3 md:p-6 pb-0">
           <DialogTitle>Multi abstract chat</DialogTitle>
         </DialogHeader>
-        <div className="flex gap-4 h-full overflow-hidden p-6">
-          <div className="flex flex-col w-2/3 h-full overflow-hidden">
-            <ScrollArea className="flex-grow mb-4 border rounded-md p-4 overflow-y-auto h-[60vh]">
+        <div className="flex flex-col md:flex-row gap-4 h-full overflow-hidden p-3 md:p-6">
+          <div className="w-full flex flex-col md:w-2/3 h-full overflow-y-auto">
+            <ScrollArea className="flex-grow mb-4 border rounded-md p-2 md:p-4 overflow-y-auto h-[60vh]">
               {messages.map((message, index) => (
                 <div
                   key={index}
@@ -157,14 +158,14 @@ export default function MultiAbstractChatModal({
                   }`}
                 >
                   <span
-                    className={`inline-block p-2 rounded-lg ${
+                    className={`inline-block py-[1px] px-2 md:p-2 rounded-lg ${
                       message.role === "user"
                         ? "bg-green-500 text-white"
                         : "bg-gray-200"
                     }`}
                   >
                     <ReactMarkdown
-                      className="markdown text-sm"
+                      className="markdown text-xs sm:text-sm"
                       remarkPlugins={[remarkMath]}
                       rehypePlugins={[rehypeKatex]}
                     >
@@ -188,7 +189,7 @@ export default function MultiAbstractChatModal({
               <Button
                 // variant="outline"
                 onClick={handleClearChat}
-                className="p-2 bg-gray-300 text-black rounded-md hover:bg-gray-400 focus:outline-none font-bold"
+                className="sm:text-md p-2 bg-gray-300 text-black rounded-md hover:bg-gray-400 focus:outline-none font-bold"
               >
                 <Trash2 className="h-4 w-4 mr-1" />
                 Clear Chat
@@ -204,13 +205,12 @@ export default function MultiAbstractChatModal({
               )}
             </div>
             <form
-              className="border-t border-gray-200 p-4 bg-gray-200 rounded-xl"
+              className="border-t border-gray-200 p-1 md:p-4 bg-gray-200 rounded-xl"
               onSubmit={(event) => {
                 handleSubmit(event);
               }}
             >
-              <div className="mb-2"></div>
-              <div className="flex items-center space-x-2">
+              <div className="flex justify-center items-center space-x-2">
                 <input
                   className="flex-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
                   value={input}
@@ -226,7 +226,7 @@ export default function MultiAbstractChatModal({
               </div>
             </form>
           </div>
-          <ScrollArea className="w-1/3 h-full overflow-y-auto">
+          <ScrollArea className="w-full md:w-1/3 h-full overflow-y-auto">
             <div className="pr-4">
               {renderedPapers.map((paper, index) => (
                 <Card
@@ -237,11 +237,11 @@ export default function MultiAbstractChatModal({
                   }}
                 >
                   <CardHeader>
-                    <CardTitle>{paper.title}</CardTitle>
-                    <CardDescription className="p-1 bg-gray-100 rounded-full w-fit">
+                    <CardTitle className={`${windowWidth < 700 && "text-md"}`}>{paper.title}</CardTitle>
+                    <CardDescription className={`${windowWidth < 700 && "text-xs"} p-1 bg-gray-100 rounded-full w-fit`}>
                       {paper.year}
                     </CardDescription>
-                    <CardDescription>{paper.tldr?.text}</CardDescription>
+                    <CardDescription className={`${windowWidth < 700 && "text-xs"}`}>{paper.tldr?.text}</CardDescription>
                   </CardHeader>
                 </Card>
               ))}
