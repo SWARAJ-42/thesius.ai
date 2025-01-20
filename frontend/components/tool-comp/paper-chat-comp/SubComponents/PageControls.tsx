@@ -39,7 +39,7 @@ export default function PageControls({
   }
 
   return (
-    <div className="absolute bottom-4 left-1/2 md:left-1/4 transform -translate-x-1/2 z-50">
+    <div className="fixed sm:absolute bottom-8 md:bottom-4 left-1/2 md:left-1/4 transform -translate-x-1/2 z-50">
       <div className="flex items-center space-x-2 md:bg-green-600 rounded-lg md:rounded-full px-2 shadow-lg text-[12px] w-[95vw] md:w-fit">
         <label htmlFor="file-upload" className="cursor-pointer">
           <input

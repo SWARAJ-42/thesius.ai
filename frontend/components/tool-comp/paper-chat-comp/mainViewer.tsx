@@ -397,7 +397,7 @@ export default function MainViewer() {
 
       {/* Mobile Sliding Overlay Sidebar */}
       <div 
-        className={`md:hidden fixed right-0 top-0 h-screen w-80 bg-white shadow-lg 
+        className={`md:hidden fixed right-0 top-0 h-fit rounded-xl sm:rounded-none sm:h-screen w-80 bg-white shadow-lg 
           transition-transform duration-300 ease-in-out transform z-50
           ${isSidebarOpen ? 'translate-x-0' : 'translate-x-full'}`}
       >
