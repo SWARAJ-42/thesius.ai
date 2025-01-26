@@ -52,6 +52,29 @@ import { Footer } from "../global-comp/Footer";
 import PaperDetailSkeleton from "../loading-skeletons/paper-detail-skeleton";
 import { fetchQueryResultCache } from "@/lib/tools/searchengine/fetchResponse";
 import { SearchPaperPage, useSearchPaper } from "@/context/SearchPapersContext";
+import { Dialog, DialogHeader, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
+import { savePaperDetails } from "@/lib/Savings/fetchSavedPaperData";
+
+interface SuccessModalProps {
+  isOpen: boolean
+  onClose: () => void
+}
+
+export function SuccessModal({ isOpen, onClose }: SuccessModalProps) {
+  return (
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="sm:max-w-[300px]">
+        <DialogHeader>
+          <DialogTitle>Success</DialogTitle>
+          <DialogDescription>Result saved successfully!</DialogDescription>
+        </DialogHeader>
+        <div className="mt-4">
+          <Button className="rounded-xl bg-green-300 hover:bg-green-400 text-gray-800" onClick={onClose}>Close</Button>
+        </div>
+      </DialogContent>
+    </Dialog>
+  )
+}
 
 interface CitationorReferenceProps {
   paper: CitationorReference;
@@ -66,12 +89,33 @@ export default function Component() {
   const [relatedPapers, setRelatedPapers] =
     useState<AllRelatedPapersLinks | null>(null);
   const [paperDetailsLoading, setpaperDetailsLoading] = useState(true); // Loading state
+
   const searchParams = useSearchParams();
   const paperIdParcel = searchParams.get("paperIdParcel");
+  const savedPaperIdParcel = searchParams.get("savedPaperIdParcel");
+
   const router = useRouter(); // initialize the router
   const { searchPaperPage, setSearchPaperPage, setPaperRetrievalQuery } =
     useSearchPaper(); // Use the hook
   const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth);
+  
+  const [isFromDatabase, setIsFromDatabase] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const HandleSave = async () => {
+    if (mainPaperDetails) {
+      setIsSaving(true); // Disable the button
+      await savePaperDetails(mainPaperDetails); // Save the result
+      setIsSaving(false); // Re-enable if needed, though it's saved
+      setIsSaved(true)
+      openModal(); // Open modal to show the message
+    }
+  };
+
+  const openModal = () => setIsModalOpen(true)
+  const closeModal = () => setIsModalOpen(false)
 
   useEffect(() => {
     const getPaperDetails = async () => {
@@ -89,22 +133,41 @@ export default function Component() {
           };
           setSearchPaperPage(newSearchPaperPage);
           setPaperRetrievalQuery(data.query);
-          const fetchedPaper = await fetchPaperDetails(parsed.paperId); // Call fetch function
-          const relatedPapers = await SearchRelatedPaperPdfLinks(data?.query);
-          if (fetchedPaper) {
-            setMainPaper(fetchedPaper); // Store fetched data in state
-            console.log("Fetched paper details:", fetchedPaper);
-          }
-          if (relatedPapers) {
-            setRelatedPapers(relatedPapers);
-            console.log("Fetched related papers from links:", relatedPapers);
-            setpaperDetailsLoading(false);
-          }
         }
-      } else {
+        const fetchedPaper = await fetchPaperDetails(parsed.paperId); // Call fetch function
+        const relatedPapers = await SearchRelatedPaperPdfLinks(fetchedPaper.title);
+        if (fetchedPaper) {
+          setMainPaper(fetchedPaper); // Store fetched data in state
+          console.log("Fetched paper details:", fetchedPaper);
+        }
+        if (relatedPapers) {
+          setRelatedPapers(relatedPapers);
+          console.log("Fetched related papers from links:", relatedPapers);
+          setpaperDetailsLoading(false);
+        }
+      } 
+      else if (savedPaperIdParcel) {
+        setIsFromDatabase(true)
+        const parsed = JSON.parse(decodeURIComponent(savedPaperIdParcel)); // Decode and parse
+        setParsedPaperIdProps(parsed); // Store parsedPaper in state
+        console.log("Parsed paperId data:", parsed);
+        const fetchedPaper = await fetchPaperDetails(parsed.paperId); // Call fetch function
+        const relatedPapers = await SearchRelatedPaperPdfLinks(fetchedPaper.title);
+        if (fetchedPaper) {
+          setMainPaper(fetchedPaper); // Store fetched data in state
+          console.log("Fetched paper details:", fetchedPaper);
+        }
+        if (relatedPapers) {
+          setRelatedPapers(relatedPapers);
+          console.log("Fetched related papers from links:", relatedPapers);
+          setpaperDetailsLoading(false);
+        }
+      }
+      else {
         setpaperDetailsLoading(false);
         notFound();
       }
+      
     };
     getPaperDetails();
   }, [paperIdParcel]);
@@ -129,6 +192,16 @@ export default function Component() {
   if (mainPaperDetails && parsedPaperIdProps) {
     return (
       <div className="container mx-auto p-6">
+        {!isFromDatabase && !isSaved && (
+              <>
+                <Button
+                  className="my-2 rounded-xl bg-green-500/50 hover:bg-green-600/50 text-gray-800 font-bold"
+                  onClick={HandleSave}
+                >
+                  Save Paper to library
+                </Button>
+              </>
+        )}
         {searchPaperPage && (
           <PaperRelevance
             query={searchPaperPage?.query}
@@ -177,6 +250,9 @@ export default function Component() {
                     </Badge>
                     <Badge variant="outline" className="text-xs sm:text-sm">
                       {mainPaperDetails.venue}
+                    </Badge>
+                    <Badge variant="outline" className="text-xs sm:text-sm">
+                      {mainPaperDetails.type}
                     </Badge>
                   </div>
                 </CardContent>
@@ -294,7 +370,7 @@ export default function Component() {
                   </TabsTrigger>
                 </TabsList>
                 <TabsContent value="citations">
-                  {searchPaperPage && (
+                  {searchPaperPage ? (
                     <ScrollArea className="h-[400px] rounded-md border p-4">
                       {mainPaperDetails.citations.map((citation) => (
                         <PaperCard
@@ -306,10 +382,18 @@ export default function Component() {
                         />
                       ))}
                     </ScrollArea>
-                  )}
+                  ):<ScrollArea className="h-[400px] rounded-md border p-4">
+                  {mainPaperDetails.references.map((citation) => (
+                    <PaperCard
+                      paper={citation}
+                      query=""
+                      query_answer=""
+                    />
+                  ))}
+                </ScrollArea>}
                 </TabsContent>
                 <TabsContent value="references">
-                  {searchPaperPage && (
+                  {searchPaperPage ? (
                     <ScrollArea className="h-[400px] rounded-md border p-4">
                       {mainPaperDetails.references.map((reference) => (
                         <PaperCard
@@ -321,7 +405,15 @@ export default function Component() {
                         />
                       ))}
                     </ScrollArea>
-                  )}
+                  ): <ScrollArea className="h-[400px] rounded-md border p-4">
+                  {mainPaperDetails.references.map((reference) => (
+                    <PaperCard
+                      paper={reference}
+                      query=""
+                      query_answer=""
+                    />
+                  ))}
+                </ScrollArea>}
                 </TabsContent>
               </Tabs>
               <div className="mt-8 text-center">
@@ -343,6 +435,7 @@ export default function Component() {
             )}
           </div>
         </div>
+        <SuccessModal isOpen={isModalOpen} onClose={closeModal} />
       </div>
     );
   }

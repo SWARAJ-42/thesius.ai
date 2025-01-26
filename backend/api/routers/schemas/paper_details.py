@@ -1,45 +1,62 @@
-# schemas.py
-
-from pydantic import BaseModel, HttpUrl
 from typing import List, Optional
+from pydantic import BaseModel
 
-# FastAPI Schema
-from pydantic import BaseModel, HttpUrl
-from typing import List, Optional
-
-class CitationNormalizedPercentile(BaseModel):
+class CitationNormalizedPercentileSchema(BaseModel):
     value: float
     is_in_top_1_percent: bool
     is_in_top_10_percent: bool
 
-class OpenAccessPdf(BaseModel):
-    url: Optional[HttpUrl]
+class OpenAccessPdfSchema(BaseModel):
+    url: str
     status: str
 
-class Author(BaseModel):
+class AuthorSchema(BaseModel):
     authorId: str
     name: str
-    url: HttpUrl
+    url: str
 
-class FieldOfStudy(BaseModel):
-    name: str
-
-class Paper(BaseModel):
+class CitationOrReference(BaseModel):
     paperId: str
-    url: HttpUrl
+    url: str
     title: str
     abstract: Optional[str]
     venue: Optional[str]
     year: int
     referenceCount: int
     citationCount: int
-    citation_normalized_percentile: CitationNormalizedPercentile
+    citation_normalized_percentile: CitationNormalizedPercentileSchema
     isOpenAccess: bool
-    openAccessPdf: OpenAccessPdf
+    openAccessPdf: OpenAccessPdfSchema
     fieldsOfStudy: List[str]
     tldr: Optional[str]
+    type: str
 
-class PaperResponse(Paper):
-    authors: List[Author]
-    citations: List[Paper]
-    references: List[Paper]
+class PaperResponse(BaseModel):
+    paperId: str
+    url: str
+    title: str
+    abstract: Optional[str]
+    venue: Optional[str]
+    year: int
+    referenceCount: int
+    citationCount: int
+    citation_normalized_percentile: CitationNormalizedPercentileSchema
+    isOpenAccess: bool
+    openAccessPdf: OpenAccessPdfSchema
+    fieldsOfStudy: List[str]
+    tldr: Optional[str]
+    authors: List[AuthorSchema]
+    citations: List[CitationOrReference]
+    references: List[CitationOrReference]
+    type: str
+
+class RelatedPapersLink(BaseModel):
+    title: str
+    description: str
+    url: str
+
+class AllRelatedPapersLinks(BaseModel):
+    results: List[RelatedPapersLink]
+
+class paperDataResponse(BaseModel):
+    paperData: PaperResponse

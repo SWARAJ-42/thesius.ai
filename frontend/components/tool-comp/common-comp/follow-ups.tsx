@@ -21,26 +21,33 @@ export default function FollowUpQuestionsCard({ questions = [
   const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth);
 
   const handleClick = async (question: string) => {
-    setPaperRetrievalQuery(question)
+    setPaperRetrievalQuery(question);
     if (paperRetrievalQuery.trim().length > 0) {
-      setPaperRetrievalLoading(true)
-      try {
-        const data = await fetchQueryResult(paperRetrievalQuery); // Call fetchQueryResult with the paperRetrievalQuery
-        console.log("Response data:", data); // Handle the returned data as needed
-        if (data) {
-          const newSearchPaperPage: SearchPaperPage = {
-            query: paperRetrievalQuery,
-            queryResult: data,
-            library: []
-          };
-          setSearchPaperPage(newSearchPaperPage)
+        setPaperRetrievalLoading(true);
+        try {
+            const data = await fetchQueryResult(question); // Call fetchQueryResult with the question
+            console.log("Response data:", data); // Handle the returned data as needed
+            if (data) {
+                const newSearchPaperPage: SearchPaperPage = {
+                    query: question,
+                    queryResult: data,
+                    library: []
+                };
+                setSearchPaperPage(newSearchPaperPage);
+            }
+        } catch (error) {
+            console.error("Error fetching response:", error);
         }
-      } catch (error) {
-        console.error("Error fetching response:", error);
-      }
-      setPaperRetrievalLoading(false)
+        setPaperRetrievalLoading(false);
+
+        // Remove all parameters from the URL
+        window.history.replaceState(null, "", window.location.pathname);
+
+        // Reload the page
+        window.location.reload();
     }
-  }
+};
+
 
   return (
     <Card className="w-full md:max-w-3xl mx-auto">

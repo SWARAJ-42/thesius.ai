@@ -76,7 +76,7 @@ async def create_user(db: db_dependency, create_user_request: UserCreateRequest)
     await send_verification_email(create_user_request.email, token)
 
     return {
-        "message": "Registration successful. Please check your email for a verification link.\n Do not forget to check your SPAM folder !",
+        "message": "Registration successful. Please check your email(if exists!) for a verification link.",
         "status_code": status.HTTP_201_CREATED,
     }
 

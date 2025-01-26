@@ -14,6 +14,7 @@ import React from "react";
 import FilterBox from "./Filtering/FilterBox";
 import { fetchTopics, fetchTopicsCache, Topic } from "@/lib/tools/advancedsearchengine/fetchTopics";
 import CommonLoader from "@/components/global-comp/loader";
+import { addSearchResult } from "@/lib/Savings/fetchSavedSearchResults";
 
 // Define the type for each research question item
 interface ResearchQuestion {
@@ -116,6 +117,7 @@ export function InputBox() {
             queryResult: data,
             library: [],
           };
+          await addSearchResult(data);
           setSearchPaperPage(newSearchPaperPage);
         }
         setIsExpanded(false);

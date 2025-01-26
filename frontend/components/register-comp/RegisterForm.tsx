@@ -6,10 +6,11 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Navbar from "@/components/global-comp/navbar";
-import { Loader2 } from "lucide-react"; // Import the loading icon
+import { Loader2, MailWarning } from "lucide-react"; // Import the loading icon
 import { BACKEND_URL } from "@/lib/constants";
 import { useRouter } from "next/navigation";
 import axios from "axios";
+import { Warning } from "postcss";
 
 interface ResponseObject {
   message: string,
@@ -119,6 +120,9 @@ const RegisterForm = () => {
             <div className="bg-white rounded-lg shadow-lg p-6 w-80 space-y-4 text-center">
               <p className="text-gray-600">
                 {modalMessage}
+              </p><br />
+              <p className="text-red-500 font-bold">
+                <MailWarning className="mx-auto inline"/> It is possible that our mail may go to your spam folder !
               </p>
               <button
                 onClick={() => {setShowModal(false);router.push("/auth/login");}}

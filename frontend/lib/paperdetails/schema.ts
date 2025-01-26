@@ -51,6 +51,7 @@ export interface PaperResponse {
     authors: authorSchema[];
     citations: CitationorReference[];
     references: CitationorReference[];
+    type: string
 }
 
 export interface RelatedPapersLink {

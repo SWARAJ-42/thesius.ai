@@ -50,12 +50,12 @@ export function CollapsibleMenu() {
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.3 }}
-              className="space-y-2 overflow-hidden"
+              className="space-y-1 overflow-hidden"
             >
               <div className="rounded-md border border-green-200 font-mono text-sm pt-1">
-                <Link href="/tool/search-papers" className="block w-full justify-start p-3 rounded-xl bg-green-100 hover:bg-green-300 text-green-800 font-bold">
+                <a href="/tool/search-papers" className="block w-full justify-start p-3 rounded-xl bg-green-100 hover:bg-green-300 text-green-800 font-bold">
                   Thesius search
-                </Link>
+                </a>
               </div>
               <div className="rounded-md border border-green-200 font-mono text-sm pt-1">
                 <Link href="/tool/paper-chat" className="block w-full justify-start p-3 rounded-xl bg-green-100 hover:bg-green-300 text-green-800 font-bold">

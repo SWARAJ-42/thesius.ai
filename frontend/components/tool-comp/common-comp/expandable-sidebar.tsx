@@ -2,9 +2,11 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { ChevronRight, ChevronLeft, Home, Settings, Users, HelpCircle, Menu, User, Library, Book, File } from "lucide-react"
+import { ChevronRight, ChevronLeft, Home, Settings, Users, HelpCircle, Menu, User, Library, Book, File, PanelTopClose, PanelBottomClose, HistoryIcon } from "lucide-react"
 import Link from "next/link"
 import { CollapsibleMenu } from "./collapsible-menu"
+import { FaTools } from "react-icons/fa"
+import HistorySearches from "./HistorySearches"
 
 export function ExpandableSidebar() {
   const [isExpanded, setIsExpanded] = useState(false)
@@ -36,14 +38,15 @@ export function ExpandableSidebar() {
           <ScrollArea className="flex-grow">
             <nav className="flex flex-col space-y-2 p-2">
               <div>
-                <SidebarItem route="/" icon={<Home className="h-4 w-4" />} text="Home" isExpanded={isExpanded} />
-                <SidebarItem route="/tool/search-papers" icon={<File className="h-4 w-4" />} text="Library (comming soon)" isExpanded={isExpanded} />
-                {isExpanded && <CollapsibleMenu />}
+                <SidebarItem route="/" icon={<Home className="font-bold h-4 w-4" />} text="Home" isExpanded={isExpanded} />
+                <SidebarItem route="/dashboard/library" icon={<File className="font-bold h-4 w-4" />} text="Library" isExpanded={isExpanded} />
+                {isExpanded ? <CollapsibleMenu /> : <div onClick={()=>{setIsExpanded(!isExpanded)}}><SidebarItem route="" icon={<PanelBottomClose className="font-bold h-4 w-4" />} text="Library" isExpanded={isExpanded} /></div>}
+                {isExpanded ? <HistorySearches /> : <div onClick={()=>{setIsExpanded(!isExpanded)}}><SidebarItem route="" icon={<HistoryIcon className="font-bold h-4 w-4" />} text="Library" isExpanded={isExpanded} /></div>}
               </div>
             </nav>
           </ScrollArea>
           <div className="m-2">
-            <SidebarItem route="/dashboard" icon={<User className="h-4 w-4" />} text="Dashboard" isExpanded={isExpanded} />
+            <SidebarItem route="/dashboard" icon={<User className="font-bold h-4 w-4" />} text="Dashboard" isExpanded={isExpanded} />
           </div>
         </div>
       </div>
@@ -56,7 +59,7 @@ export function ExpandableSidebar() {
           isCompletelyHidden ? 'left-0' : isExpanded ? 'left-64' : 'left-16'
         }`}
       >
-        {isCompletelyHidden ? <ChevronRight className="h-5 w-5" /> : <ChevronLeft className="h-5 w-5" />}
+        {isCompletelyHidden ? <ChevronRight className="font-bold h-5 w-5" /> : <ChevronLeft className="h-5 w-5" />}
       </Button>
     </>
   )
@@ -74,12 +77,17 @@ function SidebarItem({
   route: string
 }) {
   return (
-    <Link
+    route.length > 0 ? <Link
       href={route}
-      className={`flex items-center w-full ${isExpanded ? 'px-4 justify-start' : 'px-2 justify-center'}  hover:bg-green-500/50 rounded-xl p-2`}
+      className={`flex items-center w-full font-bold ${isExpanded ? 'px-4 justify-start' : 'px-2 justify-center'}  hover:bg-green-500/50 rounded-xl p-2`}
     >
-      <div>{icon}</div>
+      <div className="font-bold">{icon}</div>
       {isExpanded && <span className="ml-2">{text}</span>}
-    </Link>
+    </Link> : <div
+      className={`flex items-center w-full font-bold ${isExpanded ? 'px-4 justify-start' : 'px-2 justify-center'}  hover:bg-green-500/50 rounded-xl p-2`}
+    >
+      <div className="font-bold">{icon}</div>
+      {isExpanded && <span className="ml-2">{text}</span>}
+    </div>
   )
 }

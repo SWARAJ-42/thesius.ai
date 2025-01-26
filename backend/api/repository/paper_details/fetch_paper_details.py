@@ -116,6 +116,7 @@ def convert_api_to_first_format(
             "model": "tldr@v2.0.0",
             "text": "Generated summary is not available.",  # Placeholder
         },
+        "type": openalex_api_response.get("type", "unknown type")
     }
 
     converted_openalex_api_response["citations"] = citation_response
@@ -149,6 +150,7 @@ def fetch_cites_reference_cards(work_id, data_type="citation"):
         "cited_by_count",
         "citation_normalized_percentile",
         "open_access",
+        "type",
     ]
 
     # Construct the query parameters
@@ -220,6 +222,7 @@ def convert_cited_reference_data(data):
                 "model": "tldr@v2.0.0",
                 "text": "Generated summary is not available.",  # Placeholder
             },
+            "type": item.get("type", "unknown type")
         }
 
         results.append(converted_item)

@@ -1,17 +1,17 @@
-"use client"
+"use client";
 
-import { useState, useRef } from "react"
-import { PlusCircle, Pencil, Trash2, Upload } from "lucide-react"
-import Image from "next/image"
+import { useState, useRef } from "react";
+import { PlusCircle, Pencil, Trash2, Upload, Library } from "lucide-react";
+import Image from "next/image";
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -19,12 +19,13 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { useAuth } from "@/context/AuthContext"
-import FeaturesExplore from "./subComponents/features"
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { useAuth } from "@/context/AuthContext";
+import FeaturesExplore from "./subComponents/features";
+import Link from "next/link";
 
 export function DashboardComponent() {
   const [projects, setProjects] = useState([
@@ -36,56 +37,94 @@ export function DashboardComponent() {
     { id: 2, name: "Project Beta", description: "Innovating for the future" },
     { id: 3, name: "Project Gamma", description: "Pushing boundaries" },
     { id: 4, name: "Project Delta", description: "Redefining excellence" },
-  ])
+  ]);
 
-  const [newProject, setNewProject] = useState({ 
-    name: "", 
-    description: "", 
+  const [newProject, setNewProject] = useState({
+    name: "",
+    description: "",
     problemStatement: "",
-    document: null as File | null
-  })
-  const [isOpen, setIsOpen] = useState(false)
-  const fileInputRef = useRef<HTMLInputElement>(null)
-  const {user, logout} = useAuth()
+    document: null as File | null,
+  });
+  const [isOpen, setIsOpen] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { user, logout } = useAuth();
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    const { name, value } = e.target
-    setNewProject(prev => ({ ...prev, [name]: value }))
-  }
+    const { name, value } = e.target;
+    setNewProject((prev) => ({ ...prev, [name]: value }));
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      setNewProject(prev => ({ ...prev, document: e.target.files![0] }))
+      setNewProject((prev) => ({ ...prev, document: e.target.files![0] }));
     }
-  }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     if (newProject.name && newProject.description) {
-      setProjects(prev => [...prev, { id: Date.now(), ...newProject }])
-      setNewProject({ name: "", description: "", problemStatement: "", document: null })
-      setIsOpen(false)
+      setProjects((prev) => [...prev, { id: Date.now(), ...newProject }]);
+      setNewProject({
+        name: "",
+        description: "",
+        problemStatement: "",
+        document: null,
+      });
+      setIsOpen(false);
     }
-  }
+  };
 
   return (
     <div className="container mx-auto mt-16 p-6 max-w-7xl">
       <header className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-5xl font-bold">Welcome back {user?.username}! </h1>
+          <h1 className="text-5xl font-bold">
+            Welcome back {user?.username}!{" "}
+          </h1>
           <p className="text-2xl text-black mt-2">
             Here's an overview of your projects.
           </p>
-          <Button onClick={()=>{logout()}} className="bg-red-500 hover:bg-red-600 font-bold text-xl my-2">logout</Button>
+          <Button
+            onClick={() => {
+              logout();
+            }}
+            className="bg-red-500 hover:bg-red-600 font-bold text-xl my-2"
+          >
+            logout
+          </Button>
           <FeaturesExplore />
         </div>
       </header>
 
       <main>
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-semibold">Your project workspace (comming soon !)</h2>
+        <div className="container mx-auto py-8">
+          <h2 className="text-3xl font-bold mb-8 text-gray-800">Your Library</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <Link
+              href="/dashboard/library"
+              className="transition-transform hover:scale-105"
+            >
+              <Card className="h-full bg-gray-50 hover:bg-gray-100 cursor-pointer">
+                <CardHeader>
+                  <Library className="w-12 h-12 text-gray-600 mb-4" />
+                  <CardTitle className="text-xl font-semibold text-gray-800">
+                    Go to your library
+                  </CardTitle>
+                  <CardDescription className="text-gray-700">
+                    Revist your saved search results and research papers
+                  </CardDescription>
+                </CardHeader>
+              </Card>
+            </Link>
+          </div>
+        </div>
+        
+        {/* <div className="flex justify-between items-center mb-6">
+          <h2 className="text-3xl font-bold">
+            Your project workspace (comming soon !)
+          </h2>
           {/* <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
               <Button className="text-black bg-green-600/30 hover:bg-green-600/40">
@@ -161,8 +200,8 @@ export function DashboardComponent() {
                 <Button type="submit" className="text-black w-full bg-green-600/40 hover:bg-green-600/50">Add Project</Button>
               </form>
             </DialogContent>
-          </Dialog> */}
-        </div>
+          </Dialog>
+        </div> */}
 
         {/* <div className="flex flex-wrap gap-6">
           {projects.map((project) => (
@@ -201,5 +240,5 @@ export function DashboardComponent() {
         </div> */}
       </main>
     </div>
-  )
+  );
 }

@@ -31,6 +31,16 @@ class PaperData(BaseModel):
     similarity: float
     type: str
 
+# QueryResult
+class QueryResult(BaseModel):
+    data: List[List[PaperData]]
+    query: str
+    final_answer: str
+    followup_questions: List[str]
+
+class searchDataResponse(BaseModel):
+    searchData: QueryResult
+
 # Updated RagDataProps model
 class RagDataProps(BaseModel):
     renderedPapers: List[PaperData]

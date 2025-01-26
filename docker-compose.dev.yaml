@@ -5,6 +5,7 @@ services:
       - ./.env
     volumes:
       - ./backend/:/app  # Bind-mount local code
+      - ../thesius.db:/app/thesius.db
       - /app/node_modules  # Prevent overriding node_modules in the container
     expose:
       - "8000"
@@ -32,6 +33,18 @@ services:
     environment:
       - REDIS_PASSWORD=${REDIS_PASSWORD}
     command: ["redis-stack-server", "--requirepass", "${REDIS_PASSWORD}"]
+    restart: always
+  
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+    volumes:
+      - ../mongoDB:/data/db
     restart: always
 
   nginx:
