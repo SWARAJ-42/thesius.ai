@@ -20,33 +20,34 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 from fastapi.encoders import jsonable_encoder
 
 def get_query_result(query, paper_data=None):
-    # df = pd.DataFrame(test_data.dummy_papers)
+    # Concising the query
+    query_for_search = utils.advanced_preprocess_query(query)
 
-    '''temporarily commented for testing'''
-    if paper_data == None:
-        df = utils.get_papers(query)
+    if paper_data is None:
+        df1 = utils.get_papers(query)
+        df2 = utils.get_papers(query_for_search)
+
+        df = pd.concat([pd.DataFrame(df1), pd.DataFrame(df2)]).drop_duplicates(subset=["title"]).reset_index(drop=True)
     else:
         paper_data = [paper.dict() for paper in paper_data]
         df = pd.DataFrame(paper_data).dropna()
 
-    if df is None:
+    if df is None or df.empty:
         return {'data': jsonable_encoder([{}]), 'final_answer': "Sorry, no result found"}
-    
-    df, query = utils.rerank(df, query, column_name='fos_abs')
+    else:
+        df, query = utils.rerank(df, query, column_name="title")
+        ans_df, query = utils.rerank(df[:10], query)
 
-    prompt = utils.answer_question_chatgpt(df[:7], query) # prompt designing can be design in declaration location itself cuz already some default have been set
-    gpt_response = utils.answer_question(df=df[:7],prompt=prompt, question=query, debug=False)
+        prompt = utils.answer_question_chatgpt(ans_df, query) # prompt designing can be design in declaration location itself cuz already some default have been set
+        gpt_response = utils.answer_question(df=ans_df,prompt=prompt, question=query, debug=False)
 
-    # alternate for testing
-    # gpt_response = {"gpt_answer": "This is a sample output for testing", "followup_questions":["followup one", "followup two", "followup three"]}
+        df = df.drop(columns=['n_tokens', 'specter_embeddings'])
 
-    df = df.drop(columns=['fos_abs', 'n_tokens', 'specter_embeddings'])
-    
     # Ensure data is JSON serializable
     df_list = df.astype(str).to_dict(orient='records')
 
-    # Chunk the list into groups of 7
-    chunked_data = [df_list[i:i + 7] for i in range(0, len(df_list), 7)]
+    # Chunk the list into groups of 10
+    chunked_data = [df_list[i:i + 10] for i in range(0, len(df_list), 10)]
 
     response = {
         'data': jsonable_encoder(chunked_data),

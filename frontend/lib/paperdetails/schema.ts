@@ -31,6 +31,7 @@ export interface CitationorReference {
     openAccessPdf: openAccessPdfSchema;
     fieldsOfStudy: [string];
     tldr: string | null;
+    similarity: number | null;
     type: string
 };
 

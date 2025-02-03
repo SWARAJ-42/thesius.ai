@@ -1,7 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation"; // import router to navigate programmatically
@@ -11,12 +17,21 @@ import {
   ChevronDown,
   ChevronUp,
   BookOpen,
+  Sparkles,
+  FileText,
+  Building,
+  Type,
 } from "lucide-react";
-import { PaperData, isOpenAccessPdf } from "@/lib/tools/searchengine/fetchResponse";
+import {
+  PaperData,
+  isOpenAccessPdf,
+} from "@/lib/tools/searchengine/fetchResponse";
 import { CitationorReference } from "@/lib/paperdetails/schema";
+import { ScrollArea } from "@radix-ui/react-scroll-area";
+import { MdScore } from "react-icons/md";
 
 export interface PaperCardProps {
-  paper: PaperData | CitationorReference; 
+  paper: PaperData | CitationorReference;
   query: string;
   query_answer: string;
 }
@@ -31,53 +46,93 @@ export function PaperCard({ paper, query, query_answer }: PaperCardProps) {
   const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth);
 
   const handleCardClick = () => {
-    const parcel:PaperIdProps = {
+    const parcel: PaperIdProps = {
       paperId: paper.paperId,
-    }
+    };
     const paperIdParcel = encodeURIComponent(JSON.stringify(parcel)); // Encode the paper data
     router.push(`/paperdetails?paperIdParcel=${paperIdParcel}`); // Navigate with query parameter
   };
 
   return (
-    <Card className={`mt-2 cursor-pointer hover:bg-gray-100 ${paper.abstract && paper.abstract?.trim().length > 0 && "max-w-xl"} ${windowWidth < 900 && "max-w-full"}`} onClick={handleCardClick}>
-      <CardHeader>
-        <CardTitle className="text-sm sm:text-lg font-bold">{paper.title}</CardTitle>
-        <div className="flex flex-wrap gap-2 mt-2">
-          {Array.isArray(paper.fieldsOfStudy) &&
-            paper.fieldsOfStudy.map((label, index) => (
-              <Badge key={index} variant="secondary">
-                {label}
-              </Badge>
-            ))}
+    <Card
+      className={`mt-2 cursor-pointer hover:bg-gray-100 ${
+        paper.abstract && paper.abstract?.trim().length > 0 && "max-w-xl"
+      } ${windowWidth < 900 && "max-w-full"}`}
+      onClick={handleCardClick}
+    >
+      <CardHeader className="space-y-4">
+        <div className="flex items-start justify-between">
+          <div className="space-y-2">
+            <div className="flex flex-col sm:flex-row gap-2">
+              {Array.isArray(paper.fieldsOfStudy) &&
+                paper.fieldsOfStudy.map((label, index) => (
+                  <Badge
+                    key={index}
+                    variant="secondary"
+                    className="bg-blue-50 text-blue-700 hover:bg-blue-100 w-fit"
+                  >
+                    {label}
+                  </Badge>
+                ))}
+            </div>
+            <CardTitle className="text-2xl font-bold leading-tight text-gray-900">
+              {paper.title}
+            </CardTitle>
+            <p className="my-1 font-bold">{paper.venue}</p>
+          </div>
         </div>
+        <ScrollArea className="h-[100px] w-full rounded-md border p-4 overflow-y-scroll">
+          <CardDescription className="text-xs sm:text-sm md:text-base leading-relaxed text-gray-600">
+            {paper.abstract}
+          </CardDescription>
+        </ScrollArea>
       </CardHeader>
-      <CardContent className="grid gap-4">
-        {/* Display paper abstract */}
-        {paper.abstract && paper.abstract?.trim().length > 0 && <Card className="bg-secondary/10">
-          <CardContent className={`p-3 overflow-y-scroll ${windowWidth < 500 && "max-h-[60px]"} sm:max-h-[100px]`}>
-            <p className="text-[10px] sm:text-sm text-muted-foreground">{paper.abstract}</p>
-          </CardContent>
-        </Card>}
-        <div className="flex flex-col gap-4">
-          <Card className="w-full bg-primary/5">
-            <CardContent className="p-3 flex flex-wrap items-center justify-between">
-              <div className="flex items-center gap-2">
-                <TrendingUp size={16} className="text-primary" />
-                <span className="text-sm font-semibold">Citations :</span>
-                <span className="text-sm sm:text-lg font-bold text-primary">
-                  {paper.citationCount}
-                </span>
-              </div>
-              {/* <span className="text-xs font-semibold">Citation Percentile: </span>
-              <Badge variant="secondary" className="text-xs text-black mb-1">
-                {paper.citation_normalized_percentile?.value}
-              </Badge> */}
-              <Badge variant="secondary" className="text-xs mt-1 bg-gray-200">
-                {paper.citation_normalized_percentile?.is_in_top_1_percent ? "is in top 1 percent" : (paper.citation_normalized_percentile?.is_in_top_10_percent && "is in top 10 percent")}
-              </Badge>
-            </CardContent>
-          </Card>
-          <Card className={`w-full ${paper.isOpenAccess ? "bg-green-100" : "bg-red-100"}`}>
+      <CardContent className="space-y-4">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 rounded-lg bg-gray-50 p-4">
+          <div className="space-y-1">
+            <div className="flex items-center gap-1 text-sm text-gray-500">
+              <Sparkles className="h-4 w-4" />
+              Citations
+            </div>
+            <p className="text-sm sm:text-base font-semibold text-gray-900">{paper.citationCount}</p>
+          </div>
+          <div className="space-y-1">
+            <div className="flex items-center gap-1 text-sm text-gray-500">
+              <FileText className="h-4 w-4" />
+              Year
+            </div>
+            <p className="text-sm sm:text-base font-semibold text-gray-900">{paper.year}</p>
+          </div>
+          <div className="space-y-1">
+            <div className="flex items-center gap-1 text-sm text-gray-500">
+              <Type className="h-4 w-4" />
+              Type
+            </div>
+            <p className="text-sm sm:text-base font-semibold text-gray-900 truncate">{paper.type}</p>
+          </div>
+          <div className="space-y-1">
+            <div className="flex items-center gap-1 text-sm text-gray-500">
+              <MdScore className="h-4 w-4" />
+              Relevance
+            </div>
+            {<p className="text-sm sm:text-base font-semibold text-gray-900 truncate">{paper.similarity}</p>}
+          </div>
+        </div>
+        <div className="flex items-center justify-between rounded-lg border p-4">
+          <div className="space-y-1">
+            <p className="text-sm font-medium text-gray-500">
+              Citation Percentile
+            </p>
+            <p className="font-semibold text-emerald-600">
+              {paper.citation_normalized_percentile?.is_in_top_1_percent
+                ? "is in top 1 percent"
+                : paper.citation_normalized_percentile?.is_in_top_10_percent &&
+                  "is in top 10 percent"}
+            </p>
+          </div>
+          <Card
+            className={`${paper.isOpenAccess ? "bg-green-100" : "bg-red-100"}`}
+          >
             <CardContent className="p-3 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <BookOpen
@@ -90,23 +145,6 @@ export function PaperCard({ paper, query, query_answer }: PaperCardProps) {
                   {paper.isOpenAccess ? "Open Access" : "Closed Access"}
                 </span>
               </div>
-              {paper.isOpenAccess && (
-                <a
-                  href={
-                    isOpenAccessPdf(paper.openAccessPdf)
-                      ? paper.openAccessPdf.url
-                      : ""
-                  }
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-1 text-sm text-blue-600 hover:underline"
-                >
-                  View PDF <ExternalLink size={14} />
-                </a>
-              )}
-              <Badge variant="secondary" className="text-xs mt-1 bg-gray-200">
-                {paper.type}
-              </Badge>
             </CardContent>
           </Card>
         </div>
@@ -114,53 +152,3 @@ export function PaperCard({ paper, query, query_answer }: PaperCardProps) {
     </Card>
   );
 }
-
-
-{/* <Collapsible open={isOpen} onOpenChange={setIsOpen}>
-  <CollapsibleTrigger asChild>
-    <Button
-      variant="ghost"
-      className="flex w-full justify-between px-2 py-0"
-    >
-      <span className="font-semibold">Abstract</span>
-      {isOpen ? (
-        <ChevronUp className="h-4 w-4" />
-      ) : (
-        <ChevronDown className="h-4 w-4" />
-      )}
-    </Button>
-  </CollapsibleTrigger>
-  <CollapsibleContent className="mt-2">
-    <Card className="bg-secondary/10">
-      <CardContent className="p-3">
-        <p className="text-sm text-muted-foreground">
-          {paper.abstract}
-        </p>
-      </CardContent>
-    </Card>
-  </CollapsibleContent>
-</Collapsible> */}
-{/* <Collapsible open={isOpen} onOpenChange={setIsOpen}>
-  <CollapsibleTrigger asChild>
-    <Button
-      variant="ghost"
-      className="flex w-full justify-between px-2 py-0 bg-gray-100"
-    >
-      <span className="font-semibold">TLDR</span>
-      {isOpen ? (
-        <ChevronUp className="h-4 w-4" />
-      ) : (
-        <ChevronDown className="h-4 w-4" />
-      )}
-    </Button>
-  </CollapsibleTrigger>
-  <CollapsibleContent className="mt-2">
-    <Card className="bg-secondary/10">
-      <CardContent className="p-3">
-        <p className="text-sm text-muted-foreground">
-          {paper.tldr?.text}
-        </p>
-      </CardContent>
-    </Card>
-  </CollapsibleContent>
-</Collapsible> */}

@@ -29,14 +29,14 @@ const RegisterForm = () => {
     setLoading(true); // Set loading to true
     const formData = new FormData(e.currentTarget);
 
-    const fullname = formData.get("fullname") as string;
+    // const fullname = formData.get("fullname") as string;
     const username = formData.get("username") as string;
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
 
     try {
       const response = await axios.post<ResponseObject>(`${BACKEND_URL}/auth/register`, {
-        fullname: fullname,
+        fullname: "",
         username: username,
         email: email,
         password: password,
@@ -70,13 +70,13 @@ const RegisterForm = () => {
             placeholder="John42"
           />
 
-          <Label className="my-2">Full Name</Label>
+          {/* <Label className="my-2">Full Name</Label>
           <Input
             className="my-2 bg-white/50"
             id="fullname"
             name="fullname"
             placeholder="John Doe"
-          />
+          /> */}
 
           <Label className="my-2">Email Address</Label>
           <Input

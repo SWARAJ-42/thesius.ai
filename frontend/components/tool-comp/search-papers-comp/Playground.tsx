@@ -244,11 +244,11 @@ function Playground() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl w-full">
+    <div className="mx-auto max-w-7xl w-full px-2">
       {!isFromDatabase ? (
         <InputBox />
       ) : (
-        <div className="mt-4 rounded-xl border-8 border-green-500/50 p-3 max-w-7xl w-full text-gray-800 font-bold">
+        <div className="mt-4 mb-2 h-[60px] overflow-y-scroll rounded-xl border-8 border-green-500/50 p-3 max-w-7xl w-full text-gray-800 font-bold">
           {query}
         </div>
       )}

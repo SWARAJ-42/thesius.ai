@@ -8,6 +8,8 @@ load_dotenv()
 
 import requests
 
+import requests
+
 def fetch_openalex_data(search_query, per_page=10, page=1):
     """
     Fetch data from the OpenAlex API.
@@ -27,7 +29,6 @@ def fetch_openalex_data(search_query, per_page=10, page=1):
         "id",
         "title",
         "abstract_inverted_index",
-        "primary_location",
         "publication_year",
         "primary_topic",
         "referenced_works",
@@ -52,7 +53,11 @@ def fetch_openalex_data(search_query, per_page=10, page=1):
     if response.status_code == 200:
         results = response.json().get("results", [])
         # Filter results to include only those with significant values for all fields
-        return results
+        filtered_results = [
+            result for result in results
+            if all(field in result and result[field] not in [None, "", [], {}] for field in select_fields)
+        ]
+        return filtered_results
     else:
         response.raise_for_status()
 
@@ -65,52 +70,39 @@ def convert_api_to_first_format(openalex_api_response):
     results = []
 
     for item in openalex_api_response:
-        if not isinstance(item, dict):  # Ensure item is a dictionary
-            continue
-
-        # Safely retrieve OA status
-        oa_status = (item.get("open_access") or {}).get("oa_status", "CLOSED_ACCESS")
-        oa_status = oa_status.upper() if oa_status else "CLOSED_ACCESS"
+        oa_status = item.get("open_access", {}).get("oa_status", "CLOSED_ACCESS").upper()
         if oa_status not in ["OPEN_ACCESS", "CLOSED_ACCESS"]:
             oa_status = "CLOSED_ACCESS"
 
-        # Safely extract primary topic
-        primary_topic = item.get("primary_topic") or {}
-        field = (primary_topic.get("field") or {}).get("display_name", "")
-        subfield = (primary_topic.get("subfield") or {}).get("display_name", "")
-
-        # Safely extract primary_location
-        primary_location = item.get("primary_location") or {}
-        venue = (primary_location.get("source") or {}).get("display_name", "")
-
-        # Construct converted item
         converted_item = {
-            "paperId": item.get("id", "").split("/")[-1] if item.get("id") else "",  # Extract ID from URL
-            "url": item.get("id", ""),
-            "title": item.get("title", "") or "No Title Available",
-            "abstract": " ".join(list((item.get("abstract_inverted_index") or {}).keys())[:150]) if item.get("abstract_inverted_index") else "",
-            "venue": venue,
-            "year": item.get("publication_year") if isinstance(item.get("publication_year"), int) else None,
-            "referenceCount": len(item.get("referenced_works", []) or []),
-            "citationCount": item.get("cited_by_count", 0) if isinstance(item.get("cited_by_count"), int) else 0,
-            "citation_normalized_percentile": item.get("citation_normalized_percentile", {}) or {},
-            "isOpenAccess": (item.get("open_access") or {}).get("is_oa", False),
+            "paperId": item["id"].split("/")[-1],  # Extract ID from URL
+            "url": item["id"],
+            "title": item.get("title", ""),
+            "abstract": " ".join(list(item.get("abstract_inverted_index", {}).keys())[:150]) if item.get("abstract_inverted_index") else "",
+            "venue": "",
+            "year": item.get("publication_year", None),
+            "referenceCount": len(item.get("referenced_works", [])),  # OpenAlex does not provide this directly
+            "citationCount": item.get("cited_by_count", 0),
+            "citation_normalized_percentile": item.get("citation_normalized_percentile", {}),
+            "isOpenAccess": item.get("open_access", {}).get("is_oa", False),
             "openAccessPdf": {
-                "url": (item.get("open_access") or {}).get("oa_url", "") or "",
+                "url": item.get("open_access", {}).get("oa_url", ""),
                 "status": oa_status,
             },
-            "fieldsOfStudy": [field, subfield],
+            "fieldsOfStudy": [
+                item.get("primary_topic", {}).get("field", {}).get("display_name", ""),
+                item.get("primary_topic", {}).get("subfield", {}).get("display_name", ""),
+            ],
             "tldr": {
                 "model": "tldr@v2.0.0",
-                "text": "Generated summary is not available.",
+                "text": "Generated summary is not available.",  # Placeholder
             },
-            "type": item.get("type", "not known") or "not known",
+            "type": item.get("type", "not known")
         }
 
         results.append(converted_item)
 
     return results
-
 
 
 # Example usage
