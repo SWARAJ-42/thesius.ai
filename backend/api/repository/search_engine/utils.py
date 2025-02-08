@@ -116,6 +116,7 @@ def advanced_preprocess_query(query):
 
     response = client.chat.completions.create(
         model=DEPLOYMENT_NAME,
+        temperature=0,
         messages=[{
             "role": "system",
             "content": "Analyze the input query, and distill the core objective into a concise 10-word summary, demonstrating an understanding of complex, interdisciplinary research topics."

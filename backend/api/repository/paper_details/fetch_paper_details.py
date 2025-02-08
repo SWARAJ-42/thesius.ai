@@ -40,87 +40,71 @@ def fetch_openalex_work_details(work_id):
 
     if response.status_code == 200:
         result = response.json()
-        # Filter result to include only significant values for all fields
-        if all(
-            field in result and result[field] not in [None, "", [], {}]
-            for field in select_fields
-        ):
-            return result
-        else:
-            return {}
+
+        return result
     else:
         response.raise_for_status()
 
 
-def convert_api_to_first_format(
-    openalex_api_response, citation_response, references_response
-):
+def convert_api_to_first_format(openalex_api_response, citation_response, references_response):
     """
     Convert data from the OpenAlex API format to the Semantic Scholar format.
     """
 
-    oa_status = (
-        openalex_api_response.get("open_access", {})
-        .get("oa_status", "CLOSED_ACCESS")
-        .upper()
-    )
+    if not isinstance(openalex_api_response, dict):
+        return {}
+
+    # Safely retrieve OA status
+    open_access_info = openalex_api_response.get("open_access") or {}
+    oa_status = (open_access_info.get("oa_status") or "CLOSED_ACCESS").upper()
     if oa_status not in ["OPEN_ACCESS", "CLOSED_ACCESS"]:
         oa_status = "CLOSED_ACCESS"
 
+    # Safely retrieve primary topic
+    primary_topic = openalex_api_response.get("primary_topic") or {}
+    field = (primary_topic.get("field") or {}).get("display_name", "")
+    subfield = (primary_topic.get("subfield") or {}).get("display_name", "")
+
+    # Extract paper ID safely
+    paper_id = ""
+    if isinstance(openalex_api_response.get("id"), str):
+        paper_id = openalex_api_response["id"].split("/")[-1]
+
+    # Construct converted response
     converted_openalex_api_response = {
-        "paperId": openalex_api_response.get("id").split("/")[-1],  # Extract ID from URL
-        "url": openalex_api_response.get("id"),
-        "title": openalex_api_response.get("title", ""),
-        "abstract": (
-            " ".join(openalex_api_response.get("abstract_inverted_index", {}).keys())
-            if openalex_api_response.get("abstract_inverted_index")
-            else ""
-        ),
-        "venue": openalex_api_response.get("primary_topic", {})
-        .get("field", {})
-        .get("display_name", ""),
-        "year": openalex_api_response.get("publication_year", None),
-        "referenceCount": len(
-            openalex_api_response.get("referenced_works", [])
-        ),  # OpenAlex does not provide this directly
-        "citationCount": openalex_api_response.get("cited_by_count", 0),
-        "citation_normalized_percentile": openalex_api_response.get(
-            "citation_normalized_percentile", {}
-        ),
+        "paperId": paper_id,
+        "url": openalex_api_response.get("id", ""),
+        "title": openalex_api_response.get("title", "") or "No Title Available",
+        "abstract": " ".join(list((openalex_api_response.get("abstract_inverted_index") or {}).keys())[:150])
+        if openalex_api_response.get("abstract_inverted_index") else "",
+        "venue": field or "Unknown Venue",
+        "year": openalex_api_response.get("publication_year") if isinstance(openalex_api_response.get("publication_year"), int) else None,
+        "referenceCount": len(openalex_api_response.get("referenced_works", []) or []),
+        "citationCount": openalex_api_response.get("cited_by_count", 0) if isinstance(openalex_api_response.get("cited_by_count"), int) else 0,
+        "citation_normalized_percentile": openalex_api_response.get("citation_normalized_percentile", {}) or {},
         "authors": [
             {
-                "authorId": author.get("author", {})
-                .get("id", "")
-                .strip("https://openalex.org/"),
-                "name": author.get("author", {}).get("display_name", ""),
-                "url": author.get("author", {}).get("id", ""),
+                "authorId": (author.get("author", {}) or {}).get("id", "").replace("https://openalex.org/", ""),
+                "name": (author.get("author", {}) or {}).get("display_name", ""),
+                "url": (author.get("author", {}) or {}).get("id", ""),
             }
-            for author in openalex_api_response.get("authorships", [])
+            for author in openalex_api_response.get("authorships", []) or []
+            if isinstance(author, dict) and "author" in author
         ],
-        "isOpenAccess": openalex_api_response.get("open_access", {}).get(
-            "is_oa", False
-        ),
+        "isOpenAccess": open_access_info.get("is_oa", False),
         "openAccessPdf": {
-            "url": openalex_api_response.get("open_access", {}).get("oa_url", ""),
+            "url": open_access_info.get("oa_url", "") or "",
             "status": oa_status,
         },
-        "fieldsOfStudy": [
-            openalex_api_response.get("primary_topic", {})
-            .get("field", {})
-            .get("display_name", ""),
-            openalex_api_response.get("primary_topic", {})
-            .get("subfield", {})
-            .get("display_name", ""),
-        ],
+        "fieldsOfStudy": [field, subfield],
         "tldr": {
             "model": "tldr@v2.0.0",
-            "text": "Generated summary is not available.",  # Placeholder
+            "text": "Generated summary is not available.",
         },
-        "type": openalex_api_response.get("type", "unknown type")
+        "type": openalex_api_response.get("type", "unknown type") or "unknown type",
+        "citations": citation_response if isinstance(citation_response, list) else [],
+        "references": references_response if isinstance(references_response, list) else [],
     }
-
-    converted_openalex_api_response["citations"] = citation_response
-    converted_openalex_api_response["references"] = references_response
 
     return converted_openalex_api_response
 
@@ -182,53 +166,57 @@ def convert_cited_reference_data(data):
     """
     Convert data from the OpenAlex API format to the Semantic Scholar format.
     """
+    if not isinstance(data, list):
+        return []
+
     results = []
 
     for item in data:
-        oa_status = (
-            item.get("open_access", {}).get("oa_status", "CLOSED_ACCESS").upper()
-        )
+        if not isinstance(item, dict):
+            continue
+
+        # Safely retrieve Open Access status
+        open_access_info = item.get("open_access") or {}
+        oa_status = (open_access_info.get("oa_status") or "CLOSED_ACCESS").upper()
         if oa_status not in ["OPEN_ACCESS", "CLOSED_ACCESS"]:
             oa_status = "CLOSED_ACCESS"
 
+        # Safely retrieve primary topic
+        primary_topic = item.get("primary_topic") or {}
+        field = (primary_topic.get("field") or {}).get("display_name", "")
+        subfield = (primary_topic.get("subfield") or {}).get("display_name", "")
+
+        # Extract paper ID safely
+        paper_id = ""
+        if isinstance(item.get("id"), str):
+            paper_id = item["id"].split("/")[-1]
+
         converted_item = {
-            "paperId": item["id"].split("/")[-1],  # Extract ID from URL
-            "url": item["id"],
-            "title": item.get("title", ""),
+            "paperId": paper_id,
+            "url": item.get("id", ""),
+            "title": item.get("title", "") or "No Title Available",
             "abstract": " ",
-            "venue": item.get("primary_topic", {})
-            .get("field", {})
-            .get("display_name", ""),
-            "year": item.get("publication_year", None),
-            "referenceCount": len(
-                item.get("referenced_works", [])
-            ),  # OpenAlex does not provide this directly
-            "citationCount": item.get("cited_by_count", 0),
-            "citation_normalized_percentile": item.get(
-                "citation_normalized_percentile", {}
-            ),
-            "isOpenAccess": item.get("open_access", {}).get("is_oa", False),
+            "venue": field or "Unknown Venue",
+            "year": item.get("publication_year") if isinstance(item.get("publication_year"), int) else None,
+            "referenceCount": len(item.get("referenced_works", []) or []),
+            "citationCount": item.get("cited_by_count", 0) if isinstance(item.get("cited_by_count"), int) else 0,
+            "citation_normalized_percentile": item.get("citation_normalized_percentile", {}) or {},
+            "isOpenAccess": open_access_info.get("is_oa", False),
             "openAccessPdf": {
-                "url": item.get("open_access", {}).get("oa_url", ""),
+                "url": open_access_info.get("oa_url", "") or "",
                 "status": oa_status,
             },
-            "fieldsOfStudy": [
-                item.get("primary_topic", {}).get("field", {}).get("display_name", ""),
-                item.get("primary_topic", {})
-                .get("subfield", {})
-                .get("display_name", ""),
-            ],
+            "fieldsOfStudy": [field, subfield],
             "tldr": {
                 "model": "tldr@v2.0.0",
-                "text": "Generated summary is not available.",  # Placeholder
+                "text": "Generated summary is not available.",
             },
-            "type": item.get("type", "unknown type")
+            "type": item.get("type", "unknown type") or "unknown type",
         }
 
         results.append(converted_item)
 
     return results
-
 
 if __name__ == "__main__":
     work_id = "W3099527960"

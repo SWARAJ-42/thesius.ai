@@ -88,7 +88,7 @@ def convert_api_to_first_format(openalex_api_response):
             "paperId": item.get("id", "").split("/")[-1] if item.get("id") else "",  # Extract ID from URL
             "url": item.get("id", ""),
             "title": item.get("title", "") or "No Title Available",
-            "abstract": " ".join(list((item.get("abstract_inverted_index") or {}).keys())[:150]) if item.get("abstract_inverted_index") else "",
+            "abstract": " ".join(list((item.get("abstract_inverted_index") or {}).keys())[:150]) if item.get("abstract_inverted_index") else "Abstract is not available",
             "venue": venue,
             "year": item.get("publication_year") if isinstance(item.get("publication_year"), int) else None,
             "referenceCount": len(item.get("referenced_works", []) or []),
